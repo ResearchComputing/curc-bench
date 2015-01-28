@@ -1,0 +1,17 @@
+.TH bench 1 "14 May 1999" "version 1.0" 
+.Os UNIX
+.SS NAME
+bench
+.SH SYNOPSIS
+Example Man Page
+.SH DESCRIPTION
+This is an example of a man page.
+.SH OPTIONS
+No options for this man page
+.SH SEE ALSO
+man(1), groff(1), man.config(5)
+.SH BUGS
+No known bugs for this template, except you might want to replace the quotes if you copy from my blog.
+.SH AUTHOR
+Owen (owen@thelinuxblog.com)
+

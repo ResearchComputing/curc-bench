@@ -1,0 +1,41 @@
+.TH bench 1 "14 May 1999" "version 1.0" 
+.SH NAME
+Benchmarks manual
+.SH Description
+This is an overview of how to run the benchmark scripts.  All of the python scripts described below
+are in your path once you load the 
+.B Benchmarks
+dotkit.
+.PP
+.SH Single Node Test
+.PP
+1. Create a new directory in 
+.B /curc/admin/benchmarks/data
+that indicates the date the benchmarks are run. I use the month-dd-yyyy format (e.g. may-25-2012).
+.PP
+2. cd into the new directory and create PBS scripts for the nodes you would like to 
+test using the
+.B create_single_node_scripts.py 
+python script.  There are several ways to do this.
+.PP
+create_single_node_scripts.py
+.PP
+create_single_node_scripts.py node[01][01-80]
+.PP
+create_single_node_scripts.py node[01-05][01-80]
+.PP
+create_single_node_scripts.py node0323
+.PP
+Repeat this process until you have the desired scripts set up the the directory.
+.PP
+3. 
+.B submit_jobs.py
+This will submit all the jobs in the directory.  If you make a mistake, you can type
+.B kill_jobs.py
+to remove all the jobs that you have submitted.
+.PP
+4. One the jobs have finished, you can collect the results by running the 
+.B collect_results.py
+script. 
+
+.SH Muiltiple Node Test
