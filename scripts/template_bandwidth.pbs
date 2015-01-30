@@ -1,0 +1,24 @@
+#!/bin/bash
+#PBS -N output.<JOB_NAME>
+#PBS -q janus-admin
+#PBS -l walltime=00:10:00
+#PBS -l nodes=<NODE_LIST>
+#PBS -j oe
+
+. /curc/tools/utils/dkinit
+
+use Torque
+use Moab
+use .openmpi-1.4.3_ics-2011.0.013_torque-2.5.7_ib
+
+cd $PBS_O_WORKDIR
+mkdir -p <JOB_NAME>
+cd <JOB_NAME>
+
+mpirun -pernode /home/molu8455/projects/software/cbench/cbench-1.2.2/bin/osu_bw > data_bw
+mpirun -pernode /home/molu8455/projects/software/cbench/cbench-1.2.2/bin/osu_latency > data_latency
+mpirun -pernode /home/molu8455/projects/software/cbench/cbench-1.2.2/bin/stress | grep aggregate > data_stress
+mpirun -pernode /home/molu8455/projects/software/cbench/cbench-1.2.2/bin/mpi_latency > data_mpi_latency
+mpirun -pernode /home/molu8455/projects/software/cbench/cbench-1.2.2/bin/osu_bcast > data_bcast
+
+touch data_done
