@@ -12,6 +12,5 @@ while job_ids:
         break
     cmd = "canceljob " + id
     os.system(cmd)
-       
-job_ids.close()   
 
+job_ids.close()

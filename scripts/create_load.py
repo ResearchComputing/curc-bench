@@ -8,7 +8,7 @@ for i in range(1,last):
     nodenum = str(i)
     if i < 10:
         nodenum = "0" + str(i)
-        
+
     cmd =  "pdsh  -w  node" + nodenum + "[01-20] '. /curc/tools/utils/dkinit; use TeachingHPC; mpirun -np 12 /curc/admin/benchmarks/software/load/burn " + time + "; echo done' &"
     print cmd
     os.system(cmd)
@@ -21,5 +21,5 @@ for i in range(1,last):
     cmd = "pdsh  -w  node" + nodenum + "[61-80] '. /curc/tools/utils/dkinit; use TeachingHPC; mpirun -np 12 /curc/admin/benchmarks/software/load/burn " + time + "; echo done' &"
     print cmd
     os.system(cmd)
-    
+
 print "done"

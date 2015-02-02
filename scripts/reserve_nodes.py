@@ -12,11 +12,8 @@ while job_ids:
     tmp = id.split()
     if len(tmp):
          cmd = cmd + str(tmp[0]) + ","
-job_ids.close()   
+job_ids.close()
 
 # create ENV variable
 print cmd[:-1]
 print "mrsvctl -c -h $NODE_LIST -n 'benchmark-node' -a USER==molu8455"
-
-
-

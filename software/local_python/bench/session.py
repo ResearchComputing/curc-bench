@@ -3,7 +3,7 @@
 """
 This class implements a session concept.  The basic API is:
 
-bench session --create='name of session' 
+bench session --create='name of session'
 bench session --rename='name of session'
 bench session --session='name'
 bench list
@@ -22,7 +22,7 @@ def get_directory_name(directory, name):
 
     # if not os.path.exists(directory):
     #     os.makedirs(directory)
-    
+
     if name is not None:
         return name
         # folder_name = os.path.join(directory,str(name))
@@ -46,7 +46,7 @@ class Session:
         print '__init__'
         self.directory = '/home/molu8455/bench/junk'
         self.name = get_directory_name(self.directory, name)
-        
+
         # self.name, self.pickle_name = get_directory_name(self.directory, name)
 
     def __del__(self):
@@ -57,10 +57,10 @@ class Session:
 
     def __exit__(self, type, value, traceback):
         print '__exit__'
-        
+
     def __enter__(self):
         print '__enter__'
-        return self          
+        return self
 
     def list(self):
         print self.name, 'list'
@@ -101,8 +101,5 @@ with Session() as session:
 
 # with Session('test') as session:
 
-    
+
 #     print dump
-
-
-

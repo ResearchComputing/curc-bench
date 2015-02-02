@@ -10,16 +10,16 @@ def build_results_file():
     for dirname, dirnames, filenames in os.walk('.'):
         for subdirname in dirnames:
             if subdirname.find("job_node") == 0:
-            
+
                 # Did the run finish?
                 if os.path.exists(os.path.join(subdirname,"data_done")) :
-                
+
                     #bw data
                     in_file = open(os.path.join(subdirname,"data_bw"),"r")
                     node_name = subdirname[4:]
                     node_one = node_name[:8]
                     node_two = node_name[9:]
-                
+
                     out_file.write(node_name + " " + node_one + " " + node_two + " ")
                     print node_name
                     while in_file:
@@ -30,9 +30,9 @@ def build_results_file():
                         if split[0] == '#':
                             continue
                         out_file.write(split[1] + " ")
-                                        
+
                     in_file.close()
-                    out_file.write("\n")    
+                    out_file.write("\n")
     out_file.close()
 
 def find_percent(pvalue):
@@ -42,12 +42,12 @@ def find_percent(pvalue):
     # write the mean to a file
     df = df[['s1','s2','s3','s4','l3','l4','l5','l6']]
     pdiff = ((df - df.mean(0)) / df.mean(0))*100
-   
+
     threshold = -1.0*pvalue
     pdiff_concern = pdiff.applymap(lambda x: x if x < threshold else 0)
     pdiff_check = pdiff_concern[pdiff_concern.sum(1) < 0]
-    
-    
+
+
     if pdiff_check:
         print pdiff_check
     else:
@@ -55,7 +55,3 @@ def find_percent(pvalue):
 
 build_results_file()
 find_percent(10)
-
-
-
-

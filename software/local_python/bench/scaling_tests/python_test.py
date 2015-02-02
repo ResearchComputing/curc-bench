@@ -50,27 +50,19 @@ def create_pbs_template(mypath, data):
     t = template.Template(SCALING_TEMPLATE)
     contents = t.render(template.Context(data))
     file_out.write(contents)
-    file_out.close()    
+    file_out.close()
 
 def render(mypath, node_list):
     data = {}
     data['time_estimate'] = "01:00:00"
-    
+
     n = len(node_list)
     logger.debug("number of nodes = " + str(n))
     data['id'] = str(uuid.uuid1())
     data['nodes'] = n
     data['processors'] = n*12
     data['node_list'] = node_list
-    job_name = "python-alltoall-" + str(n)    
+    job_name = "python-alltoall-" + str(n)
     data['job_name'] = job_name
-    
+
     create_pbs_template(mypath, data)
-    
-    
-    
-    
-    
-    
-    
-    

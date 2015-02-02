@@ -16,10 +16,10 @@ import logging
 logger = logging.getLogger('Benchmarks')
 
 def wait_for_jobs():
-    
+
     logger.info("Waiting for jobs to start")
     time.sleep(60)
-    
+
     start = time.time()
     # Are we done?
     done = False
@@ -30,28 +30,22 @@ def wait_for_jobs():
         if not done:
             time.sleep(config.showq_time)
         elapsed = (time.time() - start)
-        
+
         if elapsed > config.max_time:
             done = True
 
 def execute(directory, retest):
-    
+
     logger.info(directory)
     #Create and submit
     create.execute(directory, retest)
     submit.execute(directory)
-    
+
     # Wait for the jobs to show up in showq
     wait_for_jobs()
-            
+
     # Process
     process.execute(directory)
-    
+
     # Create new reservations
-    reserve.execute(directory)    
-    
-    
-    
-    
-    
-    
+    reserve.execute(directory)

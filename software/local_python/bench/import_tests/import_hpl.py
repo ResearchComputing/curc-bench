@@ -1,4 +1,3 @@
-
 import os
 import logging
 logger = logging.getLogger('Benchmarks')
@@ -11,10 +10,10 @@ def parse(node_path, subdirname, node_dic):
         in_file = open(data_file,"r")
         node_list = infiniband.read_info_file(in_file)
         in_file.close()
-   
+
     data_file = os.path.join(node_path,subdirname,'time_data')
     if os.path.exists(data_file):
-        
+
         in_file = open(data_file,"r")
         tmp = in_file.readline().split()
         value = 0
@@ -28,23 +27,23 @@ def parse(node_path, subdirname, node_dic):
         else:
             node_dic[n] = {}
             node_dic[n][len(node_list)] = value
-    
+
     return node_dic
 
 def execute(dir_name, node_list):
-    
+
     path = os.path.split(dir_name)
     #trial = path[-1].split('-')[-1]
     #year = path[-1].split('-')[0]
     #month = path[-1].split('-')[1]
     #day = path[-1].split('-')[2]
-    
+
     node_path = os.path.join(dir_name,"hpl")
     logger.info(node_path)
-     
+
     bad_nodes = []
     good_nodes = []
-    
+
     results = {}
     for dirname, dirnames, filenames in os.walk(node_path):
         for subdirname in dirnames:
@@ -52,15 +51,15 @@ def execute(dir_name, node_list):
             if subdirname.find("test_") == 0:
                 #rint subdirname
                 results = parse(node_path, subdirname, results)
-    
+
     for k,v in results.iteritems():
-        print k,v            
-                
-    #                 
+        print k,v
+
+    #
     #                 results = read_all(node_path,subdirname, "data")
     #                 results = read_pairs(node_path, subdirname, results)
     #                 results = read_singles(node_path, subdirname, results)
-    #                 
+    #
     #                 for k,v in results.items():
     #                     print k, results[k]
     #                     if results[k]['all'] == False and results[k]['pair'] == False:
@@ -70,8 +69,8 @@ def execute(dir_name, node_list):
     #                     else:
     #                         logger.info("Passed the all test and failed the pair... this is weird")
     #                         bad_nodes.append(k)
-                        
+
     logger.info("bad nodes  " + str(len(bad_nodes)))
     logger.info("good nodes " + str(len(good_nodes)))
-                     
-    return {'bad_nodes': list(set(bad_nodes)), 'good_nodes': list(set(good_nodes).difference(set(bad_nodes)))}  
+
+    return {'bad_nodes': list(set(bad_nodes)), 'good_nodes': list(set(good_nodes).difference(set(bad_nodes)))}
