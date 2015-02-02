@@ -1,0 +1,13 @@
+#!/bin/bash
+#PBS -q janus-admin
+#PBS -l walltime=02:00:00
+#PBS -l nodes=73:jrack04:ppn=12
+#PBS -j oe
+
+. /curc/tools/utils/dkinit
+use TeachingHPC
+
+cd $PBS_O_WORKDIR
+
+mpirun ./burn 7200
+
