@@ -1,0 +1,25 @@
+#Dependencies
+#This file contains a list of dependencies for the curc-bench repo including versions and where #they should go.
+
+
+osu-micro-benchmarks-3.8
+dir: curc-bench/software/
+
+Django-1.4
+dir: curc-bench/software/local_python/
+
+django-piston-0.2.3
+dir: curc-bench/software/local_python/
+
+MySQL-python-1.2.3
+dir: curc-bench/software/local_python/
+
+pandas-0.7.3
+dir: curc-bench/software/local_python/
+
+requests-0.14.1
+dir: curc-bench/software/local_python/
+dir: curc-bench/software/local_python/lib/python2.7/site-packages
+
+Pysam-0.5
+dir: curc-bench/software/local_python/lib/python2.7/site-packages
