@@ -1,4 +1,3 @@
-
 import string
 from subprocess import check_output
 import datetime
@@ -29,7 +28,7 @@ def listPBSnodes(hostExpression):
         name = node["name"]
         state = node["state"]
         freenodelist.append(name)
-        
+
     return freenodelist
 
 
@@ -57,7 +56,7 @@ def freePBSnodes(hostExpression):
         name = node["name"]
         state = node["state"]
         if state == "free":
-            
+
             if node["jobs"]:
                 # node has a job running
                 jobs = node["jobs"].split(", ")
@@ -68,15 +67,12 @@ def freePBSnodes(hostExpression):
                     status[S] = value
                 if status.has_key("message"):
                     continue
-            #print "%s free" % name        
+            #print "%s free" % name
             freenodelist.append(name)
-        
+
     return freenodelist
 
 if __name__ == '__main__':
     import os, sys
     r = freePBSnodes("node10[01-80],node16[01-80]")
     print r
-    
-
-

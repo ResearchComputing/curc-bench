@@ -8,20 +8,20 @@ import logging
 logger = logging.getLogger('Benchmarks')
 
 def evaluate():
-    
+
     queues = overview()
     jobs = 0
     for q in queues:
         jobs += int(q.attrib['count'])
-    
+
     if jobs == 0:
         return True
-    
+
     return False
 
 
 def overview():
-    
+
     user_name = getpass.getuser()
     pbsOut = subprocess.check_output(["showq --xml -u %s" % user_name] , shell=True)
     root = ET.fromstring(pbsOut)
@@ -30,7 +30,7 @@ def overview():
     for q in queues:
         logger.info(q.attrib['option'].rjust(18)+ " : "+ q.attrib['count'].rjust(4))
     return queues
-    
+
 def checkjob(jobid):
     host_list = []
     pbs_out = subprocess.check_output(["checkjob %s --xml" % jobid] , shell=True)
@@ -42,19 +42,19 @@ def checkjob(jobid):
             if n.startswith('node'):
                 host_list.append(n)
     return host_list
-    
+
 
 def generate_node_state():
-    
+
     nodes_names = expand_hostlist("node[01-17][01-80]")
     node_string = "".join(["%s " % n for n in nodes_names])
     pbs_node_state = subprocess.check_output(["pbsnodes -x %s" % node_string] , shell=True)
     nodes = ET.fromstring(pbs_node_state)
-    
+
     node_state ={}
-    
+
     for n in nodes.findall("Node"):
-        
+
         node_state[n.find('name').text] = {}
         node_state[n.find('name').text]['state'] = n.find('state').text
         job_ids = []
@@ -69,29 +69,29 @@ def generate_node_state():
             print n.find('name').text, tmp
                 #job_ids.append(j.split('/')[1].split('.')[0])
         except:
-            pass    
-            
-            
+            pass
+
+
         node_state[n.find('name').text]['jobids'] = set(job_ids)
         node_state[n.find('name').text]['job_num'] = len(job_ids)
         node_state[n.find('name').text]['needed'] = 12
         node_state[n.find('name').text]['load'] = 1
-        
-        
-        
+
+
+
     return node_state
 
 def check_nodes(job_list, node_state):
-    
+
     job_state = []
     job_load = []
     job_num = []
-    
+
     for node in job_list:
         job_state.append(node_state[node]['state'])
         job_load.append(node_state[node]['load'])
         job_num.append(node_state[node]['job_num'])
-    
+
     if 'job-exclusive' in job_state:
         print "job-exclusive".rjust(20),
     elif 'down' in job_state:
@@ -100,23 +100,23 @@ def check_nodes(job_list, node_state):
         print 'free'.rjust(20),
     else:
         print 'unknown'.rjust(20),
-    
+
     mean_load = sum(job_load)
     mean_num_jobs = sum(job_num)
-    
-    print str(mean_load).rjust(20), 
-    
+
+    print str(mean_load).rjust(20),
+
     print str(mean_num_jobs).rjust(20),
-        
-        
-        
-     
+
+
+
+
 def detailed(queue):
-    
+
     node_state = generate_node_state()
-    
+
     index = 1
-    for q in queue:   
+    for q in queue:
         if q.attrib['option'] == 'eligible' or q.attrib['option'] == 'blocked':
             for j in q:
                 print j.attrib['JobID'].rjust(10),
@@ -126,16 +126,14 @@ def detailed(queue):
                 if index < 100:
                     node_list = checkjob(j.attrib['JobID'])
                     check_nodes(node_list, node_state)
-                    
+
                     index+=1
                 print ""
-                    
-                    
+
+
 def execute(verbose):
-    
-    q = overview() 
-    
+
+    q = overview()
+
     if verbose:
         detailed(q)
-
-

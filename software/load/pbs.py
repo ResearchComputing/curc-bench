@@ -98,12 +98,12 @@ def xml2obj(src):
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
@@ -136,7 +136,7 @@ MAX_SIZE = 100000
 def expand_hostlist(hostlist, allow_duplicates=False, sort=False):
     """Expand a hostlist expression string to a Python list.
 
-    Example: expand_hostlist("n[9-11],d[01-02]") ==> 
+    Example: expand_hostlist("n[9-11],d[01-02]") ==>
              ['n9', 'n10', 'n11', 'd01', 'd02']
 
     Unless allow_duplicates is true, duplicates will be purged
@@ -146,7 +146,7 @@ def expand_hostlist(hostlist, allow_duplicates=False, sort=False):
     results = []
     bracket_level = 0
     part = ""
-    
+
     for c in hostlist + ",":
         if c == "," and bracket_level == 0:
             # Comma at top level, split!
@@ -210,7 +210,7 @@ def expand_part(s):
 
 def expand_rangelist(prefix, rangelist):
     """ Expand a rangelist (e.g. "1-10,14"), putting a prefix before."""
-    
+
     # Split at commas and expand each range separately
     results = []
     for range_ in rangelist.split(","):
@@ -319,7 +319,7 @@ def collect_hostlist_1(left_right):
         # Add the right part unprocessed to the suffix.
         # This ensures than an already computed range expression
         # in the right part is not analyzed again.
-        suffix = suffix + right 
+        suffix = suffix + right
 
         if num_str is None:
             # A left part with no numeric part at all gets special treatment!
@@ -346,7 +346,7 @@ def collect_hostlist_1(left_right):
     # right) tuples.
 
     results = []
-    needs_another_loop = False 
+    needs_another_loop = False
 
     # Now group entries with the same prefix+suffix combination (the
     # key is the first element in the sortlist) to loop over them and
@@ -365,7 +365,7 @@ def collect_hostlist_1(left_right):
             # ranges expressed as (low, high, width) for later
             # formatting.
             range_list = []
-    
+
             for ((prefix2, suffix2), num_int, num_width, host) in group:
                 if host not in remaining:
                     # Below, we will loop internally to enumate a whole range
@@ -394,7 +394,7 @@ def collect_hostlist_1(left_right):
             if len(range_list) == 1 and range_list[0][0] == range_list[0][1]:
                 # Special case to make sure that n1 is not shown as n[1] etc
                 results.append((prefix,
-                                "%0*d%s" % 
+                                "%0*d%s" %
                                (range_list[0][2], range_list[0][0], suffix)))
             else:
                 # General case where high > low
@@ -457,7 +457,7 @@ def listPBSnodes(nodeNames):
         name = node["name"]
         state = node["state"]
         freenodelist.append(name)
-        
+
     return freenodelist
 
 
@@ -484,7 +484,7 @@ def freePBSnodes(nodeNames):
         name = node["name"]
         state = node["state"]
         if state == "free":
-            
+
             if node["jobs"]:
                 # node has a job running
                 jobs = node["jobs"].split(", ")
@@ -495,28 +495,21 @@ def freePBSnodes(nodeNames):
                     status[S] = value
                 if status.has_key("message"):
                     continue
-            #print "%s free" % name        
+            #print "%s free" % name
             freenodelist.append(name)
-        
+
     return freenodelist
 
 if __name__ == '__main__':
-    
+
     import os, sys
     if len(sys.argv) < 1:
         print "please specify rack as command line arg: eg. python pbs.py 03"
-    
+
     if len(sys.argv) == 2:
         rack = "node" + sys.argv[1] + "[01-80]"
-        hosts = expand_hostlist(rack)    
+        hosts = expand_hostlist(rack)
         nodes = freePBSnodes(hosts)
         for n in nodes:
             print n
         print len(nodes)
-
-
-
-
-
-
-

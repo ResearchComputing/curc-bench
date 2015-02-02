@@ -8,7 +8,7 @@
 cd $PBS_O_WORKDIR
 mkdir -p $HOSTNAME
 
-# copy linpack 
+# copy linpack
 cd $HOSTNAME
 
 cat >> linpack_input << EOF
@@ -36,7 +36,7 @@ TRIADTOTAL=0
 
 for ((i=0; i < NUM_TRIALS ; i++ ))
 do
-# Grab the 3 lines in addition to the line starting with Copy	
+# Grab the 3 lines in addition to the line starting with Copy
 VAR=`stream | grep -A 3 Copy`
 
 COPY=`echo $VAR | awk '{ print $2 }' | awk -F. '{ print $1 }'`

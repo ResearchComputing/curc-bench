@@ -16,10 +16,10 @@ def read_nodes_from_file(filename):
         if not line:
             break
         node_list.append(line[0])
-        
-    return node_list    
-       
-        
+
+    return node_list
+
+
 
 current_path = os.getcwd()
 source_path = sys.path[0]
@@ -34,12 +34,12 @@ if len(sys.argv) == 2:
     else:
         node_list = sys.argv[1]
         r = freePBSnodes(node_list)
-        
+
 for node in r:
     print str(node)
-    
+
     # create the pbs command
     filename = os.path.join(current_path,"script_" + node)
     template_pbs = os.path.join(source_path,"template_single_node.pbs")
-    cmd = "cat " + template_pbs + " | sed s/\<NODE_NAME\>/" + node + "/ > " + filename 
+    cmd = "cat " + template_pbs + " | sed s/\<NODE_NAME\>/" + node + "/ > " + filename
     os.system(cmd)

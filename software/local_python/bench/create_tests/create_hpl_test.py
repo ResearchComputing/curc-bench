@@ -46,36 +46,36 @@ EOF
 
 """
 # These are parameters for the script
-#==============================================================================   
+#==============================================================================
 def processors_per_node():
     return 12
-    
-def memory_per_node():
-     return 20*1073741824  
 
-# The class for modeling time     
-#==============================================================================     
+def memory_per_node():
+     return 20*1073741824
+
+# The class for modeling time
+#==============================================================================
 class TimeModel:
     def __init__(self):
         # fixed at 20%: processors vs. time
         x1 = [ 12,  24,  48,  96, 192, 384, 768, ]
         y1 = [72.61, 104.29, 150.38, 215.10, 314.19, 455.94, 681.95]
         self.g1, self.i1, r, p, std_err = stats.linregress( numpy.log(x1), numpy.log(y1))
-        
+
         # fixed at 8 nodes: percent vs. time
         x2 = [ 20, 40, 60, 80 ]
         y2 = [ 215.10, 583.83, 1056.89, 1617.62]
         y2 = numpy.divide(y2,215.10)
         self.g2, self.i2, r, p, std_err = stats.linregress( numpy.log(x2), numpy.log(y2))
-                        
+
     def get_time_estimate(self, nodes, percent):
         tmp = self.g1 * numpy.log(nodes*12) + self.i1
         time_est = numpy.exp(tmp)
-        
+
         tmp = self.g2 * numpy.log(percent) + self.i2
         factor_est = numpy.exp(tmp)
         return round(time_est*factor_est)*10
-        
+
 def max_matrix_dimension(nodes, percent):
     tmp = memory_per_node()*nodes*percent/8
     return int(math.floor(math.sqrt(tmp)))
@@ -106,7 +106,7 @@ def closest_match(n):
             A = tmpA
             B = tmpB
         index += 1
-    values = [A,B]    
+    values = [A,B]
     values.sort()
     return values
 
@@ -117,15 +117,15 @@ def create_pbs_template(mypath, hpl):
     t = template.Template(HPL_TEMPLATE)
     contents = t.render(template.Context(hpl))
     file_out.write(contents)
-    file_out.close()    
+    file_out.close()
 
 def create_node_groups(node_list,n):
     total_nodes = len(node_list)
     x = math.floor(total_nodes/float(n))
     y = math.ceil(total_nodes/float(n))
-    
+
     node_groups = []
-    
+
     #print "create " + str(x) + " groups with " + str(n) + " nodes"
     index = 0
     for r in range(int(x)):
@@ -133,17 +133,17 @@ def create_node_groups(node_list,n):
         for i in range(int(n)):
             tmp.append(node_list[index].rstrip())
             index += 1
-        #print tmp    
+        #print tmp
         node_groups.append(tmp)
-    
+
     #print "create 1 group with " + str(total_nodes - x*n) + " nodes"
     if total_nodes - x*n > 0:
         tmp = []
         for i in range(int(total_nodes - x*n)):
             tmp.append(node_list[i].rstrip())
-        #print tmp    
+        #print tmp
         node_groups.append(tmp)
-    
+
     #print node_groups
     return node_groups
 
@@ -153,8 +153,8 @@ def render(mypath, queue, node_list):
     n = len(node_list)
     #print n
     hpl = {}
-     
-    hpl['queue'] = queue 
+
+    hpl['queue'] = queue
     # What's the best P and Q
     PQ = closest_match(n*processors_per_node())
     hpl['p'] = PQ[0]
@@ -165,78 +165,78 @@ def render(mypath, queue, node_list):
     hpl['processors'] = n*processors_per_node()
     hpl['node_list'] = node_list
     hpl['percent'] = percent
-    
+
     time_model = TimeModel()
     time_estimate = time_model.get_time_estimate(n, percent)
     #print time_estimate
     hpl['time_estimate'] = time_estimate
-    
+
     # Max problem size?
     N = max_matrix_dimension(n,(float(percent)/100))
     hpl['n'] = N
 
     job_name = "hpl-" + str(n) + "-" + str(percent)
-        
+
     hpl['job_name'] = job_name
-    
+
     #infiniband.rack_subsets(hpl, node_list)
     #print hpl
-    
+
     create_pbs_template(mypath, hpl)
-    
+
 
 def create(node_list, queue, path):
     #print node_list
     mypath = os.path.join(path,"hpl")
     util.create_directory_structure(mypath)
-    
+
     logger.info("HPL with pecent = "+str(config.hpl_percent))
     # Test with 18 nodes on a switch
     logger.info("Creating 18 node HPL tests")
     rack_switch = infiniband.rack_switch_18(node_list)
     rack_list = []
-    for name, name_list in rack_switch.iteritems(): 
+    for name, name_list in rack_switch.iteritems():
         #print name, name_list
-        if len(name_list) > 0:    
+        if len(name_list) > 0:
              render(mypath, queue, name_list)
              rack_list.extend(name_list)
              data = infiniband.rack_list_subsets(name_list)
              for j,k in data.iteritems():
                  render(mypath, queue, k)
-                 
+
     logger.debug("not tested "+ str(len(set(node_list).difference(set(rack_list)))))
-    
-    
-    
+
+
+
     # Test with 18 nodes on a switch
     # logger.info("Creating 18 node alltoall tests")
     #     rack_switch = rack_switch_18(node_list)
     #     rack_list = []
-    #     for name, name_list in rack_switch.iteritems(): 
+    #     for name, name_list in rack_switch.iteritems():
     #         #print name, name_list
-    #         if len(name_list) > 0:    
+    #         if len(name_list) > 0:
     #              render(mypath, queue, name_list)
     #              rack_list.extend(name_list)
-    #              
-    #     logger.debug("not tested"+ str(set(node_list).difference(set(rack_list))))       
+    #
+    #     logger.debug("not tested"+ str(set(node_list).difference(set(rack_list))))
 
-    
-    
-    
+
+
+
 # def create(name_list, queue, n, percent, dir_name):
 #     current_path = os.getcwd()
 #     mypath = os.path.join(current_path, dir_name)
 #     create_directory_structure(mypath)
-#     
-#     groups = create_node_groups(name_list,n)      
+#
+#     groups = create_node_groups(name_list,n)
 #     for i in range(len(groups)):
 #         render(mypath, queue, groups[i], percent)
-            
 
 
-#==============================================================================  
-if __name__ == '__main__':  
-    
+
+#==============================================================================
+if __name__ == '__main__':
+
     from optparse import OptionParser
     parser = OptionParser()
     parser.add_option("-n", "--nodes", dest="nodes", help="Number of nodes to use")
@@ -245,14 +245,14 @@ if __name__ == '__main__':
     parser.add_option("-p", "--prefix", dest="prefix", help="A job prefix string")
     parser.add_option("-l", "--list", dest="list", help="A list of nodes to run on")
     (options, args) = parser.parse_args()
-    
+
     # default options
     nodes = 1
     percent = 20
     queue = "janus-admin"
     prefix = None
     node_list_name = None
-    
+
     # get the options
     if options.nodes:
         nodes = int(options.nodes)
@@ -269,11 +269,9 @@ if __name__ == '__main__':
     else:
         print "please specify a node list."
         exit()
-    
-    print "creating HPL jobs " + str(nodes) + " " + str(percent)    
+
+    print "creating HPL jobs " + str(nodes) + " " + str(percent)
     for name, name_list in node_lists.iteritems():
-        if len(name_list) > 0:    
+        if len(name_list) > 0:
             dirname = "hpl-" + str(nodes)
             create(name_list,queue,nodes,percent,dirname)
-   
-

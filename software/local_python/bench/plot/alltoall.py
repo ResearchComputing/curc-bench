@@ -25,7 +25,7 @@ for x,y in a:
     index = int(x)
     try:
         if y > y1[int(x)-1]:
-            print index, y, y1[index-1]  
+            print index, y, y1[index-1]
     except:
         pass
 
@@ -36,7 +36,7 @@ for i in range(a.shape[0]):
         print a[i,]
         delete_items.append(i)
 
-print delete_items    
+print delete_items
 a = delete(a,(delete_items),axis=0)
 
 y = a[:,1]
@@ -53,8 +53,3 @@ plot(x1,y1,'r.-')
 data = {}
 for i in range(x1.shape[0]):
     data[int(x1[i])] = y1[i]
-    
-    
-    
-    
-

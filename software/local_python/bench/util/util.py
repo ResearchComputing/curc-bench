@@ -6,18 +6,18 @@ import shutil
 def read_node_list(node_list_name, dir=None):
     node_list = []
     if not dir:
-        file_in = open(os.path.join(os.getcwd(), node_list_name),'r') 
+        file_in = open(os.path.join(os.getcwd(), node_list_name),'r')
     else:
-        file_in = open(os.path.join(dir, node_list_name),'r') 
-        
+        file_in = open(os.path.join(dir, node_list_name),'r')
+
     node_name = file_in.readline()
- 
+
     while node_name:
         if len(node_name.strip()) == 8:
             node_list.append(node_name.strip())
         node_name = file_in.readline()
     file_in.close()
-    
+
     return node_list
 
 
@@ -26,11 +26,11 @@ def categorize(node_list):
     # long node01
     # special node02* + node0301
     # janus node0302 - *
-    
+
     long_nodes = []
     special_nodes = []
     janus_nodes = []
-    
+
     for x in node_list:
         if x[4:6] == "01":
             long_nodes.append(x)
@@ -38,11 +38,11 @@ def categorize(node_list):
             special_nodes.append(x)
         else:
             janus_nodes.append(x)
-    
+
     return {'long':long_nodes,'special':special_nodes,'janus':janus_nodes}
 
 def create_directory_structure(dir_name):
-    
+
     if os.path.exists(dir_name):
         cmd = 'The directory '+dir_name+ 'exists.\n Delete it? (y or n): '
         ans = raw_input(cmd)
@@ -56,11 +56,11 @@ def create_directory_structure(dir_name):
             print "ERROR: " + e.strerror
 
 def get_directory(directory_name):
-    
+
     directory = '/curc/admin/benchmarks/data'
     if not os.path.exists(directory):
         os.makedirs(directory)
-    
+
     folder = datetime.date.today()
     index = 1
     if not directory_name:
@@ -72,11 +72,6 @@ def get_directory(directory_name):
     else:
         folder_name = os.path.join(directory,directory_name)
         return folder_name
-        
-    folder_name = os.path.join(directory,str(folder)+"-"+str(index-1))    
+
+    folder_name = os.path.join(directory,str(folder)+"-"+str(index-1))
     return folder_name
-    
-    
-    
-    
-    
