@@ -23,3 +23,12 @@ dir: curc-bench/software/local_python/lib/python2.7/site-packages
 
 Pysam-0.5
 dir: curc-bench/software/local_python/lib/python2.7/site-packages
+
+IOR-2.10.3
+dir: curc-bench/software/
+
+hpl-2.0
+dir: curc-bench/software/
+
+hpcc-1.4.1
+dir: curc-bench/software/
