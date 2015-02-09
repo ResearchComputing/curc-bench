@@ -6,18 +6,18 @@ from optparse import OptionParser
 from bench.util import config
 from bench.util import infiniband
 
-appsdir = '/root/srv/www/benchmarks/apps/'
-if not appsdir in sys.path:
-    sys.path.insert(0,appsdir)
+# appsdir = '/root/srv/www/benchmarks/apps/'
+# if not appsdir in sys.path:
+#     sys.path.insert(0,appsdir)
 
-appsdir = '/root/srv/www/benchmarks/'
-if not appsdir in sys.path:
-    sys.path.insert(1,appsdir)
+# appsdir = '/root/srv/www/benchmarks/'
+# if not appsdir in sys.path:
+#     sys.path.insert(1,appsdir)
 
-os.environ["DJANGO_SETTINGS_MODULE"] = "benchmarks_site.settings"
-from django.db import models
-from wire.models import Bandwidth
-from django.db import IntegrityError
+# os.environ["DJANGO_SETTINGS_MODULE"] = "benchmarks_site.settings"
+# from django.db import models
+# from wire.models import Bandwidth
+# from django.db import IntegrityError
 
 
 

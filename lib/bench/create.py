@@ -14,7 +14,7 @@ import logging
 logger = logging.getLogger('Benchmarks')
 
 import util.util
-from bench.util import util as util
+import util as util
 
 def add_to_reservation():
     try:

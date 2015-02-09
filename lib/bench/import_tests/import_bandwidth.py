@@ -3,18 +3,19 @@ import os, sys
 from datetime import datetime
 from optparse import OptionParser
 
-appsdir = '/root/srv/www/benchmarks/apps/'
-if not appsdir in sys.path:
-    sys.path.insert(0,appsdir)
+# appsdir = '/root/srv/www/benchmarks/apps/'
+# if not appsdir in sys.path:
+#     sys.path.insert(0,appsdir)
 
-appsdir = '/root/srv/www/benchmarks/'
-if not appsdir in sys.path:
-    sys.path.insert(1,appsdir)
+# appsdir = '/root/srv/www/benchmarks/'
+# if not appsdir in sys.path:
+#     sys.path.insert(1,appsdir)
 
-os.environ["DJANGO_SETTINGS_MODULE"] = "benchmarks_site.settings"
-from django.db import models
-from wire.models import Bandwidth
-from django.db import IntegrityError
+
+# os.environ["DJANGO_SETTINGS_MODULE"] = "benchmarks_site.settings"
+# from db import models
+# from wire.models import Bandwidth
+# from django.db import IntegrityError
 
 from bench.util import config
 import logging

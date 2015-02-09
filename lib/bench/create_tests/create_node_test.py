@@ -4,11 +4,11 @@ import os
 import sys
 import shutil
 
-from django.conf import settings
-from django import template
+# from django.conf import settings
+# from django import template
 
-if not settings.configured:
-    settings.configure()
+# if not settings.configured:
+#     settings.configure()
 
 from bench.util import util
 

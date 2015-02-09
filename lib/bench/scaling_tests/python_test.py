@@ -1,5 +1,5 @@
 #!/curc/admin/benchmarks/bin/python
-from django import template
+# from django import template
 
 import fileinput, os, sys
 import math

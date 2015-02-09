@@ -6,21 +6,21 @@ from datetime import datetime
 
 from bench.util import config
 
-appsdir = '/home/molu8455/admin/benchmarks/django/benchmarks/apps/'
-if not appsdir in sys.path:
-    sys.path.insert(0,appsdir)
+# appsdir = '/home/molu8455/admin/benchmarks/django/benchmarks/apps/'
+# if not appsdir in sys.path:
+#     sys.path.insert(0,appsdir)
 
-appsdir = '/home/molu8455/admin/benchmarks/django/benchmarks/'
-if not appsdir in sys.path:
-    sys.path.insert(1,appsdir)
+# appsdir = '/home/molu8455/admin/benchmarks/django/benchmarks/'
+# if not appsdir in sys.path:
+#     sys.path.insert(1,appsdir)
 
 import logging
 logger = logging.getLogger('Benchmarks')
 
-os.environ["DJANGO_SETTINGS_MODULE"] = "benchmarks_site.settings"
-from django.db import models
-from wire.models import Stream, Linpack
-from django.db import IntegrityError
+# os.environ["DJANGO_SETTINGS_MODULE"] = "benchmarks_site.settings"
+# from django.db import models
+# from wire.models import Stream, Linpack
+# from django.db import IntegrityError
 
 def stream_data(in_file):
     test = in_file.readline().split()[0]
