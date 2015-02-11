@@ -12,20 +12,23 @@ import shutil
 
 from bench.util import util
 
-NODE_TEMPLATE = """\
+NODE_TEMPLATE1 = """\
 #!/bin/bash
 #SBATCH -N 1
-#SBATCH --nodelist={{node_name}}
+#SBATCH --nodelist={node_name}
 #SBATCH --time=0:45:00
-#SBATCH --reservation={{queue_name}}
+#SBATCH --reservation={queue_name}
 #SBATCH --account=crcbenchmark
 #SBATCH --qos=admin
 
-mkdir -p {{node_name}}
+mkdir -p {node_name}
 
 # copy linpack
-cd {{node_name}}
+cd {node_name}
 
+"""
+
+NODE_TEMPLATE2="""\
 cat >> linpack_input << EOF
 Sample Intel(R) Optimized LINPACK Benchmark data file (lininput_xeon64)
 Intel(R) Optimized LINPACK Benchmark data
@@ -83,16 +86,16 @@ end_time=$(date +%s)
 echo $((end_time - start_time)) >> time_data
 """
 
-def create_pbs_template(values, mypath):
+def create_pbs_template(values, mypath, NODE_TEMPLATE1, NODE_TEMPLATE2):
     output_file = os.path.join(mypath,"script_" + values['node_name'])
     #print output_file
     file_out = open(output_file,'w')
-    t = template.Template(NODE_TEMPLATE)
-    contents = t.render(template.Context(values))
+    NODE_TEMPLATE1=NODE_TEMPLATE1.format(node_name=values['node_name'],queue_name=values['queue_name'])
+    contents=NODE_TEMPLATE1+NODE_TEMPLATE2
     file_out.write(contents)
     file_out.close()
 
-def create(node_list, queue, path):
+def create(node_list, queue, path, NODE_TEMPLATE1, NODE_TEMPLATE2):
     mypath = os.path.join(path,"nodes")
     util.create_directory_structure(mypath)
 
@@ -104,7 +107,7 @@ def create(node_list, queue, path):
         values = {}
         values['node_name'] = node
         values['queue_name'] = queue
-        create_pbs_template(values, mypath)
+        create_pbs_template(values, mypath, NODE_TEMPLATE1, NODE_TEMPLATE2)
 
 
 #==============================================================================
@@ -134,4 +137,4 @@ if __name__ == '__main__':
     print "creating Node tests"
 
     current_path = os.getcwd()
-    create(node_list, queue, current_path)
+    create(node_list, queue, current_path,NODE_TEMPLATE1,NODE_TEMPLATE2)
