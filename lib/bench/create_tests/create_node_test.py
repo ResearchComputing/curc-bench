@@ -4,7 +4,6 @@ import os
 import sys
 import shutil
 
-import jinja2
 from jinja2 import Template
 
 from bench.util import util
@@ -85,7 +84,7 @@ def create_pbs_template(values, mypath):
     #print output_file
     file_out = open(output_file,'w')
     t = Template(NODE_TEMPLATE)
-    contents = t.render(node_name=str(values['node_name']),queue_name=str(values['queue_name'])
+    contents = t.render(**values)
     file_out.write(contents)
     file_out.close()
 
