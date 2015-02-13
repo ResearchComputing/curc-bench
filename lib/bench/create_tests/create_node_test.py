@@ -4,31 +4,25 @@ import os
 import sys
 import shutil
 
-# from django.conf import settings
-# from django import template
-
-# if not settings.configured:
-#     settings.configure()
+import jinja2
+from jinja2 import Template
 
 from bench.util import util
 
-NODE_TEMPLATE1 = """\
+NODE_TEMPLATE = """\
 #!/bin/bash
 #SBATCH -N 1
-#SBATCH --nodelist={node_name}
+#SBATCH --nodelist={{node_name}}
 #SBATCH --time=0:45:00
-#SBATCH --reservation={queue_name}
+#SBATCH --reservation={{queue_name}}
 #SBATCH --account=crcbenchmark
 #SBATCH --qos=admin
 
-mkdir -p {node_name}
+mkdir -p {{node_name}}
 
 # copy linpack
-cd {node_name}
+cd {{node_name}}
 
-"""
-
-NODE_TEMPLATE2="""\
 cat >> linpack_input << EOF
 Sample Intel(R) Optimized LINPACK Benchmark data file (lininput_xeon64)
 Intel(R) Optimized LINPACK Benchmark data
@@ -86,16 +80,16 @@ end_time=$(date +%s)
 echo $((end_time - start_time)) >> time_data
 """
 
-def create_pbs_template(values, mypath, NODE_TEMPLATE1, NODE_TEMPLATE2):
+def create_pbs_template(values, mypath):
     output_file = os.path.join(mypath,"script_" + values['node_name'])
     #print output_file
     file_out = open(output_file,'w')
-    NODE_TEMPLATE1=NODE_TEMPLATE1.format(node_name=values['node_name'],queue_name=values['queue_name'])
-    contents=NODE_TEMPLATE1+NODE_TEMPLATE2
+    t = Template(NODE_TEMPLATE)
+    contents = t.render(node_name=str(values['node_name']),queue_name=str(values['queue_name'])
     file_out.write(contents)
     file_out.close()
 
-def create(node_list, queue, path, NODE_TEMPLATE1, NODE_TEMPLATE2):
+def create(node_list, queue, path):
     mypath = os.path.join(path,"nodes")
     util.create_directory_structure(mypath)
 
@@ -107,7 +101,7 @@ def create(node_list, queue, path, NODE_TEMPLATE1, NODE_TEMPLATE2):
         values = {}
         values['node_name'] = node
         values['queue_name'] = queue
-        create_pbs_template(values, mypath, NODE_TEMPLATE1, NODE_TEMPLATE2)
+        create_pbs_template(values, mypath)
 
 
 #==============================================================================
@@ -137,4 +131,4 @@ if __name__ == '__main__':
     print "creating Node tests"
 
     current_path = os.getcwd()
-    create(node_list, queue, current_path,NODE_TEMPLATE1,NODE_TEMPLATE2)
+    create(node_list, queue, current_path)

@@ -1,8 +1,6 @@
 #!/curc/admin/benchmarks/bin/python
-#from django.conf import settings
-# from django import template
-#if not settings.configured:
-#    settings.configure()
+
+from jinja2 import Template
 
 import fileinput, os, sys
 import math
@@ -21,7 +19,7 @@ HPL_TEMPLATE = """\
 #!/bin/bash
 #!/bin/bash
 #SBATCH -N {{num_nodes}}
-#SBATCH --nodelist={% for x in node_list %}{{x}}{% if not forloop.last %},{%endif%}{% endfor %}
+#SBATCH --nodelist={% for x in node_list %}{{x}}{% if not loop.last %},{%endif%}{% endfor %}
 #SBATCH --time=0:30:00
 #SBATCH --reservation={{queue}}
 #SBATCH --account=crcbenchmark
@@ -36,10 +34,10 @@ cd test_{{id}}
 cat >> info << EOF
 {{id}}
 {{n}}
-{% spaceless %}
+{% filter trim %}
 {% for x in node_list %}{{x}}
 {% endfor %}
-{% endspaceless %}
+{% endfilter %}
 EOF
 
 # . /curc/tools/utils/dkinit
@@ -67,16 +65,16 @@ def processors_per_node():
 def create_pbs_template(mypath, hpl):
     output_file = os.path.join(mypath,"script_" + hpl['job_name'])
     file_out = open(output_file,'w')
-    t = template.Template(HPL_TEMPLATE)
-    contents = t.render(template.Context(hpl))
+    t = Template(HPL_TEMPLATE)
+    contents = t.render(**hpl)
     file_out.write(contents)
     file_out.close()
 
 def create_pbs_rack_template(mypath, hpl):
     output_file = os.path.join(mypath,"script_" + hpl['job_name'] + "-" + hpl['id'])
     file_out = open(output_file,'w')
-    t = template.Template(RACK_TEMPLATE)
-    contents = t.render(template.Context(hpl))
+    t = Template(RACK_TEMPLATE)
+    contents = t.render(**hpl)
     file_out.write(contents)
     file_out.close()
 
