@@ -4,10 +4,7 @@ import os
 import sys
 import shutil
 
-# from django.conf import settings
-# from django import template
-# if not settings.configured:
-#     settings.configure()
+from jinja2 import Template
 
 from bench.util import infiniband
 
@@ -85,8 +82,8 @@ def create_node_pairs(node_list):
 def create_pbs_template(values, mypath):
     output_file = os.path.join(mypath,"script_" + values['job_name'])
     file_out = open(output_file,'w')
-    t = template.Template(PBS_TEMPLATE)
-    contents = t.render(template.Context(values))
+    t = Template(PBS_TEMPLATE)
+    contents = t.render(**values)
     file_out.write(contents)
     file_out.close()
 

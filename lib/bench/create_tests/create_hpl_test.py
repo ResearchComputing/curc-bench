@@ -1,8 +1,6 @@
 #!/curc/admin/benchmarks/bin/python
-# from django.conf import settings
-# from django import template
-# if not settings.configured:
-#     settings.configure()
+
+from jinja2 import Template
 
 import fileinput, os, sys
 import math
@@ -22,7 +20,7 @@ HPL_TEMPLATE = """\
 #PBS -N job.{{id}}
 #PBS -q {{queue}}
 #PBS -l walltime={{time_estimate}}
-#PBS -l nodes={% for x in node_list %}{{x}}:ppn=12{% if not forloop.last %}+{%endif%}{% endfor %}
+#PBS -l nodes={% for x in node_list %}{{x}}:ppn=12{% if not loop.last %}+{%endif%}{% endfor %}
 #PBS -j oe
 
 cd $PBS_O_WORKDIR
@@ -114,8 +112,8 @@ def create_pbs_template(mypath, hpl):
     logger.debug("HPL test "+hpl['id'] + " " + str(hpl['nodes']))
     output_file = os.path.join(mypath,"script_" + hpl['job_name'] + "-" + hpl['id'])
     file_out = open(output_file,'w')
-    t = template.Template(HPL_TEMPLATE)
-    contents = t.render(template.Context(hpl))
+    t = Template(HPL_TEMPLATE)
+    contents = t.render(**hpl)
     file_out.write(contents)
     file_out.close()
 
