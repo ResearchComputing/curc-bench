@@ -1,1 +1,0 @@
-icc -O3 -openmp  -mcmodel=medium stream.c -o stream
