@@ -27,3 +27,22 @@ NODE TEST
    script.  By default, this script takes no arguments and computes a 10%
    threshold.   
    
+
+Non-Python Dependencies:
+IOR-2.10.3
+link:
+   http://sourceforge.net/projects/ior-sio/files/
+
+hpl-2.0
+link:
+   http://www.netlib.org/benchmark/hpl/
+
+hpcc-1.4.1
+link:
+   http://icl.cs.utk.edu/hpcc/software/index.html
+
+osu-micro-benchmarks-3.8
+version 3.8 can be found:
+   https://www.nersc.gov/users/computational-systems/cori/nersc-8-procurement/trinity-nersc-8-rfp/nersc-8-trinity-benchmarks/omb-mpi-tests/
+newest version available here:
+   http://mvapich.cse.ohio-state.edu/benchmarks/

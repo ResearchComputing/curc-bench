@@ -3,7 +3,12 @@
 
 
 osu-micro-benchmarks-3.8
-dir: curc-bench/software/
+version 3.8 can be found:
+https://www.nersc.gov/users/computational-systems/cori/nersc-8-procurement/trinity-nersc-8-rfp/nersc-8-trinity-benchmarks/omb-mpi-tests/
+
+newest version available here:
+http://mvapich.cse.ohio-state.edu/benchmarks/
+
 
 Django-1.4
 dir: curc-bench/software/local_python/
@@ -25,10 +30,13 @@ Pysam-0.5
 dir: curc-bench/software/local_python/lib/python2.7/site-packages
 
 IOR-2.10.3
-dir: curc-bench/software/
+link:
+http://sourceforge.net/projects/ior-sio/files/
 
 hpl-2.0
-dir: curc-bench/software/
+link:
+http://www.netlib.org/benchmark/hpl/
 
 hpcc-1.4.1
-dir: curc-bench/software/
+link:
+http://icl.cs.utk.edu/hpcc/software/index.html
