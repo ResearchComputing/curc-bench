@@ -40,3 +40,7 @@ http://www.netlib.org/benchmark/hpl/
 hpcc-1.4.1
 link:
 http://icl.cs.utk.edu/hpcc/software/index.html
+
+stream.c v5.9
+link:
+https://github.com/gregs1104/stream-scaling/blob/master/stream.c
