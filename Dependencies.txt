@@ -10,25 +10,6 @@ newest version available here:
 http://mvapich.cse.ohio-state.edu/benchmarks/
 
 
-Django-1.4
-dir: curc-bench/software/local_python/
-
-django-piston-0.2.3
-dir: curc-bench/software/local_python/
-
-MySQL-python-1.2.3
-dir: curc-bench/software/local_python/
-
-pandas-0.7.3
-dir: curc-bench/software/local_python/
-
-requests-0.14.1
-dir: curc-bench/software/local_python/
-dir: curc-bench/software/local_python/lib/python2.7/site-packages
-
-Pysam-0.5
-dir: curc-bench/software/local_python/lib/python2.7/site-packages
-
 IOR-2.10.3
 link:
 http://sourceforge.net/projects/ior-sio/files/
@@ -44,3 +25,8 @@ http://icl.cs.utk.edu/hpcc/software/index.html
 stream.c v5.9
 link:
 https://github.com/gregs1104/stream-scaling/blob/master/stream.c
+
+Python Packages
+pandas-0.7.3
+requests-0.14.1
+Pysam-0.5

@@ -47,3 +47,8 @@ version 3.8 can be found:
    https://www.nersc.gov/users/computational-systems/cori/nersc-8-procurement/trinity-nersc-8-rfp/nersc-8-trinity-benchmarks/omb-mpi-tests/
 newest version available here:
    http://mvapich.cse.ohio-state.edu/benchmarks/
+
+stream.c v5.9
+link:
+   https://github.com/gregs1104/stream-scaling/blob/master/stream.c
+**note: Some of the numbers were changed in this (come back to this later)
