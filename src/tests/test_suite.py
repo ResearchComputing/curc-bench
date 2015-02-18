@@ -9,5 +9,3 @@ class MyTest(unittest.TestCase):
     def test(self):
         self.assertEqual(unimportant_test(), 1)
 
-
-# unimportant_test()

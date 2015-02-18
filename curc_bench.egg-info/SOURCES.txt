@@ -1,7 +1,0 @@
-README
-setup.py
-curc_bench.egg-info/PKG-INFO
-curc_bench.egg-info/SOURCES.txt
-curc_bench.egg-info/dependency_links.txt
-curc_bench.egg-info/requires.txt
-curc_bench.egg-info/top_level.txt

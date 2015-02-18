@@ -6,3 +6,4 @@
 /lib/osu-micro-benchmarks-3.8
 /lib/stream
 *.pyc
+*.egg-info
