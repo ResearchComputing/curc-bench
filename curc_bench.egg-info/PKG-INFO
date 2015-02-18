@@ -1,0 +1,64 @@
+Metadata-Version: 1.1
+Name: curc-bench
+Version: 0.0.0
+Summary: HPC Benchmarking
+Home-page: UNKNOWN
+Author: Research Computing
+Author-email: UNKNOWN
+License: BSD
+Description: NODE TEST
+        
+        1. Create a new directory in /curc/admin/benchmarks/data that indicates the 
+           date the benchmarks are run. I use the month-dd-yyyy format (e.g. may-25-2012).
+           
+        2. Navigate into the new directory and create PBS scripts for the nodes you 
+           would like to test using the create_node_test.py python script.
+           There are several ways to do this.   
+           
+           a.	create_node_test.py
+        
+           b.	create_node_test.py node[01][01-80]
+        
+           c.   create_node_test.py node[01-05][01-80]
+        
+           d. 	create_node_test.py node0323
+           
+           e.	create_node_test.py <filename>
+           
+           Repeat this process until you have the desired scripts set up in the directory.
+        
+        3. Submit the jobs using the submit_jobs.py script.  This will submit all the jobs
+           in the directory that start with "script_".  If you make a mistake, you can 
+           type kill_jobs.py to remove all the jobs that you have submitted. 
+           
+        4. Once the jobs have finished, collect the results with evaluate_node_test.py 
+           script.  By default, this script takes no arguments and computes a 10%
+           threshold.   
+           
+        
+        Non-Python Dependencies:
+        
+        IOR-2.10.3
+        link:
+           http://sourceforge.net/projects/ior-sio/files/
+        
+        hpl-2.0
+        link:
+           http://www.netlib.org/benchmark/hpl/
+        
+        hpcc-1.4.1
+        link:
+           http://icl.cs.utk.edu/hpcc/software/index.html
+        
+        osu-micro-benchmarks-3.8
+        version 3.8 can be found:
+           https://www.nersc.gov/users/computational-systems/cori/nersc-8-procurement/trinity-nersc-8-rfp/nersc-8-trinity-benchmarks/omb-mpi-tests/
+        newest version available here:
+           http://mvapich.cse.ohio-state.edu/benchmarks/
+        
+        stream.c v5.9
+        link:
+           https://github.com/gregs1104/stream-scaling/blob/master/stream.c
+        **note: Some of the numbers were changed in this (come back to this later)
+Platform: UNKNOWN
+Classifier: License :: BSD License

@@ -18,9 +18,11 @@ setup(
     license = "BSD",
     keywords = "",
     url = "",
-    packages=['src', 'lib','bin'],
-    install_requires=['pandas>=0.7.3','requests>=0.14.1','Pysam>=0.5'],
+    # packages=['src/tests','src/bench'],
+    # install_requires=['pandas>=0.7.3','requests>=0.14.1','Pysam>=0.5'],
+    install_requires=['pandas>=0.7.3','requests>=0.14.1'],
     tests_require=['nose'],
+    test_suite="src.tests",    #
     long_description=read('README'),
     classifiers=[
         "License :: BSD License",
