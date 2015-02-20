@@ -5,16 +5,16 @@ import datetime
 import sys
 
 #from create import execute
-import create as create
-import submit as submit
+import bench.create as create
+import bench.submit as submit
 
-import showq as showq
-import process as process
-import reserve as reserve
-from bench import nodelist as nodelist
-from bench import add as add
-from bench import scaling as scaling
-from bench import nodes
+import bench.showq as showq
+import bench.process as process
+import bench.reserve as reserve
+import bench.nodelist as nodelist
+import bench.add as add
+import bench.scaling as scaling
+import bench.nodes
 
 import automation
 import status
