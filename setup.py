@@ -18,7 +18,7 @@ setup(
     license = "BSD",
     keywords = "",
     url = "",
-    # packages=['src/tests','src/bench'],
+    packages=['src/bench'],
     # install_requires=['pandas>=0.7.3','requests>=0.14.1','Pysam>=0.5'],
     install_requires=['pandas>=0.7.3','requests>=0.14.1'],
     tests_require=['nose'],
