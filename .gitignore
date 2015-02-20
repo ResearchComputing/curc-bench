@@ -1,9 +1,9 @@
-/lib/hpcc-1.4.1
-/lib/hpl
-/lib/ior
+/lib/hpcc-1.4.2
+/lib/hpl-2.0
+/lib/IOR
 /lib/linpack
 /lib/mpi
 /lib/osu-micro-benchmarks-3.8
-/lib/stream
+
 *.pyc
 *.egg-info

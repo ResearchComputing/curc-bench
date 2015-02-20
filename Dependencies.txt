@@ -1,6 +1,19 @@
 #Dependencies
 #This file contains a list of dependencies for the curc-bench repo including versions and where #they should go.
 
+The following packages need to be installed to run:
+osu-micro-benchmarks-3.8
+IOR-2.10.3
+hpl-2.0
+hpcc-1.4.1
+stream.c v5.9
+linpack_10.3.9
+
+Note:
+stream.c has been tuned. If you download a fresh copy it needs to be re-tuned.
+linpack 10.3.9 no longer available on intel site, only latest version is.
+
+
 
 osu-micro-benchmarks-3.8
 version 3.8 can be found:
@@ -25,6 +38,9 @@ http://icl.cs.utk.edu/hpcc/software/index.html
 stream.c v5.9
 link:
 https://github.com/gregs1104/stream-scaling/blob/master/stream.c
+
+linpack_10.3.9
+**This version not available on INTEL site anymore. Only latest version 11.2.2 is.
 
 Python Packages
 pandas-0.7.3
