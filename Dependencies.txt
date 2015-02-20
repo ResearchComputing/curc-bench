@@ -1,7 +1,7 @@
 #Dependencies
 #This file contains a list of dependencies for the curc-bench repo including versions and where #they should go.
 
-The following packages need to be installed to run:
+The following packages need to be installed to run curc-bench:
 osu-micro-benchmarks-3.8
 IOR-2.10.3
 hpl-2.0
