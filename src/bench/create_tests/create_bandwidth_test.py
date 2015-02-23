@@ -28,7 +28,7 @@ module load openmpi/openmpi-1.6.4_intel-13.0.0_torque-4.1.4_ib
 mkdir -p {{job_name}}
 cd {{job_name}}
 
-mpirun -np 2 /home/molu8455/projects/redhat_6/software/bandwidth/osu_bw > data_bw
+mpirun -np 2 ./lib/osu-micro-benchmarks-3.8/mpi/pt2pt/osu_bw > data_bw
 # mpirun -pernode /home/molu8455/projects/software/cbench/cbench-1.2.2/bin/osu_bw > data_bw
 # mpirun -pernode /home/molu8455/projects/software/cbench/cbench-1.2.2/bin/osu_latency > data_latency
 # mpirun -pernode /home/molu8455/projects/software/cbench/cbench-1.2.2/bin/stress | grep aggregate > data_stress
@@ -42,6 +42,8 @@ mpirun -np 2 /home/molu8455/projects/redhat_6/software/bandwidth/osu_bw > data_b
 
 """
 
+#replaced: mpirun -np 2 /home/molu8455/projects/redhat_6/software/bandwidth/osu_bw > data_bw
+#with: mpirun -np 2 ./lib/osu-micro-benchmarks-3.8/mpi/pt2pt/osu_bw > data_bw
 
 
 def create_node_pairs(node_list):
