@@ -19,10 +19,10 @@ setup(
     keywords = "",
     url = "",
     packages=['src/bench'],
-    # install_requires=['pandas>=0.7.3','requests>=0.14.1','Pysam>=0.5'],
+    # install_requires=['pandas>=0.7.3','requests>=0.14.1','cython>=0.21','Pysam>=0.5'],
     install_requires=['pandas>=0.7.3','requests>=0.14.1'],
     tests_require=['nose'],
-    test_suite="src.tests",   
+    test_suite="src.tests",
     long_description=read('README'),
     classifiers=[
         "License :: BSD License",
