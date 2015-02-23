@@ -41,7 +41,7 @@ mpirun -np 2 ./lib/osu-micro-benchmarks-3.8/mpi/pt2pt/osu_bw > data_bw
 
 
 """
-
+##CHANGES TO PBS TEMPLATE:
 #replaced: mpirun -np 2 /home/molu8455/projects/redhat_6/software/bandwidth/osu_bw > data_bw
 #with: mpirun -np 2 ./lib/osu-micro-benchmarks-3.8/mpi/pt2pt/osu_bw > data_bw
 

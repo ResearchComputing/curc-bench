@@ -46,7 +46,7 @@ EOF
 module load openmpi/openmpi-1.6.4_intel-13.0.0_torque-4.1.4_ib
 
 echo '{{set_list}}' > data
-mpirun /home/molu8455/admin/benchmarks/software/mpi/osu_alltoall  -f >> data
+mpirun ./lib/osu-micro-benchmarks-3.8/mpi/collective/osu_alltoall  -f >> data
 
 #nds=$((`cat $PBS_NODEFILE | uniq | wc -l`*12))
 #for (( c=12; c<=$nds; c+=12 ))
@@ -56,6 +56,11 @@ mpirun /home/molu8455/admin/benchmarks/software/mpi/osu_alltoall  -f >> data
 #done
 
 """
+##CHANGES TO HPL_TEMPLATE
+#Replaced: mpirun /home/molu8455/admin/benchmarks/software/mpi/osu_alltoall  -f >> data
+#With: mpirun ./lib/osu-micro-benchmarks-3.8/mpi/collective/osu_alltoall  -f >> data
+
+
 
 # These are parameters for the script
 #==============================================================================
