@@ -50,7 +50,7 @@ start_time=$(date +%s)
 for ((i=0; i < NUM_TRIALS ; i++ ))
 do
 # Grab the 3 lines in addition to the line starting with Copy
-VAR=`/home/molu8455/projects/redhat_6/software/stream/stream | grep -A 3 Copy`
+VAR=`./lib/stream/stream-5.9/stream | grep -A 3 Copy`
 
 COPY=`echo $VAR | awk '{ print $2 }' | awk -F. '{ print $1 }'`
 COPYTOTAL=$(($COPY + $COPYTOTAL))
@@ -74,10 +74,16 @@ echo $((COPYTOTAL/NUM_TRIALS)) " " $((SCALETOTAL/NUM_TRIALS)) " " $((ADDTOTAL/NU
 echo "Linpack CPU Test:" >> data
 #----------------------------------------------------------------------------
 start_time=$(date +%s)
-/home/molu8455/projects/redhat_6/software/linpack/linpack_11.0.3/benchmarks/linpack/xlinpack_xeon64 linpack_input | grep -A 9 Performance >> data
+./lib/linpack/linpack_11.2.2/benchmarks/linpack/xlinpack_xeon64 linpack_input | grep -A 9 Performance >> data
 end_time=$(date +%s)
 echo $((end_time - start_time)) >> time_data
 """
+
+##CHANGES TO NODE_TEMPLATE
+#Replace /home/molu8455/projects/redhat_6/software/linpack/linpack_11.0.3/benchmarks/linpack/xlinpack_xeon64 linpack_input | grep -A 9 Performance >> data
+#With ./lib/linpack/linpack_11.2.2/benchmarks/linpack/xlinpack_xeon64 linpack_input | grep -A 9 Performance >> data
+#Replace VAR=`/home/molu8455/projects/redhat_6/software/stream/stream | grep -A 3 Copy`
+#With VAR=`./lib/stream/stream-5.9/stream | grep -A 3 Copy`
 
 def create_pbs_template(values, mypath):
     output_file = os.path.join(mypath,"script_" + values['node_name'])

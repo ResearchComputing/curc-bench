@@ -40,9 +40,13 @@ Intel(R) Optimized LINPACK Benchmark data
 4 4 4 4 4 4  # alignment values (in KBytes)
 EOF
 
-/home/molu8455/projects/redhat_6/software/linpack/linpack_11.0.3/benchmarks/linpack/xlinpack_xeon64 linpack_input | grep -A 9 Performance >> data
+./lib/linpack/linpack_11.2.2/benchmarks/linpack/xlinpack_xeon64 linpack_input | grep -A 9 Performance >> data
 
 """
+##CHANGES TO HPL_TEMPLATE
+#Replace /home/molu8455/projects/redhat_6/software/linpack/linpack_11.0.3/benchmarks/linpack/xlinpack_xeon64 linpack_input | grep -A 9 Performance >> data
+#With ./lib/linpack/linpack_11.2.2/benchmarks/linpack/xlinpack_xeon64 linpack_input | grep -A 9 Performance >> data
+
 # These are parameters for the script
 #==============================================================================
 def processors_per_node():
