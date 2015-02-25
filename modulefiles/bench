@@ -1,0 +1,29 @@
+#%Module1.0
+###############################################################################
+##  Name:   benchmarks/bench
+##  Author: Tim Dunn
+##  Date:   June 10 2013
+##
+##  Modified: (name date - reason)
+##    
+################################################################################
+proc ModulesHelp { } {
+global dotversion
+
+puts stderr "Janus Benchmarks suite"
+
+}
+
+module-whatis "Benchmarks..."
+
+module load python/anaconda-1.8.0
+module load mysql/mysql-5.5.16
+
+prepend-path PATH /curc/admin/benchmarks/bin 
+prepend-path PYTHONPATH /curc/admin/benchmarks/software/local_python
+prepend-path PYTHONPATH /curc/admin/benchmarks/software/local_python/lib/python2.7/site-packages/
+prepend-path PYTHONPATH /curc/admin/benchmarks/django/benchmarks/
+prepend-path PYTHONPATH /curc/admin/benchmarks/django/benchmarks/apps/
+
+
+                
