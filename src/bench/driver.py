@@ -217,6 +217,8 @@ def driver():
     if args.command == 'reserve':
         reserve.execute(directory, args)
 
+    # if args.command == 'l':
+        #TODO: run tests on a set of nodes specified by nodelist in filename
 
     if args.command == 'q':
         showq.execute(args.verbose)
