@@ -26,10 +26,17 @@ import util as util
 
 ##TODO: change the reservation to be a user defined reservation
 
+
 def reservations():
 
     reserved_nodes = []
+    # scontrol is a slurm command
+	# https://computing.llnl.gov/linux/slurm/scontrol.html
+	# show <Entity ID>
+	# the tag 'res' creates a reservation without specifying a name
+	# Reservation=<name>
     p1 = subprocess.Popen(['scontrol','-o', 'show','res'], stdout=subprocess.PIPE)
+    # out - contains reservation names and nodes from 'res'
     out, err = p1.communicate()
 
     reservation_names = re.findall(r'ReservationName=([A-Za-z0-9.\-\_]+)', out)
@@ -48,6 +55,8 @@ def reservations():
            logger.info(res.ljust(20)+str(len(expand_hostlist(nodes))).rjust(5))
 
     logger.info("Total reserved ".ljust(20)+str(len(reserved_nodes)).rjust(5))
+
+    return list(set(reserved_nodes))
 
 
 def execute(directory,  list, exclude, reservation):

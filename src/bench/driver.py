@@ -220,6 +220,9 @@ def driver():
     # if args.command == 'l':
         #TODO: run tests on a set of nodes specified by nodelist in filename
 
+    # if args.command == 'createCustom':
+        #TODO: user specified reservation instead of PM
+
     if args.command == 'q':
         showq.execute(args.verbose)
 
