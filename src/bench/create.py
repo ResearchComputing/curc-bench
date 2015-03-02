@@ -11,40 +11,10 @@ import logging
 logger = logging.getLogger('Benchmarks')
 
 
-def add_to_reservation():
-    try:
-        with open(os.devnull, "w") as fnull:
-            out = subprocess.check_output(["mrsvctl -m -a CLASS==janus-admin benchmark-*"], \
-                shell=True, stderr=fnull)
-    except:
-        logger.error("Cannot find reservations: benchmark-*")
-    try:
-        with open(os.devnull, "w") as fnull:
-            out = subprocess.check_output(["mrsvctl -m -a CLASS==janus-admin PM-*"], \
-                shell=True, stderr=fnull)
-    except:
-        logger.error("Cannot find reservations: PM-*")
-
-
-def reservation_list(x):
-    try:
-        with open(os.devnull, "w") as fnull:
-            p1 = subprocess.Popen(['showres', '-g', '-n', x], stdout=subprocess.PIPE, stderr=fnull)
-            p2 = subprocess.Popen(['cut', '-d', ' ', '-f', '1'], stdin=p1.stdout, \
-                stdout=subprocess.PIPE, stderr=fnull)
-            p1.stdout.close()
-        output = p2.communicate()[0]
-        nodes = []
-        for n in output.split():
-            if n.startswith('node') and n[-4:].isdigit():
-                nodes.append(n)
-        return nodes
-    except:
-        logger.error("Issues with reservation "+x)
-
 def reservations():
 
     reserved_nodes = []
+    ##pyslurm.reservation.get???
     p1 = subprocess.Popen(['scontrol', '-o', 'show', 'res'], stdout=subprocess.PIPE)
     out, err = p1.communicate()
 
@@ -65,56 +35,8 @@ def reservations():
 
     logger.info("Total reserved ".ljust(20)+str(len(reserved_nodes)).rjust(5))
 
-
     return list(set(reserved_nodes))
 
-def benchmark_nodes():
-    reserved_nodes = []
-    p1 = subprocess.Popen(['showres'], stdout=subprocess.PIPE)
-    p2 = subprocess.Popen(['cut', '-d', ' ', '-f', '1'], stdin=p1.stdout, stdout=subprocess.PIPE)
-    p1.stdout.close()
-    output = p2.communicate()[0]
-
-    for x in output.split():
-        if x.startswith('benchmark'):
-            nodes = reservation_list(x)
-            reserved_nodes.extend(nodes)
-    return list(set(reserved_nodes))
-
-
-def free_PBS_nodes(host_expression):
-
-    nodes_names = expand_hostlist(host_expression)
-    pbsOut = subprocess.check_output(["pbsnodes -x"], shell=True)
-    nodes = xml2obj(pbsOut)
-    freenodelist = []
-
-    # find free nodes: state = free, no jobs are runing, no message
-    for node in nodes["Node"]:
-        status = {}
-        jobs = []
-        name = node["name"]
-        state = node["state"]
-        if state == "free" and name.startswith('node'):
-            if node["jobs"]:
-                # node has a job running
-                jobs = node["jobs"].split(", ")
-                continue
-            if "status" in node:
-                for item in node["status"].split(","):
-                    try:
-
-                        S, value = item.split("=")
-                        status[S] = value
-                        #print 'good', S, value
-                    except ValueError:
-                        pass
-                if status.has_key("message"):
-                    continue
-            #print name
-            freenodelist.append(name)
-    logger.info("Free nodes".ljust(20)+str(len(freenodelist)).rjust(5))
-    return freenodelist
 
 def free_SLURM_nodes(nodelist):
     node_list = expand_hostlist(nodelist)
