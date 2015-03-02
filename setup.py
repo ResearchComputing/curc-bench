@@ -10,7 +10,7 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
-    name = "curc-bench",
+    name = "bench",
     version = "0.0.0",
     author = "Research Computing",
     author_email = "",
@@ -18,7 +18,8 @@ setup(
     license = "BSD",
     keywords = "",
     url = "",
-    packages=['src/bench'],
+    package_dir = {'': 'src'},
+    packages=['bench'],
     install_requires=['NumPy>=1.7.0','pandas>=0.7.3','requests>=0.14.1','cython>=0.21','Pysam>=0.5'],
     tests_require=['nose'],
     # test_suite="src/tests",
