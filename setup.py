@@ -19,7 +19,7 @@ setup(
     keywords = "",
     url = "",
     packages=['src/bench'],
-    install_requires=['NumPy>=1.7.0','pandas>=0.7.3','requests>=0.14.1','cython>=0.21','Pysam>=0.5'],
+    install_requires=['NumPy>=1.7.0','pandas>=0.7.3'],
     tests_require=['nose'],
     # test_suite="src/tests",
     long_description=read('README'),
