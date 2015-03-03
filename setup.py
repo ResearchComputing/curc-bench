@@ -22,7 +22,7 @@ setuptools.setup(
     url = "",
     package_dir = {'': 'src'},
     packages=['bench'],
-    install_requires=['NumPy>=1.7.0','pandas>=0.7.3','requests>=0.14.1','cython>=0.21','Pysam>=0.5'],
+    install_requires=['argparse', 'jinja2', 'NumPy>=1.7.0'],
     tests_require=['nose'],
     # test_suite="src/tests",
     long_description=read('README'),
