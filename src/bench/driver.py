@@ -13,7 +13,7 @@ import bench.process as process
 import bench.reserve as reserve
 import bench.nodelist as nodelist
 import bench.add as add
-import bench.scaling as scaling
+#import bench.scaling as scaling
 import bench.nodes
 
 import automation
@@ -97,9 +97,9 @@ def get_args(argv):
     status.add_argument('-d','--dir', help='directory', dest='directory')
     status.set_defaults(directory=None)
 
-    scaling = subparsers.add_parser('scaling', help='Add scaling studies.  To specify a directory, type bench status -d <DIR_NAME>.\n')
-    scaling.add_argument('-d','--dir', help='directory', dest='directory')
-    scaling.set_defaults(directory=None)
+#    scaling = subparsers.add_parser('scaling', help='Add scaling studies.  To specify a directory, type bench status -d <DIR_NAME>.\n')
+#    scaling.add_argument('-d','--dir', help='directory', dest='directory')
+#    scaling.set_defaults(directory=None)
 
     return parser.parse_args(argv)
 
@@ -233,8 +233,8 @@ def driver():
     if args.command == 'status':
         status.execute(directory)
 
-    if args.command == 'scaling':
-        scaling.execute(directory)
+#    if args.command == 'scaling':
+#        scaling.execute(directory)
 
     if args.command == 'nodes':
         nodes.execute()

@@ -4,8 +4,6 @@ from jinja2 import Template
 
 import fileinput, os, sys
 import math
-import numpy
-from scipy import stats
 import uuid
 import json
 

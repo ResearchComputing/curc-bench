@@ -18,7 +18,7 @@ import util.util
 import create_tests.create_node_test as create_node_test
 import create_tests.create_bandwidth_test as create_bandwidth_test
 import create_tests.create_alltoall2 as create_alltoall
-import create_tests.create_hpl_test as create_hpl
+#import create_tests.create_hpl_test as create_hpl
 #import create_tests.create_scaling as create_scaling
 
 from bench.util import util as util

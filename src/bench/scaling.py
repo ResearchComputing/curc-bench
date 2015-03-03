@@ -6,8 +6,6 @@
 
 import fileinput, os, sys
 import math
-import numpy
-from scipy import stats
 import uuid
 
 from bench.util import util
