@@ -5,7 +5,6 @@ import subprocess
 import re
 
 from bench.util.hostlist import expand_hostlist
-from bench.util.xml2obj import xml2obj
 
 import logging
 logger = logging.getLogger('Benchmarks')
@@ -23,10 +22,8 @@ def reservations():
 
     for res, nodes in zip(reservation_names, reservation_nodes):
         #print res, expand_hostlist(nodes)
-        if (res.endswith('PM-janus') or
-            res.endswith('PM-gpu') or
-            res.endswith('PM-himem') or
-            res.endswith('PM-serial')):
+        if (res.endswith('PM-janus') or res.endswith('PM-gpu') or
+                res.endswith('PM-himem') or res.endswith('PM-serial')):
             pass
         else:
         #    print res, expand_hostlist(nodes)
@@ -52,6 +49,7 @@ def free_SLURM_nodes(nodelist):
     diff_set = set(node_list).difference(set(not_available_nodes))
     logger.info("Free nodes".ljust(20)+str(len(diff_set)).rjust(5))
     return diff_set
+
 
 def execute(directory):
 
