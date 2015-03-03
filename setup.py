@@ -1,6 +1,8 @@
+from ez_setup import use_setuptools
+use_setuptools()
 
 import os
-from setuptools import setup
+import setuptools
 
 # Utility function to read the README file.
 # Used for the long_description.  It's nice, because now 1) we have a top level
@@ -9,7 +11,7 @@ from setuptools import setup
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
-setup(
+setuptools.setup(
     name = "bench",
     version = "0.0.0",
     author = "Research Computing",
