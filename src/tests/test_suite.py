@@ -46,6 +46,7 @@ class MyTest(unittest.TestCase):
         not_available_nodes = re.findall(r'NodeName=(node[0-9]+)', out)
 
         diff_set = set(node_list).difference(set(not_available_nodes))
+        
         for nn in diff_set:
             print nn
 
@@ -59,9 +60,9 @@ class MyTest(unittest.TestCase):
         ii = 0
         print "-" * 80
         for key, value in node_dict.iteritems():
-	        if ii>3:
-		        break
-	        ii+=1
+            if ii > 3:
+                break
+            ii += 1
             print "%s :" % (key)
             for part_key in sorted(value.iterkeys()):
                 #print "\t%-15s : %s" % (part_key, value[part_key])
