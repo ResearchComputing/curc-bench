@@ -1,7 +1,11 @@
 """Automated test suite for curc-bench"""
 import unittest
 import re
+import pyslurm
+import os
+import subprocess
 
+from bench.util.hostlist import expand_hostlist
 
 def slurm_setup():
     """Loads results from old subprocess.Popen implementation"""
@@ -32,7 +36,48 @@ class MyTest(unittest.TestCase):
 
         #TODO: test that pyslurm functionality matches the above functionality
 
+        
+        node_list = expand_hostlist("node[01-17][01-80]")
+        p1 = subprocess.Popen(['scontrol', '-o', 'show', 'nodes'], stdout=subprocess.PIPE)
+        p2 = subprocess.Popen(['grep', 'Reason'], stdin=p1.stdout, stdout=subprocess.PIPE)
+        p1.stdout.close()
+        out, err = p2.communicate()
 
+        not_available_nodes = re.findall(r'NodeName=(node[0-9]+)', out)
+
+        diff_set = set(node_list).difference(set(not_available_nodes))
+        for nn in diff_set:
+            print nn
+
+
+
+
+        a = pyslurm.node()
+        node_dict = a.get()
+
+        #if len(node_dict) > 0:
+        ii = 0
+        print "-" * 80
+        for key, value in node_dict.iteritems():
+	        if ii>3:
+		        break
+	        ii+=1
+            print "%s :" % (key)
+            for part_key in sorted(value.iterkeys()):
+                #print "\t%-15s : %s" % (part_key, value[part_key])
+                if part_key == 'node_hostname':
+                    print "    node_hostname = ",value[part_key]
+                elif part_key == 'node_state':
+                    print "    node_state = ",value[part_key]
+                elif part_key == 'reason':
+                    print "    reason = ", value[part_key]
+                #else:
+                #    print "key = ",part_key
+            print "-" * 80
+
+        #else:
+        #    print "No Nodes found !"
+        
 
 if __name__ == '__main__':
     unittest.main()
