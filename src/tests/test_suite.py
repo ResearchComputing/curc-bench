@@ -31,8 +31,8 @@ class MyTest(unittest.TestCase):
         self.assertEqual(nodes, free_nodes)
 
         #TODO: test that pyslurm functionality matches the above functionality
-        
-        
+
+
 
 if __name__ == '__main__':
     unittest.main()
