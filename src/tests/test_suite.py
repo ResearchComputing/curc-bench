@@ -5,9 +5,9 @@ import pyslurm
 import os
 import subprocess
 
-from bench.create import free_SLURM_nodes
-from bench.create import reservations
-from bench.util.hostlist import expand_hostlist
+from create import free_SLURM_nodes
+from create import reservations
+from hostlist import expand_hostlist
 
 #from bench.util.hostlist import expand_hostlist
 
@@ -74,6 +74,8 @@ class MyTest(unittest.TestCase):
                             if int(key[4:6])>=01 and int(key[4:6])<=17:
                                 if int(key[6:8])>=01 and int(key[6:8])<=80:
                                     slurm_free_nodes.append(key)
+
+        self.assertEqual(node_list, slurm_free_nodes)
                 #else:
                 #    print "key = ",part_key
             #print "-" * 80
