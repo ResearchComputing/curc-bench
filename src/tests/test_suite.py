@@ -49,7 +49,8 @@ class MyTest(unittest.TestCase):
                             if int(key[4:6])>=01 and int(key[4:6])<=17:
                                 if int(key[6:8])>=01 and int(key[6:8])<=80:
                                     slurm_free_nodes.append(key)
-
+                                    
+        print "Number of slurm free nodes = ",len(slurm_free_nodes)
         self.assertEqual(node_list, slurm_free_nodes)
                 #else:
                 #    print "key = ",part_key
