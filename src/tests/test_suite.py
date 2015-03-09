@@ -5,6 +5,10 @@ import pyslurm
 import os
 import subprocess
 
+from bench.create import free_SLURM_nodes
+from bench.create import reservations
+from bench.util.hostlist import expand_hostlist
+
 #from bench.util.hostlist import expand_hostlist
 
 def slurm_setup():
@@ -14,7 +18,11 @@ def slurm_setup():
     with open('freeNodeList', 'r') as free_node_file:
         free_nodes = free_node_file.read()
         free_nodes = free_nodes.splitlines()
-    return node_info, free_nodes
+    with open('all_nodes.txt', 'r') as all_nodes_file:
+        all_nodes = all_nodes_file.read()
+        all_nodes = all_nodes.splitlines()
+
+    return node_info, free_nodes, all_nodes
 
 class MyTest(unittest.TestCase):
     """Test cases for curc-bench"""
@@ -29,27 +37,20 @@ class MyTest(unittest.TestCase):
         # free_nodes is the result of:
             # grep -o -E "NodeName=(node[0-9]+)" nodeInfo > nodelist
             # grep -o -E "(node[0-9]+)" nodelist > freeNodeList
-        node_info, free_nodes = slurm_setup()
+        node_info, free_nodes, all_nodes = slurm_setup()
         nodes = re.findall(r'NodeName=(node[0-9]+)', node_info)
         #Test that the lists of freenodes match
         self.assertEqual(nodes, free_nodes)
 
+
         #TODO: test that pyslurm functionality matches the above functionality
+        free_nodes = free_SLURM_nodes("node[01-17][01-80]")
+        reserved_nodes = reservations()
 
-        
-        #node_list = expand_hostlist("node[01-17][01-80]")
-        #p1 = subprocess.Popen(['scontrol', '-o', 'show', 'nodes'], stdout=subprocess.PIPE)
-        #p2 = subprocess.Popen(['grep', 'Reason'], stdin=p1.stdout, stdout=subprocess.PIPE)
-        #p1.stdout.close()
-        #out, err = p2.communicate()
-
-        #not_available_nodes = re.findall(r'NodeName=(node[0-9]+)', out)
-
-        #diff_set = set(node_list).difference(set(not_available_nodes))
-        
-        #for nn in diff_set:
-        #    print nn
-
+        diff_set = set(free_nodes).difference(set(reserved_nodes))
+        node_list = []
+        for node in diff_set:
+            node_list.append(node)
 
 
 
@@ -77,12 +78,12 @@ class MyTest(unittest.TestCase):
                 #    print "key = ",part_key
             #print "-" * 80
 
-        #else:
-        #    print "No Nodes found !"
-        print ''
-        print "Number of slurm free nodes = ",len(slurm_free_nodes)
-        #for nn in slurm_free_nodes:
-        #    print nn
+        # #else:
+        # #    print "No Nodes found !"
+        # print ''
+        # print "Number of slurm free nodes = ",len(slurm_free_nodes)
+        # #for nn in slurm_free_nodes:
+        # #    print nn
 
 if __name__ == '__main__':
     unittest.main()
