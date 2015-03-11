@@ -20,7 +20,6 @@ class MyTest(unittest.TestCase):
         """Test the functionalisty of pyslurm compared to subprocess.Popen commands"""
 
         #Old code using subprocess.Popen
-
         old_all_nodes = expand_hostlist("node[01-17][01-80]")
         free_nodes = free_SLURM_nodes("node[01-17][01-80]")
         reserved_nodes = reservations()
@@ -31,13 +30,12 @@ class MyTest(unittest.TestCase):
             node_list.append(node)
 
         #New code using pyslurm
-        #Add all 'IDLE' or 'ALLOCATED' nodes to list
+        #Add all 'IDLE' and 'ALLOCATED' and 'COMPLETING' nodes to list
         a = pyslurm.node()
         node_dict = a.get()
-        slurm_free_nodes = []
+        slurm_free_nodes = set([])
         all_nodes = []
 
-        print "-" * 80
         for key, value in node_dict.iteritems():
             if key[0:4] == 'node': 
                 all_nodes.append(key)
@@ -55,23 +53,22 @@ class MyTest(unittest.TestCase):
                         if key[0:4] == 'node':
                             if int(key[4:6])>=01 and int(key[4:6])<=17:
                                 if int(key[6:8])>=01 and int(key[6:8])<=80:
-                                    slurm_free_nodes.append(key)
+                                    slurm_free_nodes.add(key)
         
         #Remove reserved nodes from slurm_free_nodes list
-        b=pyslurm.reservation()
-        reserve_dict=b.get()
-        slurm_reserve_nodes=set([])
+        b = pyslurm.reservation()
+        reserve_dict = b.get()
+        slurm_reserve_nodes = set([])
         
-        print "-" * 80
         for key, value in reserve_dict.iteritems():
             #Don't add following to reserved nodes
             if (key.endswith('PM-janus') or key.endswith('PM-gpu') or
                      key.endswith('PM-himem') or key.endswith('PM-serial')):
-                print "Not used = ","%s :" % (key)
+                #print "Not used = ","%s :" % (key)
                 pass
             #Add every other reservation to reserved nodes
             else:
-                print "Used = ","%s :" % (key)
+                #print "Used = ","%s :" % (key)
                 for part_key in sorted(value.iterkeys()):
                     #print "\t%-15s : %s" % (part_key, value[part_key]) 
                     if part_key == 'node_list':
@@ -80,23 +77,22 @@ class MyTest(unittest.TestCase):
                             for node in nodes:
                                 slurm_reserve_nodes.add(node)
         
-        print ''
-        print "Reserved nodes = ", len(slurm_reserve_nodes)
+        #print ''
+        #print "Reserved nodes = ", len(slurm_reserve_nodes)
         
-        slurm_free_nodes = set(slurm_free_nodes).difference(slurm_reserve_nodes)
-            
+        slurm_free_nodes = slurm_free_nodes.difference(slurm_reserve_nodes)
 
-        print "Old total nodes found = ", len(old_all_nodes)        
-        print "Free nodes in old code = ", len(node_list)
-        print "Total nodes found = ", len(all_nodes)                            
-        print "Number of slurm free nodes = ",len(slurm_free_nodes)
+        #print "Old total nodes found = ", len(old_all_nodes)        
+        #print "Free nodes in old code = ", len(node_list)
+        #print "Total nodes found = ", len(all_nodes)                            
+        #print "Number of slurm free nodes = ",len(slurm_free_nodes)
         
         diff_set = set(slurm_free_nodes).symmetric_difference(set(node_list))
-        print "diff_list = ",list(diff_set)[0:50]
+        #print "diff_list = ",list(diff_set)[0:50]
         
         self.assertEqual(len(old_all_nodes),len(all_nodes))
         self.assertEqual(len(node_list), len(slurm_free_nodes))
-        self.assertEqual(set(node_list),set(slurm_free_nodes))
+        self.assertEqual(set(node_list), set(slurm_free_nodes))
         
 
 if __name__ == '__main__':
