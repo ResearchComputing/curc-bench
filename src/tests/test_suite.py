@@ -19,7 +19,12 @@ class MyTest(unittest.TestCase):
     def test_free_SLURM_nodes(self):
         """Test the functionalisty of pyslurm compared to subprocess.Popen commands"""
 
+<<<<<<< HEAD
         #Old code using subprocess.Popen
+=======
+        #TODO: test that pyslurm functionality matches old functionality
+        old_all_nodes = expand_hostlist("node[01-17][01-80]")
+>>>>>>> 0740e2c5c358f59c67c74a5ac1c7fa87379e074d
         free_nodes = free_SLURM_nodes("node[01-17][01-80]")
         reserved_nodes = reservations()
 
@@ -31,29 +36,67 @@ class MyTest(unittest.TestCase):
         #New code using pyslurm
         a = pyslurm.node()
         node_dict = a.get()
-        slurm_free_nodes=[]
+        slurm_free_nodes = []
+        all_nodes = []
+        maybe = []
         #if len(node_dict) > 0:
         ii = 0
         print "-" * 80
         for key, value in node_dict.iteritems():
-            #if ii > 30:
+            if key[0:4] == 'node': 
+                all_nodes.append(key)
+            #if ii > 150:
             #    break
-            #ii += 1
+            #ii += 3
             #print "%s :" % (key)
+            #if key == 'node0149' or key == 'node1428':
+               # print ''
             for part_key in sorted(value.iterkeys()):
+                #if key == 'node0149' or key == 'node1428':
+                   # print "\t%-15s : %s" % (part_key, value[part_key])
                 #print "\t%-15s : %s" % (part_key, value[part_key])
                 if part_key == 'node_state':
                     #print "%s :" % (key), "    node_state = ",value[part_key]
-                    if value[part_key] == 'IDLE':
+                    if value[part_key] == 'IDLE' or value[part_key] == 'ALLOCATED':
                         if key[0:4] == 'node':
                             if int(key[4:6])>=01 and int(key[4:6])<=17:
                                 if int(key[6:8])>=01 and int(key[6:8])<=80:
                                     slurm_free_nodes.append(key)
+<<<<<<< HEAD
 
         print "Number of slurm free nodes = ",len(slurm_free_nodes)
         self.assertEqual(node_list, slurm_free_nodes)
         #for nn in slurm_free_nodes:
         #    print nn
+=======
+                if part_key == 'reason_uid':
+                    if value[part_key] == 0:
+                        maybe.append(key)
+
+        print "Old total nodes found = ", len(old_all_nodes)        
+        print "Free nodes in old code = ", len(node_list)
+        print "Total nodes found = ", len(all_nodes)                            
+        print "Number of slurm free nodes = ",len(slurm_free_nodes)
+        
+        diff_set = set(slurm_free_nodes).difference(set(node_list))
+        print "First 10 on diff_list = ",list(diff_set)[0:10]
+        
+        same_set = set(slurm_free_nodes).intersection(set(node_list))
+        print "First 10 on same_list = ",list(same_set)[0:10]
+
+        self.assertEqual(len(old_all_nodes),len(all_nodes))
+        #self.assertEqual(node_list, slurm_free_nodes)
+                #else:
+                #    print "key = ",part_key
+            #print "-" * 80
+
+        # #else:
+        # #    print "No Nodes found !"
+        # print ''
+        # print "Number of slurm free nodes = ",len(slurm_free_nodes)
+        # #for nn in slurm_free_nodes:
+        # #    print nn
+>>>>>>> 0740e2c5c358f59c67c74a5ac1c7fa87379e074d
 
 if __name__ == '__main__':
     unittest.main()
