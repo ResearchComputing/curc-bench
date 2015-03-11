@@ -19,7 +19,7 @@ def reservations():
 
     reservation_names = re.findall(r'ReservationName=([A-Za-z0-9.\-\_]+)', out)
     reservation_nodes = re.findall(r'Nodes=([,\-A-Za-z0-9\[\]]+)', out)
-    print "Length reserved nodes = ", len(reservation_nodes)
+    #print "Length reserved nodes = ", len(reservation_nodes)
     for res, nodes in zip(reservation_names, reservation_nodes):
         #print res, expand_hostlist(nodes)
         if (res.endswith('PM-janus') or res.endswith('PM-gpu') or
@@ -45,7 +45,7 @@ def free_SLURM_nodes(nodelist):
     out, err = p2.communicate()
 
     not_available_nodes = re.findall(r'NodeName=(node[0-9]+)', out)
-    print "not avail = ", len(not_available_nodes)
+    #print "not avail = ", len(not_available_nodes)
     diff_set = set(node_list).difference(set(not_available_nodes))
     logger.info("Free nodes".ljust(20)+str(len(diff_set)).rjust(5))
     return diff_set
