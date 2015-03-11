@@ -16,8 +16,9 @@ class MyTest(unittest.TestCase):
         """An unimportant test"""
         self.assertEqual(1, 1)
 
-    def test_free_SLURM_nodes(self):
-        """Test the functionalisty of pyslurm compared to subprocess.Popen commands"""
+    def test_create(self):
+        """Test the functionalisty of pyslurm compared to subprocess.Popen commands
+        in create.py"""
 
         #Old code using subprocess.Popen
         old_all_nodes = expand_hostlist("node[01-17][01-80]")
@@ -94,6 +95,38 @@ class MyTest(unittest.TestCase):
         self.assertEqual(len(node_list), len(slurm_free_nodes))
         self.assertEqual(set(node_list), set(slurm_free_nodes))
         
+        def test_reservations():
+            """Test the funcionality of create.reservations when using pyslurm
+            instead of subprocess.Popen"""
+
+            #Old code using Popen
+            reserved_nodes = set(reservations())
+
+            #New pyslurm
+            b = pyslurm.reservation()
+            reserve_dict = b.get()
+            slurm_reserve_nodes = set([])
+            
+            for key, value in reserve_dict.iteritems():
+                #Don't add following to reserved nodes
+                if (key.endswith('PM-janus') or key.endswith('PM-gpu') or
+                         key.endswith('PM-himem') or key.endswith('PM-serial')):
+                    #print "Not used = ","%s :" % (key)
+                    pass
+                #Add every other reservation to reserved nodes
+                else:
+                    #print "Used = ","%s :" % (key)
+                    for part_key in sorted(value.iterkeys()):
+                        #print "\t%-15s : %s" % (part_key, value[part_key]) 
+                        if part_key == 'node_list':
+                            if value[part_key][0:4] == 'node':
+                                nodes = expand_hostlist(value[part_key])
+                                for node in nodes:
+                                    slurm_reserve_nodes.add(node)
+
+            diff_set = reserved_nodes.symmetric_difference(slurm_reserve_nodes)
+            print diff_set
+
 
 if __name__ == '__main__':
     unittest.main()
