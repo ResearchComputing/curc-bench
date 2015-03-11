@@ -19,7 +19,7 @@ class MyTest(unittest.TestCase):
     def test_free_SLURM_nodes(self):
         """Test the functionalisty of pyslurm compared to subprocess.Popen commands"""
 
-        #TODO: test that pyslurm functionality matches old functionality
+        #Old code using subprocess.Popen
         free_nodes = free_SLURM_nodes("node[01-17][01-80]")
         reserved_nodes = reservations()
 
@@ -28,7 +28,7 @@ class MyTest(unittest.TestCase):
         for node in diff_set:
             node_list.append(node)
 
-
+        #New code using pyslurm
         a = pyslurm.node()
         node_dict = a.get()
         slurm_free_nodes=[]
@@ -49,19 +49,11 @@ class MyTest(unittest.TestCase):
                             if int(key[4:6])>=01 and int(key[4:6])<=17:
                                 if int(key[6:8])>=01 and int(key[6:8])<=80:
                                     slurm_free_nodes.append(key)
-                                    
+
         print "Number of slurm free nodes = ",len(slurm_free_nodes)
         self.assertEqual(node_list, slurm_free_nodes)
-                #else:
-                #    print "key = ",part_key
-            #print "-" * 80
-
-        # #else:
-        # #    print "No Nodes found !"
-        # print ''
-        # print "Number of slurm free nodes = ",len(slurm_free_nodes)
-        # #for nn in slurm_free_nodes:
-        # #    print nn
+        #for nn in slurm_free_nodes:
+        #    print nn
 
 if __name__ == '__main__':
     unittest.main()
