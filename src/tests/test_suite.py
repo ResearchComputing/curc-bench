@@ -30,7 +30,7 @@ class Test_Create(unittest.TestCase):
         pid.wait()
         output, error = pid.communicate()
         tmp = re.findall(r'ReservationName=([0-9]+.[0-9]+PM-janus) StartTime=([0-9]+-[0-9]+-[0-9]+)', output)
-        print tmp
+        print "tmp = ",tmp
         
 
         # is there more than one?
@@ -38,7 +38,8 @@ class Test_Create(unittest.TestCase):
         queue_time = datetime.datetime.strptime(tmp[0][1], "%Y-%m-%d")
 
         # queue_date = date.fromtimestamp(tmp[0][1])
-        print queue_time
+        print "time = ",queue_time
+        print "name = ",queue_name
         if len(tmp) > 1:
           # find the min...
           for i in tmp[1:]:
