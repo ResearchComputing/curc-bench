@@ -14,7 +14,7 @@ from create import reservations
 from hostlist import expand_hostlist
 
 
-class Test_Create(unittest.TestCase):
+class Test_Suite(unittest.TestCase):
     """Test cases for curc-bench"""
     def test(self):
         """An unimportant test"""
@@ -30,7 +30,7 @@ class Test_Create(unittest.TestCase):
         pid.wait()
         output, error = pid.communicate()
         tmp = re.findall(r'ReservationName=([0-9]+.[0-9]+PM-janus) StartTime=([0-9]+-[0-9]+-[0-9]+)', output)
-        print "tmp = ",tmp
+        #print "tmp = ",tmp
         
 
         # is there more than one?
@@ -38,8 +38,8 @@ class Test_Create(unittest.TestCase):
         queue_time = datetime.datetime.strptime(tmp[0][1], "%Y-%m-%d")
 
         # queue_date = date.fromtimestamp(tmp[0][1])
-        print "time = ",queue_time
-        print "name = ",queue_name
+        #print "time = ",queue_time
+        #print "name = ",queue_name
         if len(tmp) > 1:
           # find the min...
           for i in tmp[1:]:
@@ -49,9 +49,29 @@ class Test_Create(unittest.TestCase):
             if (i_var - queue_time).days < 0:
                 queue_name = i_name
                 queue_time = i_var
+       
 
-        self.assertEqual(1,1) #will be queue_name
-        self.assertEqual(1,1) #will be tmp
+        #new pyslurm code
+        a = pyslurm.reservation()
+        reserve_dict = a.get()
+        queue_name_pyslurm = ''
+        queue_time_pyslurm = ''
+        
+        for key, value in reserve_dict.iteritems():
+            if key.endswith('PM-janus'):
+                queue_name_pyslurm = key
+                #print key
+                for part_key in sorted(value.iterkeys()):
+                   # print "\t%-15s : %s" % (part_key, value[part_key])
+                    if part_key == "start_time":
+                        time1 = datetime.datetime.fromtimestamp(int(value[part_key]))
+                       # tmp = datetime.date(tmp.year, tmp.month, tmp.day)
+                        time1 = time1.replace(hour=0, minute=0, second=0, microsecond=0)
+                        queue_time_pyslurm = time1
+                        #print time1
+
+        self.assertEqual(queue_name, queue_name_pyslurm) 
+        self.assertEqual(queue_time, queue_time_pyslurm) 
 
     def test_create_execute(self):
         """Test the functionalisty of pyslurm compared to subprocess.Popen commands
