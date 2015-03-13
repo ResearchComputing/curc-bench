@@ -4,6 +4,10 @@ import re
 import pyslurm
 import os
 import subprocess
+import time
+import shutil
+import textwrap
+import datetime
 
 from create import free_SLURM_nodes
 from create import reservations
@@ -15,6 +19,38 @@ class Test_Create(unittest.TestCase):
     def test(self):
         """An unimportant test"""
         self.assertEqual(1, 1)
+
+    def test_add_queue(self):
+        """Test the functionality of pyslurm to subprocess.Popen in add.py"""
+
+        #old code using Popen
+        queue_name = 'janus-admin'
+        pid = subprocess.Popen('scontrol show reservation', shell=True,
+                               stdout=subprocess.PIPE)
+        pid.wait()
+        output, error = pid.communicate()
+        tmp = re.findall(r'ReservationName=([0-9]+.[0-9]+PM-janus) StartTime=([0-9]+-[0-9]+-[0-9]+)', output)
+        print tmp
+        
+
+        # is there more than one?
+        queue_name = tmp[0][0]
+        queue_time = datetime.datetime.strptime(tmp[0][1], "%Y-%m-%d")
+
+        # queue_date = date.fromtimestamp(tmp[0][1])
+        print queue_time
+        if len(tmp) > 1:
+          # find the min...
+          for i in tmp[1:]:
+            i_name = i[0]
+            i_time = i[1]
+            i_var = datetime.datetime.strptime(i_time, "%Y-%m-%d")
+            if (i_var - queue_time).days < 0:
+                queue_name = i_name
+                queue_time = i_var
+
+        self.assertEqual(1,1) #will be queue_name
+        self.assertEqual(1,1) #will be tmp
 
     def test_create_execute(self):
         """Test the functionalisty of pyslurm compared to subprocess.Popen commands
@@ -88,7 +124,7 @@ class Test_Create(unittest.TestCase):
         #print "Total nodes found = ", len(all_nodes)                            
         #print "Number of slurm free nodes = ",len(slurm_free_nodes)
         
-        diff_set = set(slurm_free_nodes).symmetric_difference(set(node_list))
+        # diff_set = set(slurm_free_nodes).symmetric_difference(set(node_list))
         #print "diff_list = ",list(diff_set)[0:50]
         
         self.assertEqual(len(old_all_nodes),len(all_nodes))
@@ -124,7 +160,7 @@ class Test_Create(unittest.TestCase):
                         for node in nodes:
                             slurm_reserve_nodes.add(node)
 
-        diff_set = reserved_nodes.symmetric_difference(slurm_reserve_nodes)
+        # diff_set = reserved_nodes.symmetric_difference(slurm_reserve_nodes)
         #print diff_set
 
         self.assertEqual(reserved_nodes,slurm_reserve_nodes)
@@ -143,17 +179,10 @@ class Test_Create(unittest.TestCase):
         slurm_free_nodes = set([])
        
         for key, value in node_dict.iteritems():
-                          #print "%s :" % (key)
-            #if key == 'node0149' or key == 'node1428':
-               # print ''
+            #print "%s :" % (key)
             for part_key in sorted(value.iterkeys()):
                 #if key == 'node0903' or key == 'node0805':
-                    #print "\t%-15s : %s" % (part_key, value[part_key])
-                #print "\t%-15s : %s" % (part_key, value[part_key])
-                #if part_key == 'reason':
-                    #print value[part_key]
-                    #if str(value[part_key]) != 'None':
-                        #print "%s :" % (key), "    reason = ",value[part_key]
+                    #print "\t%-15s : %s" % (part_key, value[part_key])s
                 if part_key == 'node_state':
                     #print "%s :" % (key), "    node_state = ",value[part_key]
                     if (value[part_key] == 'IDLE' or value[part_key] == 'ALLOCATED' or
@@ -163,20 +192,14 @@ class Test_Create(unittest.TestCase):
                                 if int(key[6:8])>=01 and int(key[6:8])<=80:
                                     slurm_free_nodes.add(key)
 
-        diff_set = free_nodes.symmetric_difference(slurm_free_nodes)
+        # diff_set = free_nodes.symmetric_difference(slurm_free_nodes)
         #print "sym = ", diff_set
 
-        diff_set = free_nodes.difference(slurm_free_nodes)
+        # diff_set = free_nodes.difference(slurm_free_nodes)
         #print "old-new = ", diff_set
 
-        diff_set1 = slurm_free_nodes.difference(free_nodes)
+        # diff_set1 = slurm_free_nodes.difference(free_nodes)
         #print "new-old = ", diff_set1
-
-        #for key, value in node_dict.iteritems():
-            #if key in diff_set:
-                #for part_key in sorted(value.iterkeys()):
-                   #print "\t%-15s : %s" % (part_key, value[part_key])
-                   #print "\t%-15s : %s" % (part_key, value[part_key])
         
         self.assertEqual(free_nodes, slurm_free_nodes)
 
