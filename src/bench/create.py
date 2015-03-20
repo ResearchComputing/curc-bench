@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from bench.util.hostlist import expand_hostlist
 import logging
 import os
@@ -11,12 +9,11 @@ logger = logging.getLogger('Benchmarks')
 
 
 PM_RESERVATIONS_P = re.compile(r'^.*PM-(janus|gpu|himem|serial|ipcc)$')
+FREE_NODE_STATES = ('IDLE', 'ALLOCATED', 'COMPLETING', 'RESERVED')
 
 
 def get_reserved_nodes():
-
     reserved_nodes = set()
-
     reservations = pyslurm.reservation()
     for reservation_name, reservation in reservations.get().iteritems():
         if PM_RESERVATIONS_P.match(reservation_name):
@@ -24,57 +21,36 @@ def get_reserved_nodes():
         elif 'node_list' not in reservation:
             continue
         else:
-            print reservation_name
             reserved_nodes.update(set(expand_hostlist(reservation['node_list'])))
-
-    logger.info("nodes reserved: {0}".format(len(reserved_nodes)))
-    return list(reserved_nodes)
+    return reserved_nodes
 
 
-def free_SLURM_nodes():
-
-    a = pyslurm.node()
-    node_dict = a.get()
-    slurm_free_nodes = set([])
-
-    for key, value in node_dict.iteritems():
-        #print "%s :" % (key)
-        for part_key in sorted(value.iterkeys()):
-            #if key == 'node0903' or key == 'node0805':
-                #print "\t%-15s : %s" % (part_key, value[part_key])s
-            if part_key == 'node_state':
-                #print "%s :" % (key), "    node_state = ",value[part_key]
-                if (value[part_key] == 'IDLE' or value[part_key] == 'ALLOCATED' or
-                      value[part_key] == 'COMPLETING' or value[part_key] == 'RESERVED'):
-                    if key[0:4] == 'node':
-                        if int(key[4:6]) >= 01 and int(key[4:6]) <= 17:
-                            if int(key[6:8]) >= 01 and int(key[6:8]) <= 80:
-                                slurm_free_nodes.add(key)
-
-    logger.info("Free nodes".ljust(20)+str(len(slurm_free_nodes)).rjust(5))
-    return slurm_free_nodes
+def get_free_nodes():
+    nodes = pyslurm.node()
+    free_nodes = set(
+        node_name for node_name, node in nodes.get().iteritems()
+        if 'node_state' in node
+        and node['node_state'] in FREE_NODE_STATES)
+    return free_nodes
 
 
 def execute(directory):
+    logger.info('creating node list in {0}'.format(directory))
 
-    logger.info(directory)
+    free_nodes = get_free_nodes()
+    logger.info("free nodes: {0}".format(len(free_nodes)))
 
-    logger.info('createing node list')
-    # free_nodes = free_SLURM_nodes("node[01-17][01-80]")
-    free_nodes = free_SLURM_nodes()
     reserved_nodes = get_reserved_nodes()
+    logger.info("reserved nodes: {0}".format(len(reserved_nodes)))
 
-    diff_set = set(free_nodes).difference(set(reserved_nodes))
-    node_list = []
-    for node in diff_set:
-        node_list.append(node)
+    targeted_nodes = set(expand_hostlist('node[01-17][01-80]'))
 
-    logger.info("Available nodes".ljust(20)+str(len(node_list)).rjust(5))
+    node_list = (free_nodes - reserved_nodes) & targeted_nodes
+    logger.info("nodes to test: {0}".format(len(node_list)))
 
     try:
-        f = open(os.path.join(directory, 'node_list'), 'w')
-        for item in node_list:
-            f.write("%s\n" % item)
-        f.close()
-    except:
-        logger.error("create: ".rjust(20)+"could not write node_list to file")
+        with open(os.path.join(directory, 'node_list'), 'w') as fp:
+            for node_name in sorted(node_list):
+                fp.write("{0}\n".format(node_name))
+    except IOError, ex:
+        logger.error("could not write node_list to file: {0}".format(ex))
