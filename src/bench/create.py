@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
 import os
-import subprocess
-import re
+# import subprocess
+# import re
+import pyslurm
 
 from bench.util.hostlist import expand_hostlist
 
@@ -12,51 +13,62 @@ logger = logging.getLogger('Benchmarks')
 
 def reservations():
 
-    reserved_nodes = []
-    ##pyslurm.reservation.get???
-    p1 = subprocess.Popen(['scontrol', '-o', 'show', 'res'], stdout=subprocess.PIPE)
-    out, err = p1.communicate()
+    b = pyslurm.reservation()
+    reserve_dict = b.get()
+    slurm_reserve_nodes = set([])
 
-    reservation_names = re.findall(r'ReservationName=([A-Za-z0-9.\-\_]+)', out)
-    reservation_nodes = re.findall(r'Nodes=([,\-A-Za-z0-9\[\]]+)', out)
-
-    for res, nodes in zip(reservation_names, reservation_nodes):
-        #print res, expand_hostlist(nodes)
-        if (res.endswith('PM-janus') or res.endswith('PM-gpu') or
-                res.endswith('PM-himem') or res.endswith('PM-serial')):
+    for key, value in reserve_dict.iteritems():
+        #Don't add following to reserved nodes
+        if (key.endswith('PM-janus') or key.endswith('PM-gpu') or
+                key.endswith('PM-himem') or key.endswith('PM-serial')):
+            #print "Not used = ","%s :" % (key)
             pass
+        #Add every other reservation to reserved nodes
         else:
-        #    print res, expand_hostlist(nodes)
-            reserved_nodes.extend(expand_hostlist(nodes))
-            logger.info(res.ljust(20)+str(len(expand_hostlist(nodes))).rjust(5))
+            #print "Used = ","%s :" % (key)
+            for part_key in sorted(value.iterkeys()):
+                #print "\t%-15s : %s" % (part_key, value[part_key])
+                if part_key == 'node_list':
+                    #if value[part_key][0:4] == 'node':
+                    nodes = expand_hostlist(value[part_key])
+                    for node in nodes:
+                        slurm_reserve_nodes.add(node)
 
-    logger.info("Total reserved ".ljust(20)+str(len(reserved_nodes)).rjust(5))
+    logger.info("Total reserved ".ljust(20)+str(len(slurm_reserve_nodes)).rjust(5))
 
-    return list(set(reserved_nodes))
+    return list(slurm_reserve_nodes)
 
 
-def free_SLURM_nodes(nodelist):
-    node_list = expand_hostlist(nodelist)
-    #print len(node_list)
+def free_SLURM_nodes():
 
-    p1 = subprocess.Popen(['scontrol', '-o', 'show', 'nodes'], stdout=subprocess.PIPE)
-    p2 = subprocess.Popen(['grep', 'Reason'], stdin=p1.stdout, stdout=subprocess.PIPE)
-    p1.stdout.close()
-    out, err = p2.communicate()
+    a = pyslurm.node()
+    node_dict = a.get()
+    slurm_free_nodes = set([])
 
-    not_available_nodes = re.findall(r'NodeName=(node[0-9]+)', out)
+    for key, value in node_dict.iteritems():
+        #print "%s :" % (key)
+        for part_key in sorted(value.iterkeys()):
+            #if key == 'node0903' or key == 'node0805':
+                #print "\t%-15s : %s" % (part_key, value[part_key])s
+            if part_key == 'node_state':
+                #print "%s :" % (key), "    node_state = ",value[part_key]
+                if (value[part_key] == 'IDLE' or value[part_key] == 'ALLOCATED' or
+                      value[part_key] == 'COMPLETING' or value[part_key] == 'RESERVED'):
+                    if key[0:4] == 'node':
+                        if int(key[4:6]) >= 01 and int(key[4:6]) <= 17:
+                            if int(key[6:8]) >= 01 and int(key[6:8]) <= 80:
+                                slurm_free_nodes.add(key)
 
-    diff_set = set(node_list).difference(set(not_available_nodes))
-    logger.info("Free nodes".ljust(20)+str(len(diff_set)).rjust(5))
-    return diff_set
-
+    logger.info("Free nodes".ljust(20)+str(len(slurm_free_nodes)).rjust(5))
+    return slurm_free_nodes
 
 def execute(directory):
 
     logger.info(directory)
 
     logger.info('createing node list')
-    free_nodes = free_SLURM_nodes("node[01-17][01-80]")
+    # free_nodes = free_SLURM_nodes("node[01-17][01-80]")
+    free_nodes = free_SLURM_nodes()
     reserved_nodes = reservations()
 
     diff_set = set(free_nodes).difference(set(reserved_nodes))
