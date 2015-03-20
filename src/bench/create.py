@@ -1,41 +1,34 @@
 #!/usr/bin/env python
 
-import os
-# import subprocess
-# import re
-import pyslurm
-
 from bench.util.hostlist import expand_hostlist
-
 import logging
+import os
+import pyslurm
+import re
+
+
 logger = logging.getLogger('Benchmarks')
 
 
-def reservations():
+PM_RESERVATIONS_P = re.compile(r'^.*PM-(janus|gpu|himem|serial|ipcc)$')
 
-    b = pyslurm.reservation()
-    reserve_dict = b.get()
-    slurm_reserve_nodes = set([])
 
-    for key, value in reserve_dict.iteritems():
-        #Don't add following to reserved nodes
-        if (key.endswith('PM-janus') or key.endswith('PM-gpu') or
-                key.endswith('PM-himem') or key.endswith('PM-serial')):
-            #print "Not used = ","%s :" % (key)
-            pass
-        #Add every other reservation to reserved nodes
+def get_reserved_nodes():
+
+    reserved_nodes = set()
+
+    reservations = pyslurm.reservation()
+    for reservation_name, reservation in reservations.get().iteritems():
+        if PM_RESERVATIONS_P.match(reservation_name):
+            continue
+        elif 'node_list' not in reservation:
+            continue
         else:
-            #print "Used = ","%s :" % (key)
-            for part_key in sorted(value.iterkeys()):
-                #print "\t%-15s : %s" % (part_key, value[part_key])
-                if part_key == 'node_list':
-                    #if value[part_key][0:4] == 'node':
-                    nodes = expand_hostlist(value[part_key])
-                    for node in nodes:
-                        slurm_reserve_nodes.add(node)
+            print reservation_name
+            reserved_nodes.update(set(expand_hostlist(reservation['node_list'])))
 
-    logger.info("Total reserved ".ljust(20)+str(len(slurm_reserve_nodes)).rjust(5))
-    return list(slurm_reserve_nodes)
+    logger.info("nodes reserved: {0}".format(len(reserved_nodes)))
+    return list(reserved_nodes)
 
 
 def free_SLURM_nodes():
@@ -61,6 +54,7 @@ def free_SLURM_nodes():
     logger.info("Free nodes".ljust(20)+str(len(slurm_free_nodes)).rjust(5))
     return slurm_free_nodes
 
+
 def execute(directory):
 
     logger.info(directory)
@@ -68,7 +62,7 @@ def execute(directory):
     logger.info('createing node list')
     # free_nodes = free_SLURM_nodes("node[01-17][01-80]")
     free_nodes = free_SLURM_nodes()
-    reserved_nodes = reservations()
+    reserved_nodes = get_reserved_nodes()
 
     diff_set = set(free_nodes).difference(set(reserved_nodes))
     node_list = []
@@ -77,7 +71,6 @@ def execute(directory):
 
     logger.info("Available nodes".ljust(20)+str(len(node_list)).rjust(5))
 
-    #Write list to file
     try:
         f = open(os.path.join(directory, 'node_list'), 'w')
         for item in node_list:
