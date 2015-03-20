@@ -50,13 +50,13 @@ def execute(directory, args):
     print queue_time
     if len(tmp) > 1:
       # find the min...
-      for i in tmp[1:]:
-        i_name = i[0]
-        i_time = i[1]
-        i_var = datetime.datetime.strptime(i_time, "%Y-%m-%d")
-        if (i_var - queue_time).days < 0:
-            queue_name = i_name
-            queue_time = i_var
+        for i in tmp[1:]:
+            i_name = i[0]
+            i_time = i[1]
+            i_var = datetime.datetime.strptime(i_time, "%Y-%m-%d")
+            if (i_var - queue_time).days < 0:
+                queue_name = i_name
+                queue_time = i_var
 
     logger.info("Using the PM-janus queue with the oldest time stamp.")
     logger.info("queue name".ljust(20)+queue_name.rjust(5))

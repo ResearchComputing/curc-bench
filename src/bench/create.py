@@ -35,7 +35,6 @@ def reservations():
                         slurm_reserve_nodes.add(node)
 
     logger.info("Total reserved ".ljust(20)+str(len(slurm_reserve_nodes)).rjust(5))
-
     return list(slurm_reserve_nodes)
 
 
