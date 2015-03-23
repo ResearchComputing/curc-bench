@@ -1,36 +1,32 @@
 import argparse
-import os
-import datetime
-
+import automation
+import bench.add as add
 import bench.create as create
-import bench.submit as submit
-
-import bench.showq as showq
+import bench.nodelist as nodelist
+import bench.nodes
 import bench.process as process
 import bench.reserve as reserve
-import bench.nodelist as nodelist
-import bench.add as add
-import bench.nodes
-
-import automation
-import status
-
+import bench.showq as showq
+import bench.submit as submit
+import datetime
+import glob
 import logging
+import os
 import shutil
+import status
 
 
 def parser():
     parser = argparse.ArgumentParser()
-    subparsers = parser.add_subparsers(help=None, dest='command')
+    parser.add_argument('-P', '--directory-prefix', dest='prefix')
+    parser.set_defaults(prefix='.')
+    subparsers = parser.add_subparsers(dest='command')
 
     create = subparsers.add_parser('create', help='Create the benchmark test scripts.')
-    create.add_argument('-d','--dir', help='directory', dest='directory')
-    create.set_defaults(directory=None)
-    create.add_argument('-l','--nodelist', help='node_list for test')
-    create.add_argument('-r','--reservation', help='node_list from reservation')
-    create.set_defaults(nodelist=None)
-    create.add_argument('-e','--exclude', help='exclude these nodes.  For example, --exclude node[01][01-80]')
-    create.set_defaults(exclude='node[00][01-04], node0773')
+    create.add_argument('-d','--directory', help='directory', dest='directory')
+    create.add_argument('-N','--nodes', help='explicit list of nodes to test')
+    create.add_argument('-x','--exclude-nodes', help='explicit list of nodes to exclude from testing')
+    create.add_argument('-r','--reservation', help='test a set of reserved nodes')
 
     add = subparsers.add_parser('add', help='Add a benchmark test.  For options, type bench add -h for help.\n')
     add.add_argument('-d','--dir', help='directory', dest='directory')
@@ -80,43 +76,34 @@ def parser():
     return parser
 
 
-def get_directory(dir_name=None):
+def get_directory(prefix, new=False):
+    if not os.path.exists(prefix):
+        os.makedirs(prefix)
 
-    directory = '/curc/admin/benchmarks/data'
-    if not os.path.exists(directory):
+    today = datetime.date.today()
+    existing_directories = glob.glob(os.path.join(prefix, '{0}-*'.format(today)))
+    existing_indexes = []
+    for directory in existing_directories:
+        try:
+            existing_indexes.append(int(os.path.basename(directory).split('-')[-1]))
+        except ValueError:
+            continue
+
+    if new:
+        try:
+            index = max(existing_indexes) + 1
+        except ValueError:
+            index = 1
+        directory = os.path.join(prefix, '{0}-{1}'.format(today, index))
         os.makedirs(directory)
-
-    if not dir_name:
-        folder = datetime.date.today()
-        index = 1
-        while index < 100:
-            folder_name = os.path.join(directory,str(folder)+"-"+str(index))
-            if not os.path.exists(folder_name):
-                break
-            index+=1
-        folder_name = os.path.join(directory,str(folder)+"-"+str(index-1))
-        return folder_name
+        return directory
     else:
-        if dir_name.startswith('/curc/admin/benchmarks/data'):
-            return dir_name
-        else:
-            return os.path.join('/curc/admin/benchmarks/data',dir_name)
-
-def get_new_directory():
-
-    directory = '/curc/admin/benchmarks/data'
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-
-    folder = datetime.date.today()
-    index = 1
-    while index < 100:
-        folder_name = os.path.join(directory,str(folder)+"-"+str(index))
-        if not os.path.exists(folder_name):
-            break
-        index+=1
-    folder_name = os.path.join(directory,str(folder)+"-"+str(index))
-    return folder_name
+        try:
+            index = max(existing_indexes)
+        except ValueError:
+            raise IOError('test directory not found')
+        directory = os.path.join(prefix, '{0}-{1}'.format(today, index))
+        return directory
 
 
 class MyFormatter(logging.Formatter):
@@ -150,35 +137,23 @@ def get_logger(directory):
     return logger
 
 
-def create_directory(directory_name):
-
-    if os.path.exists(directory_name):
-        shutil.rmtree(directory_name)
-
-    os.makedirs(directory_name)
-
-
 def driver():
     args = parser().parse_args()
 
-    directory = None
-    try:
-        if not args.directory and args.command == 'create':
-            directory = get_new_directory()
-        elif args.directory:
-            directory = get_directory(args.directory)
+    directory = args.directory
+    if directory is None:
+        if args.command == 'create':
+            directory = get_directory(args.prefix, new=True)
         else:
-            directory = get_directory()
-    except:
-        directory = get_directory()
-
-    if args.command == 'create':
-        create_directory(directory)
+            directory = get_directory(args.prefix, new=False)
+    else:
+        if args.command == 'create':
+            os.makedirs(directory)
 
     logger = get_logger(directory)
 
     if args.command == 'create':
-        create.execute(directory, args.nodelist, args.exclude, args.reservation)
+        create.execute(directory)
 
     if args.command == 'add':
         add.execute(directory, args)
