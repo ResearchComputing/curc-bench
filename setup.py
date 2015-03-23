@@ -29,4 +29,9 @@ setuptools.setup(
     classifiers=[
         "License :: BSD License",
     ],
+    entry_points={
+        'console_scripts': [
+            'bench = bench.driver:driver',
+        ],
+    },
 )
