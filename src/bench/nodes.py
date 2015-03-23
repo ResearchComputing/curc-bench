@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from util.hostlist import expand_hostlist
 from util.xml2obj import xml2obj
 import subprocess

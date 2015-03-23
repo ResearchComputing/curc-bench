@@ -1,4 +1,3 @@
-#!/curc/admin/benchmarks/bin/python
 # from django.conf import settings
 # from django import template
 # if not settings.configured:

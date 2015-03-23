@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-
-
 # max time to wait before processing in minutes
 # eg max_time = 1800 (30 minutes)
 max_time = 1800

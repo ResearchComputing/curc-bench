@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 import subprocess
 import getpass
 import xml.etree.ElementTree as ET

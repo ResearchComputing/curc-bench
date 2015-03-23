@@ -1,5 +1,3 @@
-#!/curc/admin/benchmarks/bin/python
-
 from jinja2 import Template
 
 import fileinput, os, sys

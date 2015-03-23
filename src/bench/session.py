@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 This class implements a session concept.  The basic API is:
 

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # This function is from http://code.activestate.com/recipes/534109-xml-to-python-data-structure/
 
 import re

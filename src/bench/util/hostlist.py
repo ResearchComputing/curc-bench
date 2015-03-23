@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # Hostlist library
@@ -351,12 +350,3 @@ def handle_int_nonint(int_nonint_tuple):
         return int(int_nonint_tuple[0])
     else:
         return int_nonint_tuple[1]
-
-#
-# Keep this part to tell users where the command line interface went
-#
-
-if __name__ == '__main__':
-    import os, sys
-    sys.stderr.write("The command line utility has been moved to a separate 'hostlist' program.\n")
-    sys.exit(os.EX_USAGE)
