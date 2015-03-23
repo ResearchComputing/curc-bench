@@ -48,8 +48,9 @@ def execute(directory):
     node_list = (free_nodes - reserved_nodes) & targeted_nodes
     logger.info("nodes to test: {0}".format(len(node_list)))
 
+    node_list_filename = os.path.join(directory, 'node_list')
     try:
-        with open(os.path.join(directory, 'node_list'), 'w') as fp:
+        with open(node_list_filename, 'w') as fp:
             for node_name in sorted(node_list):
                 fp.write("{0}\n".format(node_name))
     except IOError, ex:
