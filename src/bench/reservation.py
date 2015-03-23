@@ -4,7 +4,7 @@ import datetime
 import sys
 import subprocess
 
-from util.hostlist import expand_hostlist
+from hostlist import expand_hostlist
 from util.util import read_node_list
 
 def get_args(argv):

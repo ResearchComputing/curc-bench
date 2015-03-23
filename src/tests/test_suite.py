@@ -12,7 +12,7 @@ import datetime
 
 from tests.create import free_SLURM_nodes
 from tests.create import get_reserved_nodes
-from tests.hostlist import expand_hostlist
+from hostlist import expand_hostlist
 
 
 class Test_Suite(unittest.TestCase):
