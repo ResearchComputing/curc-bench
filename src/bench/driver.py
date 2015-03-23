@@ -1,7 +1,6 @@
 import argparse
 import os
 import datetime
-import sys
 
 import bench.create as create
 import bench.submit as submit
@@ -20,7 +19,7 @@ import logging
 import shutil
 
 
-def get_args(argv):
+def parser():
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(help=None, dest='command')
 
@@ -78,7 +77,7 @@ def get_args(argv):
     status.add_argument('-d','--dir', help='directory', dest='directory')
     status.set_defaults(directory=None)
 
-    return parser.parse_args(argv)
+    return parser
 
 
 def get_directory(dir_name=None):
@@ -160,7 +159,7 @@ def create_directory(directory_name):
 
 
 def driver():
-    args = get_args(sys.argv[1:])
+    args = parser().parse_args()
 
     directory = None
     try:
