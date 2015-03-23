@@ -29,7 +29,7 @@ def parser():
     create.add_argument('-r','--reservation', help='test a set of reserved nodes')
 
     add = subparsers.add_parser('add', help='Add a benchmark test.  For options, type bench add -h for help.\n')
-    add.add_argument('-d','--dir', help='directory', dest='directory')
+    add.add_argument('-d','--directory', help='directory', dest='directory')
     add.set_defaults(directory=None)
     add.add_argument('-r','--allrack', help='alltoall rack level', action='store_true')
     add.add_argument('-s','--allswitch', help='alltoall switch level', action='store_true')
@@ -38,7 +38,7 @@ def parser():
     add.add_argument('-b','--bandwidth', help='bandwidth', action='store_true')
 
     sumbit = subparsers.add_parser('submit', help='Submit all the jobs from create to the scheduler.')
-    sumbit.add_argument('-d','--dir', help='directory', dest='directory')
+    sumbit.add_argument('-d','--directory', help='directory', dest='directory')
     sumbit.set_defaults(directory=None)
     sumbit.add_argument('-r','--allrack', help='alltoall rack level', action='store_true')
     sumbit.add_argument('-s','--allswitch', help='alltoall switch level', action='store_true')
@@ -47,7 +47,7 @@ def parser():
     sumbit.add_argument('-b','--bandwidth', help='bandwidth', action='store_true')
 
     process = subparsers.add_parser('process', help='Process the jobs when they are finished.')
-    process.add_argument('-d','--dir', help='directory', dest='directory')
+    process.add_argument('-d','--directory', help='directory', dest='directory')
     process.set_defaults(directory=None)
     process.add_argument('-r','--allrack', help='alltoall rack level', action='store_true')
     process.add_argument('-s','--allswitch', help='alltoall switch level', action='store_true')
@@ -56,7 +56,7 @@ def parser():
     process.add_argument('-b','--bandwidth', help='bandwidth', action='store_true')
 
     reserve = subparsers.add_parser('reserve', help='Create the necessary reservations.')
-    reserve.add_argument('-d','--dir', help='directory', dest='directory')
+    reserve.add_argument('-d','--directory', help='directory', dest='directory')
     reserve.set_defaults(directory=None)
     reserve.add_argument('-r','--allrack', help='alltoall rack level', action='store_true')
     reserve.add_argument('-s','--allswitch', help='alltoall switch level', action='store_true')
@@ -70,7 +70,7 @@ def parser():
     nodes = subparsers.add_parser('nodes', help='Checks the status of nodes.')
 
     status = subparsers.add_parser('status', help='Concatentates the log file of the current directory.')
-    status.add_argument('-d','--dir', help='directory', dest='directory')
+    status.add_argument('-d','--directory', help='directory', dest='directory')
     status.set_defaults(directory=None)
 
     return parser
