@@ -23,10 +23,11 @@ def parser():
     subparsers = parser.add_subparsers(dest='command')
 
     create = subparsers.add_parser('create', help='Create the benchmark test scripts.')
-    create.add_argument('-d','--directory', help='directory', dest='directory')
-    create.add_argument('-N','--nodes', help='explicit list of nodes to test')
-    create.add_argument('-x','--exclude-nodes', help='explicit list of nodes to exclude from testing')
-    create.add_argument('-r','--reservation', help='test a set of reserved nodes')
+    create.add_argument('-d', '--directory', help='directory', dest='directory')
+    create.add_argument('-N', '--nodes', help='explicit list of nodes to test')
+    create.add_argument('-x', '--exclude-nodes', help='explicit list of nodes to exclude from testing')
+    create.add_argument('-r', '--reservation', help='test a set of reserved nodes')
+    create.add_argument('-X', '--exclude-reservation', help='exclude nodes in a reservation from testing')
 
     add = subparsers.add_parser('add', help='Add a benchmark test.  For options, type bench add -h for help.\n')
     add.add_argument('-d','--directory', help='directory', dest='directory')
@@ -153,7 +154,12 @@ def driver():
     logger = get_logger(directory)
 
     if args.command == 'create':
-        create.execute(directory)
+        create.execute(directory,
+                       include_nodes = args.nodes,
+                       include_reservation = args.reservation,
+                       exclude_nodes = args.exclude_nodes,
+                       exclude_reservation = args.exclude_reservation,
+        )
 
     if args.command == 'add':
         add.execute(directory, args)

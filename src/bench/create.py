@@ -2,56 +2,50 @@ from bench.util.hostlist import expand_hostlist
 import logging
 import os
 import pyslurm
-import re
 
 
 logger = logging.getLogger('Benchmarks')
 
 
-PM_RESERVATIONS_P = re.compile(r'^.*PM-(janus|gpu|himem|serial|ipcc)$')
-FREE_NODE_STATES = ('IDLE', 'ALLOCATED', 'COMPLETING', 'RESERVED')
+def get_reserved_nodes(reservation_name):
+    reservation = pyslurm.reservation().get()[reservation_name]
+    return set(expand_hostlist(reservation['node_list']))
 
 
-def get_reserved_nodes():
-    reserved_nodes = set()
-    reservations = pyslurm.reservation()
-    for reservation_name, reservation in reservations.get().iteritems():
-        if PM_RESERVATIONS_P.match(reservation_name):
-            continue
-        elif 'node_list' not in reservation:
-            continue
-        else:
-            reserved_nodes.update(set(expand_hostlist(reservation['node_list'])))
-    return reserved_nodes
+def get_nodes():
+    return set(node_name for node_name in pyslurm.node().get())
 
 
-def get_free_nodes():
-    nodes = pyslurm.node()
-    free_nodes = set(
-        node_name for node_name, node in nodes.get().iteritems()
-        if 'node_state' in node
-        and node['node_state'] in FREE_NODE_STATES)
-    return free_nodes
-
-
-def execute(directory):
+def execute(directory,
+            include_nodes=None, include_reservation=None,
+            exclude_nodes=None, exclude_reservation=None,
+):
     logger.info('creating node list in {0}'.format(directory))
 
-    free_nodes = get_free_nodes()
-    logger.info("free nodes: {0}".format(len(free_nodes)))
+    node_list = get_nodes()
 
-    reserved_nodes = get_reserved_nodes()
-    logger.info("reserved nodes: {0}".format(len(reserved_nodes)))
+    if include_nodes is not None or include_reservation is not None:
+        include_nodes_ = set()
+        if include_nodes is not None:
+            include_nodes_ |= set(expand_hostlist(include_nodes))
+        if include_reservation is not None:
+            include_nodes_ |= get_reserved_nodes(include_reservation)
+        node_list = node_list & include_nodes_
 
-    targeted_nodes = set(expand_hostlist('node[01-17][01-80]'))
+    if exclude_nodes is not None or exclude_reservation is not None:
+        exclude_nodes_ = set()
+        if exclude_nodes is not None:
+            exclude_nodes_ |= set(expand_hostlist(exclude_nodes))
+        if exclude_reservation is not None:
+            exclude_nodes_ |= get_reserved_nodes(exclude_reservation)
+        node_list = node_list - exclude_nodes_
 
-    node_list = (free_nodes - reserved_nodes) & targeted_nodes
-    logger.info("nodes to test: {0}".format(len(node_list)))
+    logger.info('nodes to test: {0}'.format(len(node_list)))
 
     node_list_filename = os.path.join(directory, 'node_list')
     try:
         with open(node_list_filename, 'w') as fp:
             for node_name in sorted(node_list):
-                fp.write("{0}\n".format(node_name))
+                fp.write('{0}\n'.format(node_name))
     except IOError, ex:
-        logger.error("could not write node_list to file: {0}".format(ex))
+        logger.error('could not write {0}: {1}'.format(node_list_filename, ex))
