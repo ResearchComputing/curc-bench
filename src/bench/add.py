@@ -1,6 +1,7 @@
 import bench.tests.alltoall
 import bench.tests.bandwidth
 import bench.tests.node
+import bench.util
 from bench.util import util as util
 import datetime
 import logging
@@ -40,12 +41,14 @@ def execute(directory, allrack, allswitch, bandwidth, nodes, allpair):
     reservation_name = get_first_pm_reservation()
     logger.info('reservation: {0}'.format(reservation_name))
 
-    node_list = util.read_node_list(os.path.join(directory,'node_list'))
+    node_list = util.read_node_list(os.path.join(directory, 'node_list'))
     logger.info('nodes: {0}'.format(len(node_list)))
 
+    node_prefix = os.path.join(directory, 'node')
+
     if not (allrack or allswitch or bandwidth or nodes or allpair):
-        logger.info('adding all tests to {0}'.format(directory))
-        bench.tests.node.create(node_list, reservation_name, directory)
+        add_node_tests(node_list, reservation_name, prefix)
+
         bench.tests.bandwidth.create(node_list, reservation_name, directory)
         bench.tests.alltoall.create(
             node_list, reservation_name, directory,
@@ -69,5 +72,11 @@ def execute(directory, allrack, allswitch, bandwidth, nodes, allpair):
             bench.tests.bandwidth.create(node_list, reservation_name, directory)
 
         if nodes:
-            logger.info('adding nodes tests to {0}'.format(directory))
-            bench.tests.node.create(node_list, reservation_name, directory)
+            add_node_tests(node_list, reservation_name, prefix)
+
+
+def add_node_tests (node_list, reservation_name, prefix):
+    logger.info('adding node tests to {0}'.format(prefix))
+    bench.util.mkdir_p(prefix)
+    for node_name in node_list:
+        bench.tests.node.generate(node_name, reservation_name, prefix)

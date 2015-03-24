@@ -34,4 +34,7 @@ setuptools.setup(
             'bench = bench.driver:driver',
         ],
     },
+    package_data={
+        'bench.tests': ['*.job'],
+    },
 )
