@@ -1,46 +1,56 @@
 import argparse
-import automation
 import bench.add as add
+import bench.automation as automation
 import bench.create as create
 import bench.nodelist as nodelist
 import bench.nodes
 import bench.process as process
 import bench.reserve as reserve
 import bench.showq as showq
+import bench.status as status
 import bench.submit as submit
 import datetime
 import glob
 import logging
 import os
-import shutil
-import status
 
 
 def parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('-P', '--directory-prefix', dest='prefix')
+    parser.add_argument('-d', '--directory', help='directory')
     parser.set_defaults(prefix='.')
+
     subparsers = parser.add_subparsers(dest='command')
 
-    create = subparsers.add_parser('create', help='Create the benchmark test scripts.')
-    create.add_argument('-d', '--directory', help='directory', dest='directory')
-    create.add_argument('-N', '--nodes', help='explicit list of nodes to test')
-    create.add_argument('-x', '--exclude-nodes', help='explicit list of nodes to exclude from testing')
-    create.add_argument('-r', '--reservation', help='test a set of reserved nodes')
-    create.add_argument('-X', '--exclude-reservation', help='exclude nodes in a reservation from testing')
+    create = subparsers.add_parser('create', help='Create the benchmark test scripts')
+    create.add_argument('-N', '--nodes',
+                        help = 'explicit list of nodes to test')
+    create.add_argument('-x', '--exclude-nodes',
+                        help = 'explicit list of nodes to exclude from testing')
+    create.add_argument('-r', '--reservation',
+                        help = 'test a set of reserved nodes')
+    create.add_argument('-X', '--exclude-reservation',
+                        help = 'exclude nodes in a reservation from testing')
 
-    add = subparsers.add_parser('add', help='Add a benchmark test.  For options, type bench add -h for help.\n')
-    add.add_argument('-d','--directory', help='directory', dest='directory')
-    add.set_defaults(directory=None)
-    add.add_argument('-r','--allrack', help='alltoall rack level', action='store_true')
-    add.add_argument('-s','--allswitch', help='alltoall switch level', action='store_true')
-    add.add_argument('-p','--allpair', help='alltoall pair level', action='store_true')
-    add.add_argument('-n','--nodes', help='nodes', action='store_true')
-    add.add_argument('-b','--bandwidth', help='bandwidth', action='store_true')
+    add = subparsers.add_parser('add', help='Add a benchmark test')
+    add.add_argument('-r', '--allrack',
+                     help = 'alltoall rack level tests',
+                     action = 'store_true')
+    add.add_argument('-s', '--allswitch',
+                     help = 'alltoall switch level tests',
+                     action = 'store_true')
+    add.add_argument('-p', '--allpair',
+                     help = 'alltoall pair level tests',
+                     action = 'store_true')
+    add.add_argument('-n', '--nodes',
+                     help = 'individual node tests',
+                     action = 'store_true')
+    add.add_argument('-b', '--bandwidth',
+                     help = 'bandwidth tests',
+                     action = 'store_true')
 
     sumbit = subparsers.add_parser('submit', help='Submit all the jobs from create to the scheduler.')
-    sumbit.add_argument('-d','--directory', help='directory', dest='directory')
-    sumbit.set_defaults(directory=None)
     sumbit.add_argument('-r','--allrack', help='alltoall rack level', action='store_true')
     sumbit.add_argument('-s','--allswitch', help='alltoall switch level', action='store_true')
     sumbit.add_argument('-p','--allpair', help='alltoall pair level', action='store_true')
@@ -48,8 +58,6 @@ def parser():
     sumbit.add_argument('-b','--bandwidth', help='bandwidth', action='store_true')
 
     process = subparsers.add_parser('process', help='Process the jobs when they are finished.')
-    process.add_argument('-d','--directory', help='directory', dest='directory')
-    process.set_defaults(directory=None)
     process.add_argument('-r','--allrack', help='alltoall rack level', action='store_true')
     process.add_argument('-s','--allswitch', help='alltoall switch level', action='store_true')
     process.add_argument('-p','--allpair', help='alltoall pair level', action='store_true')
@@ -57,8 +65,6 @@ def parser():
     process.add_argument('-b','--bandwidth', help='bandwidth', action='store_true')
 
     reserve = subparsers.add_parser('reserve', help='Create the necessary reservations.')
-    reserve.add_argument('-d','--directory', help='directory', dest='directory')
-    reserve.set_defaults(directory=None)
     reserve.add_argument('-r','--allrack', help='alltoall rack level', action='store_true')
     reserve.add_argument('-s','--allswitch', help='alltoall switch level', action='store_true')
     reserve.add_argument('-p','--allpair', help='alltoall pair level', action='store_true')
@@ -71,8 +77,6 @@ def parser():
     nodes = subparsers.add_parser('nodes', help='Checks the status of nodes.')
 
     status = subparsers.add_parser('status', help='Concatentates the log file of the current directory.')
-    status.add_argument('-d','--directory', help='directory', dest='directory')
-    status.set_defaults(directory=None)
 
     return parser
 
@@ -162,7 +166,13 @@ def driver():
         )
 
     if args.command == 'add':
-        add.execute(directory, args)
+        add.execute(directory,
+                    allrack = args.allrack,
+                    allswitch = args.allswitch,
+                    bandwidth = args.bandwidth,
+                    nodes = args.nodes,
+                    allpair = args.allpair,
+        )
 
     if args.command == 'submit':
         submit.execute(directory, args)
