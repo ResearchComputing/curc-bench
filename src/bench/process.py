@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import os
 import subprocess
 
@@ -10,7 +8,7 @@ from bench.import_tests import import_alltoall2 as import_alltoall
 from bench.import_tests import import_hpl as import_hpl
 from bench.util import util as util
 
-from util.hostlist import expand_hostlist
+from hostlist import expand_hostlist
 
 import logging
 logger = logging.getLogger('Benchmarks')

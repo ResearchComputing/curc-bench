@@ -11,8 +11,8 @@ import datetime
 
 
 from tests.create import free_SLURM_nodes
-from tests.create import reservations
-from tests.hostlist import expand_hostlist
+from tests.create import get_reserved_nodes
+from hostlist import expand_hostlist
 
 
 class Test_Suite(unittest.TestCase):
@@ -79,7 +79,7 @@ class Test_Suite(unittest.TestCase):
         #Old code using subprocess.Popen
         old_all_nodes = expand_hostlist("node[01-17][01-80]")
         free_nodes = free_SLURM_nodes("node[01-17][01-80]")
-        reserved_nodes = reservations()
+        reserved_nodes = get_reserved_nodes()
 
         diff_set = set(free_nodes).difference(set(reserved_nodes))
         node_list = []
@@ -151,12 +151,12 @@ class Test_Suite(unittest.TestCase):
         self.assertEqual(len(node_list), len(slurm_free_nodes))
         self.assertEqual(set(node_list), set(slurm_free_nodes))
 
-    def test_create_reservations(self):
-        """Test the funcionality of create.reservations when using pyslurm
+    def test_create_get_reserved_nodes(self):
+        """Test the funcionality of create.get_reserved_nodes when using pyslurm
         instead of subprocess.Popen"""
 
         #Old code using Popen
-        reserved_nodes = set(reservations())
+        reserved_nodes = set(get_reserved_nodes())
 
         #New pyslurm
         b = pyslurm.reservation()

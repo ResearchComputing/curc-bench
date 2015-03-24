@@ -15,7 +15,7 @@ import shutil
 import textwrap
 import re
 
-from util.hostlist import expand_hostlist
+from hostlist import expand_hostlist
 from util.xml2obj import xml2obj
 
 import logging

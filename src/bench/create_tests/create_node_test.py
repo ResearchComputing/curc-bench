@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import os
 import sys
 import shutil
@@ -107,33 +105,3 @@ def create(node_list, queue, path):
         values['node_name'] = node
         values['queue_name'] = queue
         create_pbs_template(values, mypath)
-
-
-#==============================================================================
-if __name__ == '__main__':
-
-    from optparse import OptionParser
-    parser = OptionParser()
-    parser.add_option("-q", "--queue", dest="queue", help="PBS Queue")
-    parser.add_option("-l", "--list", dest="list", help="A list of nodes to run on")
-    (options, args) = parser.parse_args()
-
-    # default options
-    queue = "janus-admin"
-    node_list_name = None
-
-    # get the options
-    if options.queue != None:
-        queue = options.queue
-    if options.list != None:
-        node_list_name = options.list
-        node_list = read_node_list(node_list_name)
-        #print node_list
-    else:
-        print "please specify a node list."
-        exit()
-
-    print "creating Node tests"
-
-    current_path = os.getcwd()
-    create(node_list, queue, current_path)

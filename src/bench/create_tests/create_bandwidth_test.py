@@ -1,5 +1,3 @@
-#!/curc/admin/benchmarks/bin/python
-
 import os
 import sys
 import shutil

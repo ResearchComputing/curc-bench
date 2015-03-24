@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import os
 import subprocess
 import datetime
@@ -8,7 +6,6 @@ import textwrap
 import re
 import datetime
 
-from util.hostlist import expand_hostlist
 from util.xml2obj import xml2obj
 
 import logging

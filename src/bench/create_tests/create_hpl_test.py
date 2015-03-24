@@ -1,5 +1,3 @@
-#!/curc/admin/benchmarks/bin/python
-
 from jinja2 import Template
 
 import fileinput, os, sys
@@ -233,47 +231,3 @@ def create(node_list, queue, path):
 #     groups = create_node_groups(name_list,n)
 #     for i in range(len(groups)):
 #         render(mypath, queue, groups[i], percent)
-
-
-
-#==============================================================================
-if __name__ == '__main__':
-
-    from optparse import OptionParser
-    parser = OptionParser()
-    parser.add_option("-n", "--nodes", dest="nodes", help="Number of nodes to use")
-    parser.add_option("-m", "--memory", dest="memory", help="Percent of memory to use (e.g. -m 20 for 20%)")
-    parser.add_option("-q", "--queue", dest="queue", help="PBS Queue")
-    parser.add_option("-p", "--prefix", dest="prefix", help="A job prefix string")
-    parser.add_option("-l", "--list", dest="list", help="A list of nodes to run on")
-    (options, args) = parser.parse_args()
-
-    # default options
-    nodes = 1
-    percent = 20
-    queue = "janus-admin"
-    prefix = None
-    node_list_name = None
-
-    # get the options
-    if options.nodes:
-        nodes = int(options.nodes)
-    if options.memory:
-        percent = int(options.memory)
-    if options.queue:
-        queue = options.queue
-    if options.prefix:
-        prefix = options.prefix
-    if options.list:
-        node_list_name = options.list
-        tmp = read_node_list(node_list_name)
-        node_lists = categorize(tmp)
-    else:
-        print "please specify a node list."
-        exit()
-
-    print "creating HPL jobs " + str(nodes) + " " + str(percent)
-    for name, name_list in node_lists.iteritems():
-        if len(name_list) > 0:
-            dirname = "hpl-" + str(nodes)
-            create(name_list,queue,nodes,percent,dirname)
