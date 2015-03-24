@@ -40,12 +40,14 @@ def parser():
 
     sumbit = subparsers.add_parser('submit', help='Submit all the jobs from create to the scheduler.')
     sumbit.add_argument('-d','--directory', help='directory', dest='directory')
-    sumbit.set_defaults(directory=None)
-    sumbit.add_argument('-r','--allrack', help='alltoall rack level', action='store_true')
-    sumbit.add_argument('-s','--allswitch', help='alltoall switch level', action='store_true')
-    sumbit.add_argument('-p','--allpair', help='alltoall pair level', action='store_true')
-    sumbit.add_argument('-n','--nodes', help='nodes', action='store_true')
-    sumbit.add_argument('-b','--bandwidth', help='bandwidth', action='store_true')
+    submit.set_defaults(directory=None)
+    sumbit.add_argument('-r', '--allrack', help='alltoall rack level', action='store_true')
+    sumbit.add_argument('-s', '--allswitch', help='alltoall switch level', action='store_true')
+    sumbit.add_argument('-p', '--allpair', help='alltoall pair level', action='store_true')
+    sumbit.add_argument('-n', '--nodes', help='nodes', action='store_true')
+    sumbit.add_argument('-b', '--bandwidth', help='bandwidth', action='store_true')
+    submit.add_argument('-p', '--pause', help='number of jobs submitted before pause', action='store_true')
+    submit.set_defaults(pause=None)
 
     process = subparsers.add_parser('process', help='Process the jobs when they are finished.')
     process.add_argument('-d','--directory', help='directory', dest='directory')
@@ -165,7 +167,14 @@ def driver():
         add.execute(directory, args)
 
     if args.command == 'submit':
-        submit.execute(directory, args)
+        submit.execute(directory, 
+                        allrack = args.allrack,
+                        allswitch = args.allswitch,
+                        allpair = args.allpair,
+                        nodes = args.nodes,
+                        bandwidth = args.bandwidth,
+                        pause = args.pause,
+        )
 
     if args.command == 'process':
         process.execute(directory, args)

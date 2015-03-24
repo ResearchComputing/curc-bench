@@ -1,16 +1,11 @@
 import os
 import subprocess
-
-import datetime
-import shutil
 import time
 
 import logging
 logger = logging.getLogger('Benchmarks')
 
-import util.config as config
-
-def submit(directory, folder, index):
+def submit(directory, folder, index, pause):
 
     sub_folder = os.path.join(directory, folder)
     for dirname, dirnames, filenames in os.walk(sub_folder):
@@ -20,45 +15,53 @@ def submit(directory, folder, index):
             if filename.find("script_") == 0:
                 logger.info(filename)
                 cmd = "sbatch " + filename
-                if index % config.submit_jobs == 0:
-                    logger.info("waiting 10 seconds...")
-                    time.sleep(10)
-                try:
-                    out = subprocess.check_output([cmd] , shell=True)
-                except:
-                    logger.error("Cannot submit job "+ cmd)
-                #os.system(cmd)
-                index+=1
+                #No waiting between job submissions
+                if pause == None:
+                    try:
+                        out = subprocess.check_output([cmd], shell=True)
+                    except:
+                        logger.error("Cannot submit job "+ cmd)
+                    index += 1
+                #Wait 10 seconds every pause jobs
+                else:
+                    if index % pause == 0:
+                        logger.info("waiting 10 seconds...")
+                        time.sleep(10)
+                    try:
+                        out = subprocess.check_output([cmd], shell=True)
+                    except:
+                        logger.error("Cannot submit job "+ cmd)
+                    index += 1
         os.chdir(current)
     return index
 
 
 
-def execute(directory, args):
+def execute(directory, allrack=None, allswitch=None, bandwidth=None, nodes=None, allpair=None, pause=None):
 
     # Create directory structure
     logger.info(directory)
 
     index = 1
-    if not args.allrack and not args.allswitch and not args.bandwidth and not args.nodes and not args.allpair:
+    if not (allrack or allswitch or bandwidth or nodes or allpair):
 
-       index = submit(directory,"nodes", index)
-       index = submit(directory,"bandwidth", index)
-       index = submit(directory,"alltoall_rack", index)
-       index = submit(directory,"alltoall_switch", index)
-       index = submit(directory,"alltoall_pair", index)
+        index = submit(directory, "nodes", index, pause)
+        index = submit(directory, "bandwidth", index, pause)
+        index = submit(directory, "alltoall_rack", index, pause)
+        index = submit(directory, "alltoall_switch", index, pause)
+        index = submit(directory, "alltoall_pair", index, pause)
 
     else:
 
-        if args.allrack==True:
-            index = submit(directory,"alltoall_rack", index)
-        if args.allswitch==True:
-            index = submit(directory,"alltoall_switch", index)
-        if args.allpair==True:
-            index = submit(directory,"alltoall_pair", index)
-        if args.bandwidth==True:
-            index = submit(directory,"bandwidth", index)
-        if args.nodes==True:
-           index = submit(directory,"nodes", index)
+        if allrack == True:
+            index = submit(directory, "alltoall_rack", index, pause)
+        if allswitch == True:
+            index = submit(directory, "alltoall_switch", index, pause)
+        if allpair == True:
+            index = submit(directory, "alltoall_pair", index, pause)
+        if bandwidth == True:
+            index = submit(directory, "bandwidth", index, pause)
+        if nodes == True:
+            index = submit(directory, "nodes", index, pause)
 
     logger.info(str(index-1)+" jobs")
