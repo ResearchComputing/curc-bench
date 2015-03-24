@@ -5,6 +5,7 @@ import shutil
 import textwrap
 import re
 import datetime
+import pyslurm
 
 from util.xml2obj import xml2obj
 
@@ -24,36 +25,26 @@ from bench.util import util as util
 
 def execute(directory, args):
 
-
-
     logger.info(directory)
     print directory
     queue_name = 'janus-admin'
 
-    pid = subprocess.Popen('scontrol show reservation', shell=True,
-                           stdout=subprocess.PIPE)
-    pid.wait()
-    output, error = pid.communicate()
-    tmp = re.findall(r'ReservationName=([0-9]+.[0-9]+PM-janus) StartTime=([0-9]+-[0-9]+-[0-9]+)', output)
-    print tmp
+    a = pyslurm.reservation()
+    reserve_dict = a.get()
+    queue_name = ''
+    queue_time = ''
 
-    import time
-
-    # is there more than one?
-    queue_name = tmp[0][0]
-    queue_time = datetime.datetime.strptime(tmp[0][1], "%Y-%m-%d")
+    for key, value in reserve_dict.iteritems():
+        if key.endswith('PM-janus'):
+            queue_name = key
+            for part_key in sorted(value.iterkeys()):
+                if part_key == "start_time":
+                    time1 = datetime.datetime.fromtimestamp(int(value[part_key]))
+                    time1 = time1.replace(hour=0, minute=0, second=0, microsecond=0)
+                    queue_time = time1
 
     # queue_date = date.fromtimestamp(tmp[0][1])
     print queue_time
-    if len(tmp) > 1:
-      # find the min...
-        for i in tmp[1:]:
-            i_name = i[0]
-            i_time = i[1]
-            i_var = datetime.datetime.strptime(i_time, "%Y-%m-%d")
-            if (i_var - queue_time).days < 0:
-                queue_name = i_name
-                queue_time = i_var
 
     logger.info("Using the PM-janus queue with the oldest time stamp.")
     logger.info("queue name".ljust(20)+queue_name.rjust(5))

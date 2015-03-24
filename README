@@ -14,7 +14,6 @@ fix if needed)
 login01 >bench process -n
 login01 >bench reserve -n
 
-
 3. Bandwidth Test
 login01 >bench add -b
 login01 >bench submit -b
