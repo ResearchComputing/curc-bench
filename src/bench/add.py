@@ -1,6 +1,6 @@
-import bench.create_tests.create_alltoall as create_alltoall
-import bench.create_tests.create_bandwidth_test as create_bandwidth_test
-import bench.create_tests.create_node_test as create_node_test
+import bench.tests.alltoall
+import bench.tests.bandwidth
+import bench.tests.node
 from bench.util import util as util
 import datetime
 import logging
@@ -45,9 +45,9 @@ def execute(directory, allrack, allswitch, bandwidth, nodes, allpair):
 
     if not (allrack or allswitch or bandwidth or nodes or allpair):
         logger.info('adding all tests to {0}'.format(directory))
-        create_node_test.create(node_list, reservation_name, directory)
-        create_bandwidth_test.create(node_list, reservation_name, directory)
-        create_alltoall.create(
+        bench.tests.node.create(node_list, reservation_name, directory)
+        bench.tests.bandwidth.create(node_list, reservation_name, directory)
+        bench.tests.alltoall.create(
             node_list, reservation_name, directory,
             allrack = True,
             allswitch = True,
@@ -57,17 +57,17 @@ def execute(directory, allrack, allswitch, bandwidth, nodes, allpair):
     else:
         if allrack or allswitch or allpair:
             logger.info('adding alltoall tests to {0}'.format(directory))
-            create_alltoall.create(
+            bench.tests.alltoall.create(
                 node_list, reservation_name, directory,
                 allrack = allrack,
                 allswitch = allswitch,
                 allpair = allpair,
             )
 
-        if args.bandwidth:
+        if bandwidth:
             logger.info('adding bandwidth tests to {0}'.format(directory))
-            create_bandwidth_test.create(node_list, reservation_name, directory)
+            bench.tests.bandwidth.create(node_list, reservation_name, directory)
 
-        if args.nodes:
+        if nodes:
             logger.info('adding nodes tests to {0}'.format(directory))
-            create_node_test.create(node_list, reservation_name, directory)
+            bench.tests.node.create(node_list, reservation_name, directory)
