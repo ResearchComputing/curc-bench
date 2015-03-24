@@ -23,7 +23,7 @@ setuptools.setup(
     package_dir = {'': 'src'},
     packages=['bench'],
     install_requires=['argparse', 'jinja2', 'python-hostlist'],#, 'NumPy>=1.7.0'],
-    tests_require=['nose', 'importlib'],
+    tests_require=['nose', 'importlib', 'mock'],
     test_suite = 'nose.collector',
     long_description=read('README'),
     classifiers=[

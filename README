@@ -1,11 +1,16 @@
-NODE TEST
+## Running tests
 
-1. Create a new directory in /curc/admin/benchmarks/data that indicates the 
-   date the benchmarks are run. I use the month-dd-yyyy format (e.g. may-25-2012).
+    $ python setup.py test
+
+## NODE TEST
+
+1. Create a new directory in /curc/admin/benchmarks/data that
+   indicates the date the benchmarks are run. I use the month-dd-yyyy
+   format (e.g. may-25-2012).
    
-2. Navigate into the new directory and create PBS scripts for the nodes you 
-   would like to test using the create_node_test.py python script.
-   There are several ways to do this.   
+2. Navigate into the new directory and create PBS scripts for the
+   nodes you would like to test using the create_node_test.py python
+   script.  There are several ways to do this.
    
    a.	create_node_test.py
 
