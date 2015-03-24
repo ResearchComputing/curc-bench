@@ -1,4 +1,3 @@
-TESTS
 
 1. Load modules
 login01 >module load python/anaconda-1.8
@@ -43,6 +42,12 @@ login01 >bench submit -r
 (wait til jobs finish)
 login01 >bench process -r
 login01 >bench reserve -r
+
+
+## Running tests
+
+    $ python setup.py test
+
 
 
 Non-Python Dependencies:
