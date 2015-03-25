@@ -48,6 +48,8 @@ def parser():
     sumbit.add_argument('-b', '--bandwidth', help='bandwidth', action='store_true')
     submit.add_argument('-p', '--pause', help='number of jobs submitted before pause', action='store_true')
     submit.set_defaults(pause=None)
+    submit.add_argument('-q', '--reservation', help='reservation to run in', action='store_true')
+    submit.set_defaults(reservation=None)
 
     process = subparsers.add_parser('process', help='Process the jobs when they are finished.')
     process.add_argument('-d','--directory', help='directory', dest='directory')
@@ -174,6 +176,7 @@ def driver():
                         nodes = args.nodes,
                         bandwidth = args.bandwidth,
                         pause = args.pause,
+                        reservation = args.reservation,
         )
 
     if args.command == 'process':
