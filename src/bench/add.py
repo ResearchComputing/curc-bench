@@ -37,21 +37,18 @@ def get_first_pm_reservation ():
     return reservation_name
 
 
-def execute(directory, allrack, allswitch, bandwidth, nodes, allpair):
+def execute(prefix, allrack, allswitch, bandwidth, nodes, allpair):
     reservation_name = get_first_pm_reservation()
     logger.info('reservation: {0}'.format(reservation_name))
 
-    node_list = util.read_node_list(os.path.join(directory, 'node_list'))
+    node_list = util.read_node_list(os.path.join(prefix, 'node_list'))
     logger.info('nodes: {0}'.format(len(node_list)))
-
-    node_prefix = os.path.join(directory, 'node')
 
     if not (allrack or allswitch or bandwidth or nodes or allpair):
         add_node_tests(node_list, reservation_name, prefix)
-
-        bench.tests.bandwidth.create(node_list, reservation_name, directory)
+        add_bandwidth_tests(node_list, reservation_name, prefix)
         bench.tests.alltoall.create(
-            node_list, reservation_name, directory,
+            node_list, reservation_name, prefix,
             allrack = True,
             allswitch = True,
             allpair = True,
@@ -59,24 +56,30 @@ def execute(directory, allrack, allswitch, bandwidth, nodes, allpair):
 
     else:
         if allrack or allswitch or allpair:
-            logger.info('adding alltoall tests to {0}'.format(directory))
+            logger.info('adding alltoall tests to {0}'.format(prefix))
             bench.tests.alltoall.create(
-                node_list, reservation_name, directory,
+                node_list, reservation_name, prefix,
                 allrack = allrack,
                 allswitch = allswitch,
                 allpair = allpair,
             )
 
         if bandwidth:
-            logger.info('adding bandwidth tests to {0}'.format(directory))
-            bench.tests.bandwidth.create(node_list, reservation_name, directory)
+            add_bandwidth_tests(node_list, reservation_name, prefix)
 
         if nodes:
             add_node_tests(node_list, reservation_name, prefix)
 
 
 def add_node_tests (node_list, reservation_name, prefix):
-    logger.info('adding node tests to {0}'.format(prefix))
+    node_prefix = os.path.join(prefix, 'node')
+    logger.info('adding node tests to {0}'.format(node_prefix))
     bench.util.mkdir_p(prefix)
-    for node_name in node_list:
-        bench.tests.node.generate(node_name, reservation_name, prefix)
+    bench.tests.node.generate(node_list, reservation_name, node_prefix)
+
+
+def add_bandwidth_tests (node_list, reservation_name, prefix):
+    bandwidth_prefix = os.path.join(prefix, 'bandwidth')
+    logger.info('adding bandwidth tests to {0}'.format(prefix))
+    bench.util.mkdir_p(bandwidth_prefix)
+    bench.tests.bandwidth.generate(node_list, reservation_name, bandwidth_prefix)

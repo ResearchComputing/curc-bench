@@ -1,7 +1,5 @@
 import json
 import re
-import logging
-logger = logging.getLogger('Benchmarks')
 
 
 def read_info_file(in_file):
@@ -82,8 +80,6 @@ def rack_switch_18(node_list):
     except:
         pass
 
-    logger.debug("These numbers should be the same")
-    logger.debug(str(keep)+" "+str(count)+" "+str(len(node_list)))
     return rack_switch
 
 
@@ -126,37 +122,31 @@ def rack_subsets(data, node_list):
 
 def rack_list_subsets(node_list):
     data = {}
-    try:
-        size = len(node_list)
+    size = len(node_list)
 
-        if size > 2:
-            if size%2 == 0:
-                for i in xrange(0,size-1,2):
-                    list_string = 'set_'+str(i)+'_list'
-                    list_string = 'infiniband_' + node_list[i] + '_' + node_list[i+1]
-                    data[list_string] = []
-                    data[list_string].append(node_list[i])
-                    data[list_string].append(node_list[i+1])
-
-            else:
-                for i in xrange(0,size-2,2):
-                    list_string = 'infiniband_' + node_list[i] + '_' + node_list[i+1]
-                    data[list_string] = []
-                    data[list_string].append(node_list[i])
-                    data[list_string].append(node_list[i+1])
-                index = size-2
-                list_string = 'infiniband_' + node_list[index] + '-' + node_list[index+1]
+    if size > 2:
+        if size%2 == 0:
+            for i in xrange(0,size-1,2):
+                list_string = 'set_'+str(i)+'_list'
+                list_string = 'infiniband_' + node_list[i] + '_' + node_list[i+1]
                 data[list_string] = []
-                data[list_string].append(node_list[index])
-                data[list_string].append(node_list[index+1])
+                data[list_string].append(node_list[i])
+                data[list_string].append(node_list[i+1])
 
-        elif size == 2:
-            list_string = 'infiniband_' + node_list[0] + '_' + node_list[1]
+        else:
+            for i in xrange(0,size-2,2):
+                list_string = 'infiniband_' + node_list[i] + '_' + node_list[i+1]
+                data[list_string] = []
+                data[list_string].append(node_list[i])
+                data[list_string].append(node_list[i+1])
+            index = size-2
+            list_string = 'infiniband_' + node_list[index] + '-' + node_list[index+1]
             data[list_string] = []
-            data[list_string].append(node_list[0])
-            data[list_string].append(node_list[1])
-            return data
-    except:
-        print "problem with %s", size
+            data[list_string].append(node_list[index])
+            data[list_string].append(node_list[index+1])
+
+    elif size == 2:
+        list_string = 'infiniband_' + node_list[0] + '_' + node_list[1]
+        data[list_string] = node_list[:]
 
     return data
