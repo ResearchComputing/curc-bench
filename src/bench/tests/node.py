@@ -9,11 +9,10 @@ TEMPLATE = jinja2.Template(
 )
 
 
-def generate(node_list, reservation, prefix):
+def generate(node_list, prefix):
     for node in node_list:
         output_file = os.path.join(prefix, '{0}.job'.format(node))
         with open(output_file, 'w') as fp:
             fp.write(TEMPLATE.render(
                 node_name = node,
-                reservation_name = reservation,
             ))

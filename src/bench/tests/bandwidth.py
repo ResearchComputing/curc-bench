@@ -12,7 +12,7 @@ TEMPLATE = jinja2.Template(
 )
 
 
-def generate(node_list, reservation_name, prefix):
+def generate(node_list, prefix):
     switches = bench.util.infiniband.rack_switch_18(node_list)
     rack_list = []
     for switch_name, switch_node_list in switches.iteritems():
@@ -26,6 +26,5 @@ def generate(node_list, reservation_name, prefix):
             with open(output_file, 'w') as fp:
                 fp.write(TEMPLATE.render(
                     job_name = job_name,
-                    reservation_name = reservation_name,
                     node_list = node_list,
                 ))
