@@ -12,19 +12,18 @@ TEMPLATE = jinja2.Template(
 )
 
 
-def generate(node_list, prefix):
-    switches = bench.util.infiniband.rack_switch_18(node_list)
-    rack_list = []
-    for switch_name, switch_node_list in switches.iteritems():
-        if not switch_node_list:
+def generate(nodes, prefix):
+    switches = bench.util.infiniband.rack_switch_18(nodes)
+    for switch_name, switch_nodes in switches.iteritems():
+        if not switch_nodes:
             continue
-        node_pairs = bench.util.infiniband.rack_list_subsets(switch_node_list)
+        node_pairs = bench.util.infiniband.rack_list_subsets(switch_nodes)
         for node_pair in node_pairs.itervalues():
-            node_list = ','.join(node_pair)
+            node_pair = list(sorted(node_pair))
             job_name = '-'.join(node_pair)
             output_file = os.path.join(prefix, '{0}.job'.format(job_name))
             with open(output_file, 'w') as fp:
                 fp.write(TEMPLATE.render(
                     job_name = job_name,
-                    node_list = node_list,
+                    nodes = node_pair,
                 ))

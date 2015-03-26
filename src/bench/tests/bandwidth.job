@@ -1,6 +1,5 @@
 #!/bin/bash
-#SBATCH -N 2
-#SBATCH --nodelist={{node_list}}
+#SBATCH --nodelist={{','.join(nodes)}}
 #SBATCH --time=0:45:00
 #SBATCH --ntasks-per-node=1
 

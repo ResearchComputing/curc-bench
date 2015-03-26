@@ -36,7 +36,7 @@ def render(prefix, nodes, node_list_name):
     output_file = os.path.join(prefix, node_list_name)
     with open(output_file, 'w') as fp:
         fp.write(TEMPLATE.render(
-            id_ = node_list_name,
-            nodes = nodes,
+            node_list_name = node_list_name,
+            nodes = list(sorted(nodes)),
             num_nodes = len(nodes),
         ))

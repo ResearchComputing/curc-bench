@@ -4,11 +4,11 @@
 #SBATCH --ntasks-per-node=12
 
 
-mkdir -p test_{{id_}}
-cd test_{{id_}}
+mkdir -p test_{{node_list_name}}
+cd test_{{node_list_name}}
 
 
-echo "{{id_}}
+echo "{{node_list_name}}
 {{num_nodes}}
 {% for node in nodes -%}
 {{node}}
