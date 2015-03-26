@@ -6,7 +6,10 @@ import os
 import pkg_resources
 
 
-TEMPLATE = jinja2.Template(pkg_resources.resource_string(__name__, 'bandwidth.job'))
+TEMPLATE = jinja2.Template(
+    pkg_resources.resource_string(__name__, 'bandwidth.job'),
+    keep_trailing_newline=True,
+)
 
 
 def generate(node_list, reservation_name, prefix):
@@ -17,21 +20,12 @@ def generate(node_list, reservation_name, prefix):
             continue
         node_pairs = bench.util.infiniband.rack_list_subsets(switch_node_list)
         for node_pair in node_pairs.itervalues():
-            render(prefix, reservation_name, node_pair)
-
-
-def render(prefix, reservation_name, node_pair):
-    node_list = ','.join(node_pair)
-    job_name = '-'.join(node_pair)
-    values = {
-        'job_name': job_name,
-        'reservation_name': reservation_name,
-        'node_list': node_list,
-    }
-    output_file = os.path.join(prefix, '{0}.job'.format(job_name))
-    with open(output_file, 'w') as fp:
-        fp.write(TEMPLATE.render(
-            job_name = job_name,
-            reservation_name = reservation_name,
-            node_list = node_list,
-        ))
+            node_list = ','.join(node_pair)
+            job_name = '-'.join(node_pair)
+            output_file = os.path.join(prefix, '{0}.job'.format(job_name))
+            with open(output_file, 'w') as fp:
+                fp.write(TEMPLATE.render(
+                    job_name = job_name,
+                    reservation_name = reservation_name,
+                    node_list = node_list,
+                ))

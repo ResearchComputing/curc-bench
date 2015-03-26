@@ -179,9 +179,6 @@ def render(mypath, queue, node_list):
 
     hpl['job_name'] = job_name
 
-    #infiniband.rack_subsets(hpl, node_list)
-    #print hpl
-
     create_pbs_template(mypath, hpl)
 
 

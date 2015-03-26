@@ -3,7 +3,10 @@ import os
 import pkg_resources
 
 
-TEMPLATE = jinja2.Template(pkg_resources.resource_string(__name__, 'node.job'))
+TEMPLATE = jinja2.Template(
+    pkg_resources.resource_string(__name__, 'node.job'),
+    keep_trailing_newline=True,
+)
 
 
 def generate(node_list, reservation, prefix):

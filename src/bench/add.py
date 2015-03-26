@@ -37,36 +37,29 @@ def get_first_pm_reservation ():
     return reservation_name
 
 
-def execute(prefix, allrack, allswitch, bandwidth, nodes, allpair):
+def execute(prefix, alltoall_rack, alltoall_switch, alltoall_pair, bandwidth, nodes):
     reservation_name = get_first_pm_reservation()
     logger.info('reservation: {0}'.format(reservation_name))
 
     node_list = util.read_node_list(os.path.join(prefix, 'node_list'))
     logger.info('nodes: {0}'.format(len(node_list)))
 
-    if not (allrack or allswitch or bandwidth or nodes or allpair):
+    if not (alltoall_rack or alltoall_switch or alltoall_pair or bandwidth or nodes):
         add_node_tests(node_list, reservation_name, prefix)
         add_bandwidth_tests(node_list, reservation_name, prefix)
-        bench.tests.alltoall.create(
-            node_list, reservation_name, prefix,
-            allrack = True,
-            allswitch = True,
-            allpair = True,
-        )
+        add_allrack_tests(node_list, reservation_name, prefix)
+        add_allswitch_tests(node_list, reservation_name, prefix)
+        add_allpair_tests(node_list, reservation_name, prefix)
 
     else:
-        if allrack or allswitch or allpair:
-            logger.info('adding alltoall tests to {0}'.format(prefix))
-            bench.tests.alltoall.create(
-                node_list, reservation_name, prefix,
-                allrack = allrack,
-                allswitch = allswitch,
-                allpair = allpair,
-            )
-
+        if alltoall_rack:
+            add_allrack_tests(node_list, reservation_name, prefix)
+        if alltoall_switch:
+            add_allswitch_tests(node_list, reservation_name, prefix)
+        if alltoall_pair:
+            add_allpair_tests(node_list, reservation_name, prefix)
         if bandwidth:
             add_bandwidth_tests(node_list, reservation_name, prefix)
-
         if nodes:
             add_node_tests(node_list, reservation_name, prefix)
 
@@ -83,3 +76,24 @@ def add_bandwidth_tests (node_list, reservation_name, prefix):
     logger.info('adding bandwidth tests to {0}'.format(prefix))
     bench.util.mkdir_p(bandwidth_prefix)
     bench.tests.bandwidth.generate(node_list, reservation_name, bandwidth_prefix)
+
+
+def add_allrack_tests (node_list, reservation_name, prefix):
+    allrack_prefix = os.path.join(prefix, 'allrack')
+    logger.info('adding allrack tests to {0}'.format(prefix))
+    bench.util.mkdir_p(allrack_prefix)
+    bench.tests.alltoall.generate_allrack(node_list, reservation_name, allrack_prefix)
+
+
+def add_allswitch_tests (node_list, reservation_name, prefix):
+    allswitch_prefix = os.path.join(prefix, 'allswitch')
+    logger.info('adding allswitch tests to {0}'.format(prefix))
+    bench.util.mkdir_p(allswitch_prefix)
+    bench.tests.alltoall.generate_allswitch(node_list, reservation_name, allswitch_prefix)
+
+
+def add_allpair_tests (node_list, reservation_name, prefix):
+    allpair_prefix = os.path.join(prefix, 'allpair')
+    logger.info('adding allpair tests to {0}'.format(prefix))
+    bench.util.mkdir_p(allpair_prefix)
+    bench.tests.alltoall.generate_allpair(node_list, reservation_name, allpair_prefix)

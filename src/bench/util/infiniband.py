@@ -1,3 +1,4 @@
+import bench.util
 import json
 import re
 
@@ -83,70 +84,23 @@ def rack_switch_18(node_list):
     return rack_switch
 
 
-def rack_switch_pairs(node_list):
+def rack_switch_pairs(nodes):
     results = {}
-    test = rack_switch_18(node_list)
-    for name, name_list in test.iteritems():
-        data = rack_list_subsets(name_list)
-        results = dict(results.items() + data.items())
-
+    switch_nodes = rack_switch_18(nodes)
+    for switch_name, switch_nodes in switch_nodes.iteritems():
+        data = rack_list_subsets(switch_nodes)
+        results.update(data)
     return results
 
 
-def rack_subsets(data, node_list):
-    try:
-        size = len(node_list)
-
-        if size > 2:
-            if size%2 == 0:
-                for i in xrange(0,size-1,2):
-                    list_string = 'set_'+str(i)+'_list'
-                    name_string = 'set_'+str(i)+'_name'
-                    data[list_string] = node_list[i]+","+node_list[i+1]
-                    data[name_string] = node_list[i]+"_"+node_list[i+1]
-            else:
-                for i in xrange(0,size-2,2):
-                    list_string = 'set_'+str(i)+'_list'
-                    name_string = 'set_'+str(i)+'_name'
-                    data[list_string] = node_list[i]+","+node_list[i+1]
-                    data[name_string] = node_list[i]+"_"+node_list[i+1]
-                index = size-2
-                list_string = 'set_last_list'
-                name_string = 'set_last_name'
-                data[list_string] = node_list[index]+","+node_list[index+1]
-                data[name_string] = node_list[index]+"_"+node_list[index+1]
-
-    except:
-        print "problem with %s", size
-
-
-def rack_list_subsets(node_list):
+def rack_list_subsets(nodes):
     data = {}
-    size = len(node_list)
-
-    if size > 2:
-        if size%2 == 0:
-            for i in xrange(0,size-1,2):
-                list_string = 'set_'+str(i)+'_list'
-                list_string = 'infiniband_' + node_list[i] + '_' + node_list[i+1]
-                data[list_string] = []
-                data[list_string].append(node_list[i])
-                data[list_string].append(node_list[i+1])
-
+    for node_pair in bench.util.chunks(nodes, 2):
+        try:
+            key = 'infiniband_{0}_{1}'.format(*node_pair)
+        except IndexError:
+            # odd-length list might end with a single node
+            continue
         else:
-            for i in xrange(0,size-2,2):
-                list_string = 'infiniband_' + node_list[i] + '_' + node_list[i+1]
-                data[list_string] = []
-                data[list_string].append(node_list[i])
-                data[list_string].append(node_list[i+1])
-            index = size-2
-            list_string = 'infiniband_' + node_list[index] + '-' + node_list[index+1]
-            data[list_string] = []
-            data[list_string].append(node_list[index])
-            data[list_string].append(node_list[index+1])
-
-    elif size == 2:
-        list_string = 'infiniband_' + node_list[0] + '_' + node_list[1]
-        data[list_string] = node_list[:]
-
+            data[key] = node_pair
     return data

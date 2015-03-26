@@ -34,13 +34,13 @@ def parser():
                         help = 'exclude nodes in a reservation from testing')
 
     add = subparsers.add_parser('add', help='Add a benchmark test')
-    add.add_argument('-r', '--allrack',
+    add.add_argument('-r', '--alltoall-rack',
                      help = 'alltoall rack level tests',
                      action = 'store_true')
-    add.add_argument('-s', '--allswitch',
+    add.add_argument('-s', '--alltoall-switch',
                      help = 'alltoall switch level tests',
                      action = 'store_true')
-    add.add_argument('-p', '--allpair',
+    add.add_argument('-p', '--alltoall-pair',
                      help = 'alltoall pair level tests',
                      action = 'store_true')
     add.add_argument('-n', '--nodes',
@@ -167,11 +167,11 @@ def driver():
 
     if args.command == 'add':
         add.execute(directory,
-                    allrack = args.allrack,
-                    allswitch = args.allswitch,
+                    alltoall_rack = args.alltoall_rack,
+                    alltoall_switch = args.alltoall_switch,
+                    alltoall_pair = args.alltoall_pair,
                     bandwidth = args.bandwidth,
                     nodes = args.nodes,
-                    allpair = args.allpair,
         )
 
     if args.command == 'submit':
