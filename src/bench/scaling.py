@@ -24,7 +24,7 @@ def execute(directory):
     util.create_directory_structure(mypath)
 
     logger.info("Creating Scaling Tests")
-    rack_switch = infiniband.rack_switch_18(node_list)
+    rack_switch = infiniband.get_switch_nodes(node_list)
     preference_list = []
     for name, name_list in rack_switch.iteritems():
         if len(name_list) > 0:

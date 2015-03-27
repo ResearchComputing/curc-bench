@@ -49,6 +49,8 @@ def parser():
     add.add_argument('-b', '--bandwidth',
                      help = 'bandwidth tests',
                      action = 'store_true')
+    add.add_argument('-t', '--topology-file',
+                     help = 'slurm topology.conf')
 
     sumbit = subparsers.add_parser('submit', help='Submit all the jobs from create to the scheduler.')
     sumbit.add_argument('-r','--allrack', help='alltoall rack level', action='store_true')
@@ -166,7 +168,7 @@ def driver():
         )
 
     if args.command == 'add':
-        add.execute(directory,
+        add.execute(directory, args.topology_file,
                     alltoall_rack = args.alltoall_rack,
                     alltoall_switch = args.alltoall_switch,
                     alltoall_pair = args.alltoall_pair,

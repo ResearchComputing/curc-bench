@@ -12,21 +12,21 @@ TEMPLATE = jinja2.Template(
 
 
 def generate_alltoall_rack(nodes, prefix):
-    rack_nodes = bench.util.infiniband.rack(nodes)
+    rack_nodes = bench.util.infiniband.get_rack_nodes(nodes)
     for rack_name, rack_nodes in rack_nodes.iteritems():
         if rack_nodes:
             render(prefix, rack_nodes, rack_name)
 
 
-def generate_alltoall_switch(nodes, prefix):
-    switch_nodes = bench.util.infiniband.rack_switch_18(nodes)
+def generate_alltoall_switch(nodes, topology, prefix):
+    switch_nodes = bench.util.infiniband.get_switch_nodes(nodes, topology)
     for switch_name, switch_nodes in switch_nodes.iteritems():
         if switch_nodes:
             render(prefix, switch_nodes, switch_name)
 
 
-def generate_alltoall_pair(nodes, prefix):
-    node_pairs = bench.util.infiniband.rack_switch_pairs(nodes)
+def generate_alltoall_pair(nodes, topology, prefix):
+    node_pairs = bench.util.infiniband.get_switch_node_pairs(nodes, topology)
     for pair_name, name_list in node_pairs.iteritems():
         if name_list:
             render(prefix, name_list, pair_name)

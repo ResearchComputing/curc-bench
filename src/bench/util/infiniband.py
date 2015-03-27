@@ -1,6 +1,31 @@
 import bench.util
+import collections
+import hostlist
 import json
 import re
+
+
+SWITCH_NAME_P = re.compile(r'SwitchName=([^ ]+)')
+NODES_P = re.compile(r'Nodes=([^ ]+)')
+
+
+def parse_topology_conf (topology_file):
+    with open(topology_file) as fp:
+        for line in fp:
+            line = line.rstrip()
+            switch_match = SWITCH_NAME_P.search(line)
+            if not switch_match:
+                continue
+            nodes_match = NODES_P.search(line)
+            if not nodes_match:
+                continue
+            switch_name = switch_match.group(1)
+            nodes = set(hostlist.expand_hostlist(nodes_match.group(1)))
+            yield switch_name, nodes
+
+
+def get_topology (topology_file):
+    return dict(parse_topology_conf(topology_file))
 
 
 def read_info_file(in_file):
@@ -13,89 +38,34 @@ def read_info_file(in_file):
     return node_list
 
 
-def rack(node_list):
-    rack_switch = {}
-    for node in node_list:
+def get_rack_nodes(nodes):
+    rack_nodes = collections.defaultdict(set)
+    for node in nodes:
         rack_num = node[4:6]
-        rack_name = 'infiniband_rack_' + str(rack_num)
-        if rack_name not in rack_switch:
-            rack_switch[rack_name] = []
-        rack_switch[rack_name].append(node)
-    return rack_switch
+        rack_name = 'rack_{0}'.format(rack_num)
+        rack_nodes[rack_name].add(node)
+    return rack_nodes
 
 
-def rack_switch_18(node_list):
-    rack_switch = json.load(open('/curc/admin/benchmarks/software/local_python/bench/util/rack_switch.json'))
-
-    switch_dictionary = {'u42': '1', 'u43': '2', 'u44':'3', 'u45':'4', 'u46':'5'}
-
-    for r in rack_switch.keys():
-        result = re.match(r"(?P<id>\w+)-(?P<rack>\w+)-(?P<uid>\w+)", r)
-
-        if r == 'Infiniscale-I':
-            rack_name = 'infiniband_rack_07_5'
-            rack_switch[rack_name] = rack_switch[r]
-            del rack_switch[r]
-
-        if result:
-            name = result.group('rack')
-            rack_num = "%02d" % (int(name.replace('rack','')),)
-            switch_num = switch_dictionary[result.group('uid')]
-            rack_name = 'infiniband_rack_' + rack_num + '_' + switch_num
-            rack_switch[rack_name] = rack_switch[r]
-            del rack_switch[r]
-
-    count = 0
-    keep = 0
-    for r in rack_switch:
-        previous = len(rack_switch[r])
-        removelist = []
-        for n in rack_switch[r]:
-            if n not in node_list:
-                removelist.append(n)
-            else:
-                keep += 1.0
-        for x in removelist:
-            rack_switch[r].remove(x)
-        count += len(rack_switch[r])
-
-    remove_list = []
-    for r,l in rack_switch.iteritems():
-        if len(l) < 1:
-            remove_list.append(r)
-
-    for r in remove_list:
-        del rack_switch[r]
-
-    tmp_11 = []
-    tmp_13 = []
-    try:
-        for node in rack_switch['infiniband_rack_11_5']:
-            if node[4:6] =='11':
-                tmp_11.append(node)
-            else:
-                tmp_13.append(node)
-
-        rack_switch['infiniband_rack_11_5'] = tmp_11
-        rack_switch['infiniband_rack_13_6'] = tmp_13
-    except:
-        pass
-
-    return rack_switch
+def get_switch_nodes(nodes, topology):
+    nodes = set(nodes)
+    switch_nodes = collections.defaultdict(set)
+    for switch_name, all_switch_nodes in topology.iteritems():
+        switch_nodes[switch_name] |= all_switch_nodes & nodes
+    return switch_nodes
 
 
-def rack_switch_pairs(nodes):
-    results = {}
-    switch_nodes = rack_switch_18(nodes)
+def get_switch_node_pairs(nodes, topology):
+    switch_node_pairs = {}
+    switch_nodes = get_switch_nodes(nodes, topology)
     for switch_name, switch_nodes in switch_nodes.iteritems():
-        data = rack_list_subsets(switch_nodes)
-        results.update(data)
-    return results
+        switch_node_pairs.update(get_node_pairs(switch_nodes))
+    return switch_node_pairs
 
 
-def rack_list_subsets(nodes):
+def get_node_pairs(nodes):
     data = {}
-    for node_pair in bench.util.chunks(nodes, 2):
+    for node_pair in bench.util.chunks(sorted(nodes), 2):
         try:
             key = 'infiniband_{0}_{1}'.format(*list(sorted(node_pair)))
         except IndexError:

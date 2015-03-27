@@ -14,5 +14,6 @@ def mkdir_p (path):
 def chunks(l, n):
     """ Yield successive n-sized chunks from l.
     """
+    l = list(l)
     for i in xrange(0, len(l), n):
         yield l[i:i+n]
