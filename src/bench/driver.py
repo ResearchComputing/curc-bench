@@ -184,8 +184,6 @@ def driver():
                     alltoall_pair = args.alltoall_pair,
                     bandwidth = args.bandwidth,
                     nodes = args.nodes,
-                    qos = args.qos,
-                    account = args.account,
         )
 
     if args.command == 'submit':
@@ -197,6 +195,8 @@ def driver():
                         bandwidth = args.bandwidth,
                         pause = args.pause,
                         reservation = args.reservation,
+                        qos = args.qos,
+                        account = args.account,
         )
 
     if args.command == 'process':
