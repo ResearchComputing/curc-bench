@@ -35,10 +35,9 @@ def submit(directory, folder, index, pause, reservation):
 
 
 
-def execute(directory, allrack=None, allswitch=None, bandwidth=None, 
-            nodes=None, allpair=None, pause=None, reservation=None
-            qos=None, account=None):
-
+def execute(directory, pause=None, reservation=None, qos=None, account=None,
+            allrack=None, allswitch=None, bandwidth=None, nodes=None, allpair=None):
+            
     # Create directory structure
     logger.info(directory)
 
