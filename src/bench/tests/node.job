@@ -1,19 +1,7 @@
-import os
-import sys
-import shutil
-
-from jinja2 import Template
-
-from bench.util import util
-
-NODE_TEMPLATE = """\
 #!/bin/bash
-#SBATCH -N 1
+#SBATCH --nodes 1
 #SBATCH --nodelist={{node_name}}
 #SBATCH --time=0:45:00
-#SBATCH --reservation={{queue_name}}
-#SBATCH --account=crcbenchmark
-#SBATCH --qos=admin
 
 mkdir -p {{node_name}}
 
@@ -29,10 +17,6 @@ Intel(R) Optimized LINPACK Benchmark data
 2 2 2 1 1 1  # times to run a test
 4 4 4 4 4 4  # alignment values (in KBytes)
 EOF
-
-# . /curc/tools/utils/dkinit
-# use .openmpi-1.4.5_intel-12.1.2
-# use Benchmarks
 
 module load openmpi/openmpi-1.6.4_intel-13.0.0_torque-4.1.4_ib
 
@@ -75,33 +59,3 @@ start_time=$(date +%s)
 ./lib/linpack/linpack_11.2.2/benchmarks/linpack/xlinpack_xeon64 linpack_input | grep -A 9 Performance >> data
 end_time=$(date +%s)
 echo $((end_time - start_time)) >> time_data
-"""
-
-##CHANGES TO NODE_TEMPLATE
-#Replace /home/molu8455/projects/redhat_6/software/linpack/linpack_11.0.3/benchmarks/linpack/xlinpack_xeon64 linpack_input | grep -A 9 Performance >> data
-#With ./lib/linpack/linpack_11.2.2/benchmarks/linpack/xlinpack_xeon64 linpack_input | grep -A 9 Performance >> data
-#Replace VAR=`/home/molu8455/projects/redhat_6/software/stream/stream | grep -A 3 Copy`
-#With VAR=`./lib/stream/stream-5.9/stream | grep -A 3 Copy`
-
-def create_pbs_template(values, mypath):
-    output_file = os.path.join(mypath,"script_" + values['node_name'])
-    #print output_file
-    file_out = open(output_file,'w')
-    t = Template(NODE_TEMPLATE)
-    contents = t.render(**values)
-    file_out.write(contents)
-    file_out.close()
-
-def create(node_list, queue, path):
-    mypath = os.path.join(path,"nodes")
-    util.create_directory_structure(mypath)
-
-    # print mypath, node_list
-
-    for node in node_list:
-
-        # create the pbs command
-        values = {}
-        values['node_name'] = node
-        values['queue_name'] = queue
-        create_pbs_template(values, mypath)

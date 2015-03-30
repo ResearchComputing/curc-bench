@@ -1,15 +1,14 @@
+import bench.tests.alltoall
+import bench.tests.bandwidth
+import bench.tests.node
+import bench.util
+from bench.util import util as util
+import datetime
+import logging
 import os
 import subprocess
-import datetime
-import shutil
-import textwrap
-import re
-import datetime
-import pyslurm
 
-from util.xml2obj import xml2obj
 
-import logging
 logger = logging.getLogger('Benchmarks')
 
 import util.util
@@ -21,60 +20,66 @@ import create_tests.create_alltoall2 as create_alltoall
 
 from bench.util import util as util
 
+def execute(prefix, topology_file, alltoall_rack, alltoall_switch,
+            alltoall_pair, bandwidth, nodes):
+    node_list = util.read_node_list(os.path.join(prefix, 'node_list'))
+    logger.info('nodes: {0}'.format(len(node_list)))
 
+    if topology_file is not None:
+        topology = bench.util.infiniband.get_topology(topology_file)
+    else:
+        topology = {}
 
-def execute(directory, args):
-
-    logger.info(directory)
-    print directory
-    queue_name = 'janus-admin'
-
-    a = pyslurm.reservation()
-    reserve_dict = a.get()
-    queue_name = ''
-    queue_time = ''
-
-    for key, value in reserve_dict.iteritems():
-        if key.endswith('PM-janus'):
-            queue_name = key
-            for part_key in sorted(value.iterkeys()):
-                if part_key == "start_time":
-                    time1 = datetime.datetime.fromtimestamp(int(value[part_key]))
-                    time1 = time1.replace(hour=0, minute=0, second=0, microsecond=0)
-                    queue_time = time1
-
-    # queue_date = date.fromtimestamp(tmp[0][1])
-    print queue_time
-
-    logger.info("Using the PM-janus queue with the oldest time stamp.")
-    logger.info("queue name".ljust(20)+queue_name.rjust(5))
-    node_list = util.read_node_list(os.path.join(directory,'node_list'))
-    logger.info("Node list".ljust(20)+str(len(node_list)).rjust(5))
-
-    if not args.allrack and not args.allswitch and not args.bandwidth and not args.nodes and not args.allpair:
-
-        #Create the tests
-        logger.info("node tests")
-        create_node_test.create(node_list,queue_name,directory)
-
-        logger.info("bandwidth tests")
-        create_bandwidth_test.create(node_list,queue_name,directory)
-
-        logger.info("alltoall tests")
-        create_alltoall.create(node_list,queue_name,directory)
-
-        create_scaling.create(node_list,"janus-admin",directory)
+    if not (alltoall_rack or alltoall_switch or alltoall_pair or bandwidth or nodes):
+        add_node_tests(node_list, prefix)
+        add_bandwidth_tests(node_list, topology, prefix)
+        add_alltoall_rack_tests(node_list, prefix)
+        add_alltoall_switch_tests(node_list, topology, prefix)
+        add_alltoall_pair_tests(node_list, topology, prefix)
 
     else:
+        if alltoall_rack:
+            add_alltoall_rack_tests(node_list, prefix)
+        if alltoall_switch:
+            add_alltoall_switch_tests(node_list, topology, prefix)
+        if alltoall_pair:
+            add_alltoall_pair_tests(node_list, topology, prefix)
+        if bandwidth:
+            add_bandwidth_tests(node_list, topology, prefix)
+        if nodes:
+            add_node_tests(node_list, prefix)
 
-        if args.allrack or args.allswitch or args.allpair:
-           logger.info("alltoall tests")
-           create_alltoall.create(node_list,queue_name,directory, args)
 
-        if args.bandwidth:
-           logger.info("bandwidth tests")
-           create_bandwidth_test.create(node_list,queue_name,directory)
+def add_node_tests (node_list, prefix):
+    node_prefix = os.path.join(prefix, 'node')
+    logger.info('adding node tests to {0}'.format(node_prefix))
+    bench.util.mkdir_p(node_prefix)
+    bench.tests.node.generate(node_list, node_prefix)
 
-        if args.nodes:
-           logger.info("node tests")
-           create_node_test.create(node_list,queue_name,directory)
+
+def add_bandwidth_tests (node_list, topology, prefix):
+    bandwidth_prefix = os.path.join(prefix, 'bandwidth')
+    logger.info('adding bandwidth tests to {0}'.format(bandwidth_prefix))
+    bench.util.mkdir_p(bandwidth_prefix)
+    bench.tests.bandwidth.generate(node_list, topology, bandwidth_prefix)
+
+
+def add_alltoall_rack_tests (node_list, prefix):
+    alltoall_rack_prefix = os.path.join(prefix, 'alltoall-rack')
+    logger.info('adding alltoall-rack tests to {0}'.format(alltoall_rack_prefix))
+    bench.util.mkdir_p(alltoall_rack_prefix)
+    bench.tests.alltoall.generate_alltoall_rack(node_list, alltoall_rack_prefix)
+
+
+def add_alltoall_switch_tests (node_list, topology, prefix):
+    alltoall_switch_prefix = os.path.join(prefix, 'alltoall-switch')
+    logger.info('adding alltoall-switch tests to {0}'.format(alltoall_switch_prefix))
+    bench.util.mkdir_p(alltoall_switch_prefix)
+    bench.tests.alltoall.generate_alltoall_switch(node_list, topology, alltoall_switch_prefix)
+
+
+def add_alltoall_pair_tests (node_list, topology, prefix):
+    alltoall_pair_prefix = os.path.join(prefix, 'alltoall-pair')
+    logger.info('adding alltoall-pair tests to {0}'.format(alltoall_pair_prefix))
+    bench.util.mkdir_p(alltoall_pair_prefix)
+    bench.tests.alltoall.generate_alltoall_pair(node_list, topology, alltoall_pair_prefix)

@@ -20,21 +20,16 @@ def submit(directory, folder, index, pause, reservation):
                 else:
                     cmd = "sbatch + --reservation=" + reservation + " " + filename
                 #User specified to wait between 'pause' job submissions?
-                if pause == None:
-                    try:
-                        out = subprocess.check_output([cmd], shell=True)
-                    except:
-                        logger.error("Cannot submit job " + cmd)
-                    index += 1
-                else:
+                if pause != None:
                     if index % pause == 0:
                         logger.info("waiting 10 seconds...")
                         time.sleep(10)
-                    try:
-                        out = subprocess.check_output([cmd], shell=True)
-                    except:
-                        logger.error("Cannot submit job " + cmd)
-                    index += 1
+                try:
+                    out = subprocess.check_output([cmd], shell=True)
+                except:
+                    logger.error("Cannot submit job " + cmd)
+                index += 1
+
         os.chdir(current)
     return index
 

@@ -1,7 +1,7 @@
-import os
-import sys
 import datetime
+import os
 import shutil
+
 
 def read_node_list(node_list_name, dir=None):
     node_list = []
@@ -22,11 +22,6 @@ def read_node_list(node_list_name, dir=None):
 
 
 def categorize(node_list):
-
-    # long node01
-    # special node02* + node0301
-    # janus node0302 - *
-
     long_nodes = []
     special_nodes = []
     janus_nodes = []
@@ -39,12 +34,12 @@ def categorize(node_list):
         else:
             janus_nodes.append(x)
 
-    return {'long':long_nodes,'special':special_nodes,'janus':janus_nodes}
+    return {'long':long_nodes, 'special':special_nodes, 'janus':janus_nodes}
+
 
 def create_directory_structure(dir_name):
-
     if os.path.exists(dir_name):
-        cmd = 'The directory '+dir_name+ 'exists.\n Delete it? (y or n): '
+        cmd = 'The directory {0} exists.\n Delete it? (y or n): '.format(dir_name)
         ans = raw_input(cmd)
         if ans == 'y':
             shutil.rmtree(dir_name)
@@ -53,10 +48,10 @@ def create_directory_structure(dir_name):
         try:
             os.mkdir(dir_name)
         except os.error as e:
-            print "ERROR: " + e.strerror
+            print "ERROR: {0}".format(e.strerror)
+
 
 def get_directory(directory_name):
-
     directory = '/curc/admin/benchmarks/data'
     if not os.path.exists(directory):
         os.makedirs(directory)

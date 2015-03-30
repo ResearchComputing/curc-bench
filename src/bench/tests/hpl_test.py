@@ -179,55 +179,25 @@ def render(mypath, queue, node_list):
 
     hpl['job_name'] = job_name
 
-    #infiniband.rack_subsets(hpl, node_list)
-    #print hpl
-
     create_pbs_template(mypath, hpl)
 
 
 def create(node_list, queue, path):
-    #print node_list
     mypath = os.path.join(path,"hpl")
     util.create_directory_structure(mypath)
 
     logger.info("HPL with pecent = "+str(config.hpl_percent))
     # Test with 18 nodes on a switch
     logger.info("Creating 18 node HPL tests")
-    rack_switch = infiniband.rack_switch_18(node_list)
+    rack_switch = infiniband.get_switch_nodes(node_list)
     rack_list = []
     for name, name_list in rack_switch.iteritems():
         #print name, name_list
         if len(name_list) > 0:
              render(mypath, queue, name_list)
              rack_list.extend(name_list)
-             data = infiniband.rack_list_subsets(name_list)
+             data = infiniband.get_node_pairs(name_list)
              for j,k in data.iteritems():
                  render(mypath, queue, k)
 
     logger.debug("not tested "+ str(len(set(node_list).difference(set(rack_list)))))
-
-
-
-    # Test with 18 nodes on a switch
-    # logger.info("Creating 18 node alltoall tests")
-    #     rack_switch = rack_switch_18(node_list)
-    #     rack_list = []
-    #     for name, name_list in rack_switch.iteritems():
-    #         #print name, name_list
-    #         if len(name_list) > 0:
-    #              render(mypath, queue, name_list)
-    #              rack_list.extend(name_list)
-    #
-    #     logger.debug("not tested"+ str(set(node_list).difference(set(rack_list))))
-
-
-
-
-# def create(name_list, queue, n, percent, dir_name):
-#     current_path = os.getcwd()
-#     mypath = os.path.join(current_path, dir_name)
-#     create_directory_structure(mypath)
-#
-#     groups = create_node_groups(name_list,n)
-#     for i in range(len(groups)):
-#         render(mypath, queue, groups[i], percent)

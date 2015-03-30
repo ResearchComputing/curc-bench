@@ -1,0 +1,20 @@
+#!/bin/bash
+#SBATCH --nodelist={{','.join(nodes)}}
+#SBATCH --time=0:30:00
+#SBATCH --ntasks-per-node=12
+
+
+mkdir -p test_{{node_list_name}}
+cd test_{{node_list_name}}
+
+
+echo "{{node_list_name}}
+{{num_nodes}}
+{% for node in nodes -%}
+{{node}}
+{% endfor %}" >>info
+
+module load openmpi/openmpi-1.6.4_intel-13.0.0_torque-4.1.4_ib
+
+echo '{{", ".join(nodes)}}' > data
+mpirun ./lib/osu-micro-benchmarks-3.8/mpi/collective/osu_alltoall  -f >> data
