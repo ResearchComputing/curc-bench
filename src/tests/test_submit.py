@@ -24,7 +24,7 @@ class TestSubmit(unittest.TestCase):
 		shutil.rmtree(self.directory)
 
 	@mock.patch('bench.submit.subprocess.check_output',
-				return_value=fake_subprocess('sbatch script_10', True))
+				return_value=fake_subprocess('script_10', True))
 	def test_submit(self, arg1):
 		index = 0
 		pause = None
@@ -37,14 +37,31 @@ class TestSubmit(unittest.TestCase):
 		#Did it find the file?
 		self.assertEqual(1, new_index)
 		#Arguments correct?
-		self.assertTrue('sbatch' in str(arg1.call_args_list))
-		self.assertTrue('script_10' in str(arg1.call_args_list))
-		self.assertTrue('--reservation=PM' in str(arg1.call_args_list))
-		self.assertTrue('--qos=High' in str(arg1.call_args_list))
-		self.assertTrue('--account=Account' in str(arg1.call_args_list))
+		self.assertTrue('sbatch ' in str(arg1.call_args_list))
+		self.assertTrue(' script_10' in str(arg1.call_args_list))
+		self.assertTrue(' --reservation=PM ' in str(arg1.call_args_list))
+		self.assertTrue(' --qos=High ' in str(arg1.call_args_list))
+		self.assertTrue(' --account=Account ' in str(arg1.call_args_list))
 		#Shell==True?
 		self.assertEqual(True, arg1.call_args_list[0][1]['shell'])
 
+	@mock.patch('bench.submit.subprocess.check_output',
+				return_value=fake_subprocess('script_10', True))
+	def test_submit2(self, arg1):
+		index = 0
+		pause = None
+		reservation = None
+		qos = None
+		account = None
+		new_index = bench.submit.submit(self.directory, self.folder,
+							 			index, pause, reservation, qos, account)
+
+		#Did it find the file?
+		self.assertEqual(1, new_index)
+		#Arguments correct?
+		self.assertTrue('sbatch script_10' in str(arg1.call_args_list))
+		#Shell==True?
+		self.assertEqual(True, arg1.call_args_list[0][1]['shell'])
 
 if __name__ == '__main__':
 	unittest.main()
