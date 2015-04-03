@@ -17,11 +17,11 @@ def submit(directory, folder, index, pause, reservation, qos, account):
                 cmd = "sbatch"
                 #User specified reservation, qos, account?
                 if reservation != None:
-                    cmd = cmd + " + --reservation=" + reservation
+                    cmd = cmd + " --reservation=" + reservation
                 if qos != None:
-                    cmd = cmd + " + --qos=" + qos
+                    cmd = cmd + " --qos=" + qos
                 if account != None:
-                    cmd + " + --account=" + account
+                    cmd = cmd + " --account=" + account
                 cmd = cmd + " " + filename
                 #User specified to wait between 'pause' job submissions?
                 if pause != None:
