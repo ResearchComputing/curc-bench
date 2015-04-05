@@ -1,14 +1,12 @@
 import argparse
-import bench.add as add
-import bench.automation as automation
-import bench.create as create
-import bench.nodelist as nodelist
+import bench.add
+import bench.create
 import bench.nodes
-import bench.process as process
-import bench.reserve as reserve
-import bench.showq as showq
-import bench.status as status
-import bench.submit as submit
+import bench.process
+import bench.reserve
+import bench.showq
+import bench.status
+import bench.submit
 import datetime
 import glob
 import logging
@@ -170,52 +168,52 @@ def driver():
     logger = get_logger(directory)
 
     if args.command == 'create':
-        create.execute(directory,
-                       include_nodes = args.nodes,
-                       include_reservation = args.reservation,
-                       exclude_nodes = args.exclude_nodes,
-                       exclude_reservation = args.exclude_reservation,
+        bench.create.execute(directory,
+                             include_nodes = args.nodes,
+                             include_reservation = args.reservation,
+                             exclude_nodes = args.exclude_nodes,
+                             exclude_reservation = args.exclude_reservation,
         )
 
     if args.command == 'add':
-        add.execute(directory, args.topology_file,
-                    alltoall_rack = args.alltoall_rack,
-                    alltoall_switch = args.alltoall_switch,
-                    alltoall_pair = args.alltoall_pair,
-                    bandwidth = args.bandwidth,
-                    nodes = args.nodes,
+        bench.add.execute(directory, args.topology_file,
+                          alltoall_rack = args.alltoall_rack,
+                          alltoall_switch = args.alltoall_switch,
+                          alltoall_pair = args.alltoall_pair,
+                          bandwidth = args.bandwidth,
+                          nodes = args.nodes,
         )
 
     if args.command == 'submit':
-        submit.execute(directory, 
-                        allrack = args.allrack,
-                        allswitch = args.allswitch,
-                        allpair = args.allpair,
-                        nodes = args.nodes,
-                        bandwidth = args.bandwidth,
-                        pause = args.pause,
-                        reservation = args.reservation,
-                        qos = args.qos,
-                        account = args.account,
+        bench.submit.execute(directory,
+                             allrack = args.allrack,
+                             allswitch = args.allswitch,
+                             allpair = args.allpair,
+                             nodes = args.nodes,
+                             bandwidth = args.bandwidth,
+                             pause = args.pause,
+                             reservation = args.reservation,
+                             qos = args.qos,
+                             account = args.account,
         )
 
     if args.command == 'process':
-        process.execute(directory, 
-                        allrack = args.allrack,
-                        allswitch = args.allswitch,
-                        allpair = args.allpair,
-                        nodes = args.nodes,
-                        bandwidth = args.bandwidth,
+        bench.process.execute(directory,
+                              allrack = args.allrack,
+                              allswitch = args.allswitch,
+                              allpair = args.allpair,
+                              nodes = args.nodes,
+                              bandwidth = args.bandwidth,
         )
 
     if args.command == 'reserve':
-        reserve.execute(directory, args)
+        bench.reserve.execute(directory, args)
 
     if args.command == 'q':
-        showq.execute(args.verbose)
+        bench.showq.execute(args.verbose)
 
     if args.command == 'status':
-        status.execute(directory)
+        bench.status.execute(directory)
 
     if args.command == 'nodes':
-        nodes.execute()
+        bench.nodes.execute()
