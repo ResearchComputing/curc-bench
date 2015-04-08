@@ -1,9 +1,5 @@
-import os, sys
-
+import os
 from bench.util import config
-
-
-
 
 import logging
 logger = logging.getLogger('Benchmarks')
@@ -261,7 +257,7 @@ def execute_pair(dir_name, node_list):
        for subdirname in dirnames:
            logger.debug(subdirname)
            if subdirname.find("test_") == 0:
-               results_switch = read_all(node_path,subdirname, "data",'pair',bad_nodes_switch,good_nodes_switch)
+               results_pair = read_all(node_path,subdirname, "data",'pair',bad_nodes_switch,good_nodes_switch)
 
     tested_r = set(good_nodes_switch).union(set(bad_nodes_switch))
     not_tested_r = set(node_list).difference(tested_r)
