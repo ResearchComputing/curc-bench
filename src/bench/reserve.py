@@ -28,7 +28,8 @@ def create_reservation(data_name,label,directory):
 
 
 
-def execute(directory, args):
+def execute(directory, allrack=None, allswitch=None,
+            bandwidth=None, nodes=None, allpair=None):
 
     logger.info(directory)
 
