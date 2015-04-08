@@ -209,8 +209,14 @@ def driver():
         )
 
     if args.command == 'reserve':
-        reserve.execute(directory, args)
-
+        reserve.execute(directory, 
+                        allrack = args.allrack,
+                        allswitch = args.allswitch,
+                        allpair = args.allpair,
+                        nodes = args.nodes,
+                        bandwidth = args.bandwidth,
+        )
+        
     if args.command == 'q':
         showq.execute(args.verbose)
 

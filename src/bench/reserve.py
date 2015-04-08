@@ -26,27 +26,14 @@ def create_reservation(data_name,label,directory):
     except:
         logger.error("could not create " + label + " reservations")
 
-    # Remove cnodes
-
-
-        #print cmd_out
-
-def release_reservations(data):
-
-    for d in data:
-        if d != 'benchmark-not-tested.30472' and d != 'benchmark-nodes.30471':
-            logger.info(d)
-            cmd = "mrsvctl -r " + d
-            cmd_out = subprocess.check_output([cmd] , shell=True)
-            #print cmd_out
 
 
 def execute(directory, args):
 
     logger.info(directory)
 
-
-    if not args.allrack and not args.allswitch and not args.bandwidth and not args.nodes and not args.allpair:
+    if not (allrack or allswitch or bandwidth or nodes or allpair):
+    # if not args.allrack and not args.allswitch and not args.bandwidth and not args.nodes and not args.allpair:
 
          create_reservation( "list_all_rack_bad_not_tested_nodes", "benchmark-alltoall-rack",directory)
          create_reservation( "list_all_switch_bad_not_tested_nodes", "benchmark-alltoall-switch",directory)
@@ -60,19 +47,19 @@ def execute(directory, args):
 
         print args
 
-        if args.allrack==True:
+        if allrack==True:
            create_reservation( "list_all_rack_bad_not_tested_nodes", "benchmark_alltoall_rack",directory)
 
-        if args.allswitch==True:
+        if allswitch==True:
            create_reservation( "list_all_switch_bad_not_tested_nodes", "benchmark_alltoall_switch",directory)
 
-        if args.allpair==True:
+        if allpair==True:
            create_reservation( "list_all_pair_bad_not_tested_nodes", "benchmark_alltoall_pair",directory)
 
-        if args.bandwidth==True:
+        if bandwidth==True:
             create_reservation( "list_band", "benchmark_bandwidth",directory)
 
-        if args.nodes==True:
+        if nodes==True:
             create_reservation( "list_node", "benchmark_node",directory)
             #create_reservation( "not_tested", "benchmark-not-tested",directory)
             #create_reservation( "not_in_test", "benchmark-not-in-test",directory)
