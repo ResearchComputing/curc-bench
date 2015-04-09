@@ -32,19 +32,19 @@ def parser():
                         help = 'exclude nodes in a reservation from testing')
 
     add = subparsers.add_parser('add', help='Add a benchmark test')
-    add.add_argument('-r', '--alltoall-rack',
+    add.add_argument('-r', '--alltoall-rack-tests',
                      help = 'alltoall rack level tests',
                      action = 'store_true')
-    add.add_argument('-s', '--alltoall-switch',
+    add.add_argument('-s', '--alltoall-switch-tests',
                      help = 'alltoall switch level tests',
                      action = 'store_true')
-    add.add_argument('-p', '--alltoall-pair',
+    add.add_argument('-p', '--alltoall-pair-tests',
                      help = 'alltoall pair level tests',
                      action = 'store_true')
-    add.add_argument('-n', '--nodes',
+    add.add_argument('-n', '--nodes-tests',
                      help = 'individual node tests',
                      action = 'store_true')
-    add.add_argument('-b', '--bandwidth',
+    add.add_argument('-b', '--bandwidth-tests',
                      help = 'bandwidth tests',
                      action = 'store_true')
     add.add_argument('-t', '--topology-file',
@@ -177,11 +177,11 @@ def driver():
 
     if args.command == 'add':
         bench.add.execute(directory, args.topology_file,
-                          alltoall_rack = args.alltoall_rack,
-                          alltoall_switch = args.alltoall_switch,
-                          alltoall_pair = args.alltoall_pair,
-                          bandwidth = args.bandwidth,
-                          nodes = args.nodes,
+                          add_alltoall_rack_tests = args.alltoall_rack_tests,
+                          add_alltoall_switch_tests = args.alltoall_switch_tests,
+                          add_alltoall_pair_tests = args.alltoall_pair_tests,
+                          add_bandwidth_tests = args.bandwidth_tests,
+                          add_node_tests = args.node_tests,
         )
 
     if args.command == 'submit':
