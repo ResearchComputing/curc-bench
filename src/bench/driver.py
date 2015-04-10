@@ -32,21 +32,7 @@ def parser():
                         help = 'exclude nodes in a reservation from testing')
 
     add = subparsers.add_parser('add', help='Add a benchmark test')
-    add.add_argument('-r', '--alltoall-rack-tests',
-                     help = 'alltoall rack level tests',
-                     action = 'store_true')
-    add.add_argument('-s', '--alltoall-switch-tests',
-                     help = 'alltoall switch level tests',
-                     action = 'store_true')
-    add.add_argument('-p', '--alltoall-pair-tests',
-                     help = 'alltoall pair level tests',
-                     action = 'store_true')
-    add.add_argument('-n', '--nodes-tests',
-                     help = 'individual node tests',
-                     action = 'store_true')
-    add.add_argument('-b', '--bandwidth-tests',
-                     help = 'bandwidth tests',
-                     action = 'store_true')
+    parser_add_test_arguments(add)
     add.add_argument('-t', '--topology-file',
                      help = 'slurm topology.conf')
 
@@ -67,12 +53,8 @@ def parser():
     submit.add_argument('-a', '--account', help='account', action='store_true')
     submit.set_defaults(account=None)
 
-    process = subparsers.add_parser('process', help='Process the jobs when they are finished.')
-    process.add_argument('-r','--allrack', help='alltoall rack level', action='store_true')
-    process.add_argument('-s','--allswitch', help='alltoall switch level', action='store_true')
-    process.add_argument('-p','--allpair', help='alltoall pair level', action='store_true')
-    process.add_argument('-n','--nodes', help='nodes', action='store_true')
-    process.add_argument('-b','--bandwidth', help='bandwidth', action='store_true')
+    process = subparsers.add_parser('process', help='Process the test results')
+    parser_add_test_arguments(process)
 
     reserve = subparsers.add_parser('reserve', help='Create the necessary reservations.')
     reserve.add_argument('-r','--allrack', help='alltoall rack level', action='store_true')
@@ -89,6 +71,24 @@ def parser():
     status = subparsers.add_parser('status', help='Concatentates the log file of the current directory.')
 
     return parser
+
+
+def parser_add_test_arguments (parser):
+    parser.add_argument('-r', '--alltoall-rack-tests',
+                     help = 'alltoall rack level tests',
+                     action = 'store_true')
+    parser.add_argument('-s', '--alltoall-switch-tests',
+                     help = 'alltoall switch level tests',
+                     action = 'store_true')
+    parser.add_argument('-p', '--alltoall-pair-tests',
+                     help = 'alltoall pair level tests',
+                     action = 'store_true')
+    parser.add_argument('-n', '--nodes-tests',
+                     help = 'individual node tests',
+                     action = 'store_true')
+    parser.add_argument('-b', '--bandwidth-tests',
+                     help = 'bandwidth tests',
+                     action = 'store_true')
 
 
 def get_directory(prefix, new=False):
@@ -199,11 +199,11 @@ def driver():
 
     if args.command == 'process':
         bench.process.execute(directory,
-                              allrack = args.allrack,
-                              allswitch = args.allswitch,
-                              allpair = args.allpair,
-                              nodes = args.nodes,
-                              bandwidth = args.bandwidth,
+                              alltoall_rack_tests = args.alltoall_rack_tests,
+                              alltoall_switch_tests = args.alltoall_switch_tests,
+                              alltoall_pair_tests = args.alltoall_pair_tests,
+                              node_tests = args.node_tests,
+                              bandwidth_tests = args.bandwidth_tests,
         )
 
     if args.command == 'reserve':

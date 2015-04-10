@@ -41,3 +41,9 @@ def subprocess_check_output (*popenargs, **kwargs):
 
 def patch_subprocess_check_output ():
     subprocess.check_output = subprocess_check_output
+
+
+def write_node_list (path, nodes):
+    with open(path, 'w') as fp:
+        for node in sorted(nodes):
+            fp.write('{0}\n'.format(node))
