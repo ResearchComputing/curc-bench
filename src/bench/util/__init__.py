@@ -1,5 +1,7 @@
 import errno
 import os
+import subprocess
+
 
 def mkdir_p (path):
     try:
@@ -17,3 +19,25 @@ def chunks(l, n):
     l = list(l)
     for i in xrange(0, len(l), n):
         yield l[i:i+n]
+
+
+def subprocess_check_output (*popenargs, **kwargs):
+    assert 'stdout' not in kwargs, 'stdout is used internally by check_output'
+
+    process = subprocess.Popen(*popenargs, stdout=subprocess.PIPE, **kwargs)
+    stdout, _ = process.communicate()
+    process.wait()
+    if process.returncode != 0:
+        cmd = kwargs.get('args')
+        if cmd is None:
+            cmd = popenargs[0]
+        ex = subprocess.CalledProcessError(
+            process.returncode, cmd)
+        ex.output = stdout
+        raise ex
+    else:
+        return stdout
+
+
+def patch_subprocess_check_output ():
+    subprocess.check_output = subprocess_check_output

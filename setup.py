@@ -1,6 +1,7 @@
 from ez_setup import use_setuptools
 use_setuptools()
 
+import multiprocessing
 import os
 import setuptools
 

@@ -1,14 +1,12 @@
 import argparse
-import bench.add as add
-import bench.automation as automation
-import bench.create as create
-import bench.nodelist as nodelist
+import bench.add
+import bench.create
 import bench.nodes
-import bench.process as process
-import bench.reserve as reserve
-import bench.showq as showq
-import bench.status as status
-import bench.submit as submit
+import bench.process
+import bench.reserve
+import bench.showq
+import bench.status
+import bench.submit
 import datetime
 import glob
 import logging
@@ -34,19 +32,19 @@ def parser():
                         help = 'exclude nodes in a reservation from testing')
 
     add = subparsers.add_parser('add', help='Add a benchmark test')
-    add.add_argument('-r', '--alltoall-rack',
+    add.add_argument('-r', '--alltoall-rack-tests',
                      help = 'alltoall rack level tests',
                      action = 'store_true')
-    add.add_argument('-s', '--alltoall-switch',
+    add.add_argument('-s', '--alltoall-switch-tests',
                      help = 'alltoall switch level tests',
                      action = 'store_true')
-    add.add_argument('-p', '--alltoall-pair',
+    add.add_argument('-p', '--alltoall-pair-tests',
                      help = 'alltoall pair level tests',
                      action = 'store_true')
-    add.add_argument('-n', '--nodes',
+    add.add_argument('-n', '--nodes-tests',
                      help = 'individual node tests',
                      action = 'store_true')
-    add.add_argument('-b', '--bandwidth',
+    add.add_argument('-b', '--bandwidth-tests',
                      help = 'bandwidth tests',
                      action = 'store_true')
     add.add_argument('-t', '--topology-file',
@@ -170,58 +168,58 @@ def driver():
     logger = get_logger(directory)
 
     if args.command == 'create':
-        create.execute(directory,
-                       include_nodes = args.nodes,
-                       include_reservation = args.reservation,
-                       exclude_nodes = args.exclude_nodes,
-                       exclude_reservation = args.exclude_reservation,
+        bench.create.execute(directory,
+                             include_nodes = args.nodes,
+                             include_reservation = args.reservation,
+                             exclude_nodes = args.exclude_nodes,
+                             exclude_reservation = args.exclude_reservation,
         )
 
     if args.command == 'add':
-        add.execute(directory, args.topology_file,
-                    alltoall_rack = args.alltoall_rack,
-                    alltoall_switch = args.alltoall_switch,
-                    alltoall_pair = args.alltoall_pair,
-                    bandwidth = args.bandwidth,
-                    nodes = args.nodes,
+        bench.add.execute(directory, args.topology_file,
+                          add_alltoall_rack_tests = args.alltoall_rack_tests,
+                          add_alltoall_switch_tests = args.alltoall_switch_tests,
+                          add_alltoall_pair_tests = args.alltoall_pair_tests,
+                          add_bandwidth_tests = args.bandwidth_tests,
+                          add_node_tests = args.node_tests,
         )
 
     if args.command == 'submit':
-        submit.execute(directory, 
-                        allrack = args.allrack,
-                        allswitch = args.allswitch,
-                        allpair = args.allpair,
-                        nodes = args.nodes,
-                        bandwidth = args.bandwidth,
-                        pause = args.pause,
-                        reservation = args.reservation,
-                        qos = args.qos,
-                        account = args.account,
+        bench.submit.execute(directory,
+                             allrack = args.allrack,
+                             allswitch = args.allswitch,
+                             allpair = args.allpair,
+                             nodes = args.nodes,
+                             bandwidth = args.bandwidth,
+                             pause = args.pause,
+                             reservation = args.reservation,
+                             qos = args.qos,
+                             account = args.account,
         )
 
     if args.command == 'process':
-        process.execute(directory, 
-                        allrack = args.allrack,
-                        allswitch = args.allswitch,
-                        allpair = args.allpair,
-                        nodes = args.nodes,
-                        bandwidth = args.bandwidth,
+        bench.process.execute(directory,
+                              allrack = args.allrack,
+                              allswitch = args.allswitch,
+                              allpair = args.allpair,
+                              nodes = args.nodes,
+                              bandwidth = args.bandwidth,
         )
 
     if args.command == 'reserve':
-        reserve.execute(directory, 
-                        allrack = args.allrack,
-                        allswitch = args.allswitch,
-                        allpair = args.allpair,
-                        nodes = args.nodes,
-                        bandwidth = args.bandwidth,
+        bench.reserve.execute(directory, 
+                              allrack = args.allrack,
+                              allswitch = args.allswitch,
+                              allpair = args.allpair,
+                              nodes = args.nodes,
+                              bandwidth = args.bandwidth,
         )
         
     if args.command == 'q':
-        showq.execute(args.verbose)
+        bench.showq.execute(args.verbose)
 
     if args.command == 'status':
-        status.execute(directory)
+        bench.status.execute(directory)
 
     if args.command == 'nodes':
-        nodes.execute()
+        bench.nodes.execute()
