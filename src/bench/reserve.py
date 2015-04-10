@@ -2,7 +2,8 @@ import os
 import subprocess
 from bench.util import util
 import pyslurm
-import datetime
+import time
+import calendar
 
 import logging
 logger = logging.getLogger('Benchmarks')
@@ -21,21 +22,26 @@ def create_reservation(data_name, label, directory):
 
             # print node_string[:-1]
             # os.environ['NODE_LIST'] = node_string[:-1]
-            # #cmd = "mrsvctl -c -h $NODE_LIST -n " + label
             # cmd = 'scontrol create reservation={0} accounts=crcbenchmark flags=overlap starttime=now duration=32-0 nodes=$NODE_LIST'.format(label)
             
             # print cmd
             # cmd_out = subprocess.check_output([cmd] , shell=True)
-
+            a = pyslurm.reservation()
             res_dict = pyslurm.create_reservation_dict()
-            res_dict['Accounts'] = 'crcbenchmark'            #Is this the desired account name?
-            res_dict['Flags'] = 'overlap'
-            res_dict['StartTime'] = datetime.datetime.now()  #Check time formatting
-            res_dict['Duration'] = '32-0'                    #Check time formatting
-            res_dict['Name'] = label
-            res_dict['Nodes'] = node_string[:-1]
+            res_dict['accounts'] = 'crcbenchmark'            #Is this the desired account name?
+            res_dict['flags'] = 'overlap'
+            res_dict['start_time'] = calendar.timegm(time.gmtime()) #time right now
+            res_dict['duration'] = 2678400                    #32 days
+            res_dict['name'] = label
+            res_dict['node_list'] = node_string[:-1]          #Check formatting!
 
-            resid = pyslurm.slurm_create_reservation(res_dict)
+            resid = a.create(res_dict)
+
+            if pyslurm.slurm_get_errno() != 0:
+                print "Failed - Error : %s" % pyslurm.slurm_strerror(pyslurm.slurm_get_errno())
+            else:
+                print "Success - Created reservation %s\n" % resid
+                res_display(a.get())
 
 
     except:
