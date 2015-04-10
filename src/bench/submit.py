@@ -1,12 +1,18 @@
+import logging
 import os
 import subprocess
 import time
 
-import logging
+
+if not hasattr(subprocess, 'check_output'):
+    import bench.util
+    bench.util.patch_subprocess_check_output()
+
+
 logger = logging.getLogger('Benchmarks')
 
-def submit(directory, folder, index, pause, reservation, qos, account):
 
+def submit(directory, folder, index, pause, reservation, qos, account):
     sub_folder = os.path.join(directory, folder)
     for dirname, dirnames, filenames in os.walk(sub_folder):
         current = os.getcwd()
@@ -29,7 +35,7 @@ def submit(directory, folder, index, pause, reservation, qos, account):
                         logger.info("waiting 10 seconds...")
                         time.sleep(10)
                 try:
-                    out = subprocess.check_output([cmd], shell=True)
+                    out = bench.util.subprocess.check_output([cmd], shell=True)
                 except:
                     logger.error("Cannot submit job " + cmd)
                 index += 1
@@ -40,7 +46,7 @@ def submit(directory, folder, index, pause, reservation, qos, account):
 
 def execute(directory, pause=None, reservation=None, qos=None, account=None,
             allrack=None, allswitch=None, bandwidth=None, nodes=None, allpair=None):
-            
+
     # Create directory structure
     logger.info(directory)
 
