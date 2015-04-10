@@ -20,16 +20,37 @@ def create_reservation(data_name, label, directory):
             #node_string = "".join(['^%s$,' % n for n in data])
             node_string = "".join(['%s,' % n for n in data])
 
-            # print node_string[:-1]
-            # os.environ['NODE_LIST'] = node_string[:-1]
-            # cmd = 'scontrol create reservation={0} accounts=crcbenchmark flags=overlap starttime=now duration=32-0 nodes=$NODE_LIST'.format(label)
-            
-            # print cmd
-            # cmd_out = subprocess.check_output([cmd] , shell=True)
+    # :param int flags: Slurm reservation flags
+    #     - RESERVE_FLAG_MAINT              0x0001
+    #     - RESERVE_FLAG_NO_MAINT           0x0002
+    #     - RESERVE_FLAG_DAILY              0x0004
+    #     - RESERVE_FLAG_NO_DAILY           0x0008
+    #     - RESERVE_FLAG_WEEKLY             0x0010
+    #     - RESERVE_FLAG_NO_WEEKLY          0x0020
+    #     - RESERVE_FLAG_IGN_JOBS           0x0040
+    #     - RESERVE_FLAG_NO_IGN_JOB         0x0080
+    #     - RESERVE_FLAG_LIC_ONLY           0x0100
+    #     - RESERVE_FLAG_NO_LIC_ONLY        0x0200
+    #     - RESERVE_FLAG_OVERLAP            0x4000
+    #     - RESERVE_FLAG_SPEC_NODES         0x8000
+
+    # create_reservation_dict() returns empty dict with:
+    # return {u'start_time': -1,
+    #         u'end_time': -1,
+    #         u'duration': -1,
+    #         u'node_cnt': -1,
+    #         u'name': '',
+    #         u'node_list': '',
+    #         u'flags': '',
+    #         u'partition': '',
+    #         u'licenses': '',
+    #         u'users': '',
+    #         u'accounts': ''}
+
             a = pyslurm.reservation()
             res_dict = pyslurm.create_reservation_dict()
-            res_dict['accounts'] = 'crcbenchmark'            #Is this the desired account name?
-            res_dict['flags'] = 'overlap'
+            res_dict['accounts'] = 'crcbenchmark'
+            res_dict['flags'] = 16384  #flag for 'OVERLAP'
             res_dict['start_time'] = calendar.timegm(time.gmtime()) #time right now
             res_dict['duration'] = 2678400                    #32 days
             res_dict['name'] = label
