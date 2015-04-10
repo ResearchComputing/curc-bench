@@ -207,8 +207,14 @@ def driver():
         )
 
     if args.command == 'reserve':
-        bench.reserve.execute(directory, args)
-
+        bench.reserve.execute(directory, 
+                              allrack = args.allrack,
+                              allswitch = args.allswitch,
+                              allpair = args.allpair,
+                              nodes = args.nodes,
+                              bandwidth = args.bandwidth,
+        )
+        
     if args.command == 'q':
         bench.showq.execute(args.verbose)
 

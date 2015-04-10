@@ -4,21 +4,11 @@ from datetime import datetime
 
 from bench.util import config
 
-# appsdir = '/home/molu8455/admin/benchmarks/django/benchmarks/apps/'
-# if not appsdir in sys.path:
-#     sys.path.insert(0,appsdir)
-
-# appsdir = '/home/molu8455/admin/benchmarks/django/benchmarks/'
-# if not appsdir in sys.path:
-#     sys.path.insert(1,appsdir)
 
 import logging
 logger = logging.getLogger('Benchmarks')
 
-# os.environ["DJANGO_SETTINGS_MODULE"] = "benchmarks_site.settings"
-# from django.db import models
-# from wire.models import Stream, Linpack
-# from django.db import IntegrityError
+
 
 def stream_data(in_file):
     test = in_file.readline().split()[0]
@@ -116,41 +106,6 @@ def linpack_data(in_file):
         data = in_file.readline().split()
 
     return data_linpack
-
-def insert_stream(data, node_name, td, tr):
-    tmp = datetime(year=td.year, month=td.month, day=td.day, hour=int(tr))
-    stream = Stream(test_date=tmp, name=node_name, node=node_name, test1=data['t0'], test2=data['t1'], test3=data['t2'], test4=data['t3'], effective=True)
-    try:
-        stream.save()
-    except IntegrityError as e:
-        logger.error("Stream import error: " + str(e))
-
-def insert_linpack(data, node_name, td, tr):
-    tmp = datetime(year=td.year, month=td.month, day=td.day, hour=int(tr))
-    linpack = Linpack(test_date=tmp,  name=node_name, node=node_name, test1=data['t0'], test2=data['t1'], test3=data['t2'], test4=data['t3'], effective=True)
-    try:
-        linpack.save()
-    except IntegrityError as e:
-        logger.error("linpack import error: " + str(e))
-
-def import_data(path, date, trial):
-    logger.info("Importing Node level data")
-    for dirname, dirnames, filenames in os.walk(path):
-        for subdirname in dirnames:
-            if subdirname.find("node") == 0:
-                data_file = os.path.join(path,subdirname,"data")
-                if os.path.exists(data_file):
-                    in_file = open(os.path.join(path,subdirname,"data"),"r")
-
-                    # Stream data
-                    s = stream_data(in_file)
-                    insert_stream(s,subdirname,date, trial)
-
-                    # Linpack
-                    l = linpack_data(in_file)
-                    insert_linpack(l,subdirname,date, trial)
-
-                    in_file.close()
 
 def execute(dir_name, node_list):
 

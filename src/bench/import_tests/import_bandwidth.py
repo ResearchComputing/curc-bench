@@ -2,20 +2,6 @@ import os, sys
 from datetime import datetime
 from optparse import OptionParser
 
-# appsdir = '/root/srv/www/benchmarks/apps/'
-# if not appsdir in sys.path:
-#     sys.path.insert(0,appsdir)
-
-# appsdir = '/root/srv/www/benchmarks/'
-# if not appsdir in sys.path:
-#     sys.path.insert(1,appsdir)
-
-
-# os.environ["DJANGO_SETTINGS_MODULE"] = "benchmarks_site.settings"
-# from db import models
-# from wire.models import Bandwidth
-# from django.db import IntegrityError
-
 from bench.util import config
 import logging
 logger = logging.getLogger('Benchmarks')
@@ -38,30 +24,6 @@ def bandwidth_data(in_file):
 
     return data_bandwidth
 
-def insert_bandwidth(data, subdirname, td, tr):
-    node1 = subdirname[:8]
-    node2 = subdirname[9:]
-    tmp = datetime(year=td.year, month=td.month, day=td.day, hour=int(tr))
-
-    bw = Bandwidth(test_date=tmp, name=node1, node1=node1, node2=node2, test1=data['65536'], test2=data['262144'], test3=data['1048576'], test4=data['4194304'], effective=True)
-    try:
-        bw.save()
-    except IntegrityError as e:
-        logger.error("Bandwidth import error: " + str(e))
-
-def import_data(path, date, trial):
-    for dirname, dirnames, filenames in os.walk(path):
-        for subdirname in dirnames:
-            if subdirname.find("node") == 0:
-                data_file = os.path.join(path,subdirname,"data_bw")
-                #print subdirname
-                if os.path.exists(data_file):
-                    in_file = open(data_file,"r")
-
-                    b = bandwidth_data(in_file)
-                    insert_bandwidth(b,subdirname,date, trial)
-
-                    in_file.close()
 
 def evaluate_bandwidth_data(data, subdirname, bad_nodes, good_nodes):
 
