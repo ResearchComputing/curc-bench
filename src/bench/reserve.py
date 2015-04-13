@@ -55,6 +55,8 @@ def create_reservation(data_name, label, directory):
             res_dict['duration'] = 2678400                    #32 days
             res_dict['name'] = label
             res_dict['node_list'] = node_string[:-1]          #Check formatting!
+            #Note sure if 'nodes' or 'node_list' should be used. Documentation is bad...
+            #res_dict['nodes'] = node_string[:-1]    
 
             resid = a.create(res_dict)
 
