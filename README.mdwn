@@ -1,0 +1,61 @@
+## Tests supported
+
+* `-n`, `--node-tests`: each node in the test runs a stream and
+  linpack benchmark
+
+## Running curc-bench at CU-Boulder Research Computing
+
+1. Load modules and prepare the environment
+
+     $ module load slurm python/pyslurm benchmarks/bench 
+     $ bench create
+
+2. Node tests
+
+     $ bench add --node-tests
+     $ bench submit --node-tests
+     $ bench process --node-tests # after all jobs done
+     $ bench reserve --node-tests
+
+3. Bandwidth tests
+
+     $ bench add --bandwidth-tests
+     $ bench submit --bandwidth-tests
+     $ bench process --bandwidth-tests # after all jobs done
+     $ bench reserve --bandwidth-tests
+
+4. All-to-all tests: pairs of nodes
+
+     $ bench add --alltoall-pair-tests
+     $ bench submit --alltoall-pair-tests
+     $ bench process --alltoall-pair-tests # after all jobs done
+     $ bench reserve --alltoall-pair-tests
+
+5. All-to-all tests: switch groups
+
+     $ bench add --alltoall-switch-tests
+     $ bench submit --alltoall-switch-tests
+     $ bench process --alltoall-switch-tests # after all jobs done
+     $ bench reserve --alltoall-switch-tests
+
+6. All-to-all tests: rack groups
+
+     $ bench add --alltoall-rack-tests
+     $ bench submit --alltoall-rack-tests
+     $ bench process --alltoall-rack-tests # after all jobs done
+     $ bench reserve --alltoall-rack-tests
+
+## Running code tests
+
+    $ python setup.py test
+
+## Non-Python dependencies
+
+* [IOR-2.10.3](http://sourceforge.net/projects/ior-sio/files/)
+* [hpl-2.0](http://www.netlib.org/benchmark/hpl/)
+* [hpcc-1.4.1](http://icl.cs.utk.edu/hpcc/software/index.html)
+* [osu-micro-benchmarks-3.8](https://www.nersc.gov/users/computational-systems/cori/nersc-8-procurement/trinity-nersc-8-rfp/nersc-8-trinity-benchmarks/omb-mpi-tests/)
+  * latest version: http://mvapich.cse.ohio-state.edu/benchmarks/
+* [stream.c v5.9](https://github.com/gregs1104/stream-scaling/blob/master/stream.c)
+
+*note: Some of the version numbers were changed in this (come back to this later)*

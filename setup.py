@@ -26,7 +26,7 @@ setuptools.setup(
     install_requires=['argparse', 'jinja2', 'python-hostlist'],#, 'NumPy>=1.7.0'],
     tests_require=['nose', 'importlib', 'mock'],
     test_suite = 'nose.collector',
-    long_description=read('README'),
+    long_description=read('README.mdwn'),
     classifiers=[
         "License :: BSD License",
     ],
