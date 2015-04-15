@@ -3,59 +3,55 @@
 #SBATCH --nodelist={{node_name}}
 #SBATCH --time=0:45:00
 
-mkdir -p {{node_name}}
+STREAM=/curc/tools/x86_64/rh6/software/stream/5.10/intel/15.0.2/stream_c.exe
+LINPACK=/curc/tools/x86_64/rh6/software/intel/15.0.2/mkl/benchmarks/linpack/xlinpack_xeon64
 
-# copy linpack
-cd {{node_name}}
-
-cat >> linpack_input << EOF
+LINPACK_INPUT="\
 Sample Intel(R) Optimized LINPACK Benchmark data file (lininput_xeon64)
 Intel(R) Optimized LINPACK Benchmark data
 6                     # number of tests
 1000 2000 5000 10000 20000 25000# problem sizes
 1000 2000 5000 10000 20000 25000 # leading dimensions
 2 2 2 1 1 1  # times to run a test
-4 4 4 4 4 4  # alignment values (in KBytes)
-EOF
+4 4 4 4 4 4  # alignment values (in KBytes)"
 
-module load openmpi/openmpi-1.6.4_intel-13.0.0_torque-4.1.4_ib
 
-echo "STREAM Memory Bandwidth Test:" > data
-#----------------------------------------------------------------------------
-export OMP_NUM_THREADS=12
-NUM_TRIALS=2
-COPYTOTAL=0
-SCALETOTAL=0
-ADDTOTAL=0
-TRIADTOTAL=0
-start_time=$(date +%s)
-for ((i=0; i < NUM_TRIALS ; i++ ))
-do
-# Grab the 3 lines in addition to the line starting with Copy
-VAR=`./lib/stream/stream-5.9/stream | grep -A 3 Copy`
+function main
+{
+    module load intel
 
-COPY=`echo $VAR | awk '{ print $2 }' | awk -F. '{ print $1 }'`
-COPYTOTAL=$(($COPY + $COPYTOTAL))
+    mkdir -p {{node_name}}
+    cd {{node_name}}
 
-SCALE=`echo $VAR | awk '{ print $7 }' | awk -F. '{ print $1 }'`
-SCALETOTAL=$(($SCALE + $SCALETOTAL))
+    run_stream_benchmark
+    run_linpack_benchmark
+}
 
-ADD=`echo $VAR | awk '{ print $12 }' | awk -F. '{ print $1 }'`
-ADDTOTAL=$(($ADD + $ADDTOTAL))
 
-TRIAD=`echo $VAR | awk '{ print $17 }' | awk -F. '{ print $1 }'`
-TRIADTOTAL=$(($TRIAD + $TRIADTOTAL))
+function run_stream_benchmark
+{
+    local start_time
+    local end_time
 
-done
-end_time=$(date +%s)
-echo $((end_time - start_time)) > time_data
+    start_time=$(date +%s)
+    $STREAM >stream.out
+    end_time=$(date +%s)
+    echo $((end_time - start_time)) >> time_data
+}
 
-echo $((COPYTOTAL/NUM_TRIALS)) " " $((SCALETOTAL/NUM_TRIALS)) " " $((ADDTOTAL/NUM_TRIALS)) " " $((TRIADTOTAL/NUM_TRIALS)) >> data
 
-# Linpack
-echo "Linpack CPU Test:" >> data
-#----------------------------------------------------------------------------
-start_time=$(date +%s)
-./lib/linpack/linpack_11.2.2/benchmarks/linpack/xlinpack_xeon64 linpack_input | grep -A 9 Performance >> data
-end_time=$(date +%s)
-echo $((end_time - start_time)) >> time_data
+function run_linpack_benchmark
+{
+    local start_time
+    local end_time
+
+    echo >linpack_input "${LINPACK_INPUT}"
+
+    start_time=$(date +%s)
+    $LINPACK linpack_input >linpack.out
+    end_time=$(date +%s)
+    echo $((end_time - start_time)) >> time_data
+}
+
+
+main

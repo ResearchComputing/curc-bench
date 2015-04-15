@@ -30,7 +30,7 @@ def parse(node_path, subdirname, node_dic):
 
     return node_dic
 
-def execute(dir_name, node_list):
+def execute(node_list, dir_name):
 
     path = os.path.split(dir_name)
     #trial = path[-1].split('-')[-1]

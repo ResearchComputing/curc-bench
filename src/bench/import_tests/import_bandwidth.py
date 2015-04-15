@@ -75,7 +75,7 @@ def evaluate_bandwidth_data(data, subdirname, bad_nodes, good_nodes):
         good_nodes.append(node2)
 
 
-def execute(dir_name, node_list):
+def execute(node_list, dir_name):
 
     path = os.path.split(dir_name)
     trial = path[-1].split('-')[-1]

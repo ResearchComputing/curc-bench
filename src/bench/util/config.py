@@ -11,19 +11,6 @@ submit_jobs = 100
 hpl_percent = 20
 
 
-# Test averages and percent criteria
-stream_limits = {'percent': 10,
-                 't0': 26500,
-                 't1': 40000,
-                 't2': 41500,
-                 't3': 42000}
-
-linpack_limits = {'percent': 10,
-                  't0': 105,
-                  't1': 114,
-                  't2': 121,
-                  't3': 122}
-
 bandwidth_limits = {'percent': 20,
                   '4194304': 3400,
                   '1048576': 3400,

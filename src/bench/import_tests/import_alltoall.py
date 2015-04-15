@@ -9,7 +9,6 @@ def alltoall_data(in_file):
     value = (1. + float(config.alltoall_limits['percent'])/100.0)
     data = {'total':0, 'num':0, 'mean':0,'min':0,'max':0 }
 
-    # First line is node_list
     line = in_file.readline()
     tmp_list = line.split(',')
     if tmp_list[-1] == '\n':
@@ -24,7 +23,6 @@ def alltoall_data(in_file):
     data['num_nodes'] = num_nodes
     while in_file:
         line = in_file.readline()
-        #print line
         split = line.split()
         if not split:
             break
@@ -46,18 +44,9 @@ def alltoall_data(in_file):
     if data['num'] > 0:
         data['mean'] = data['total']/data['num']
         logger.debug(str(data['num']) + " " + str(data['mean']))
-        #data['percent'] = round(100*(config.alltoall_limits[num_nodes]- data['mean'])/config.alltoall_limits[num_nodes])
         data['percent'] = 100
-
-        # if config.alltoall_limits[num_nodes]*value < data['mean']:
- #            data['effective'] = False
- #        else:
- #            data['effective'] = True
     else:
-        # data['effective'] = False
         data['percent'] = 100
-    # if data['effective'] == False:
- #        print num_nodes, data['mean'], config.alltoall_limits[num_nodes], data['effective']
 
     data['effective'] = False
     return data
@@ -92,7 +81,6 @@ def read_all(node_path, subdirname, filename, keyname, bad_nodes, good_nodes):
         in_file = open(data_file,"r")
         b = alltoall_data(in_file)
 
-        # compute % difference
         try:
             pdiff = 100*(b['mean'] - config.alltoall_limits[b['num_nodes']] )/b['mean']
         except ZeroDivisionError, e:
@@ -100,10 +88,7 @@ def read_all(node_path, subdirname, filename, keyname, bad_nodes, good_nodes):
         except KeyError, e:
             pdiff = 100
 
-        #print pdiff, config.alltoall_limits['percent']
-
         threshold = config.alltoall_limits['percent']
-        # NOTE: CHANGE THRESHOLD
         threshold = 55
         if pdiff > threshold:
             b['effective'] = False
@@ -112,8 +97,6 @@ def read_all(node_path, subdirname, filename, keyname, bad_nodes, good_nodes):
 
         b['test'] = subdirname
 
-        # print b['test'], b['num_nodes'], b['mean'], config.alltoall_limits[b['num_nodes']], pdiff, b['effective']
-  #
         for n in b['node_list']:
             if n not in node_dic:
                 node_dic[n] = {}
@@ -131,7 +114,7 @@ def read_all(node_path, subdirname, filename, keyname, bad_nodes, good_nodes):
     return node_dic
 
 
-def execute(dir_name, node_list):
+def execute(node_list, dir_name):
 
     path = os.path.split(dir_name)
 
@@ -203,8 +186,8 @@ def execute(dir_name, node_list):
 
 
     return {'not_tested': list(not_tested), 'bad_nodes': list(set(bad_nodes)), 'good_nodes': list(good_nodes)}
-#
-def execute_rack(dir_name, node_list):
+
+def execute_rack(node_list, dir_name):
 
     path = os.path.split(dir_name)
 
@@ -224,8 +207,8 @@ def execute_rack(dir_name, node_list):
 
 
     return {'not_tested': list(not_tested_r), 'bad_nodes': list(set(bad_nodes_rack)), 'good_nodes': list(good_nodes_rack)}
-#
-def execute_switch(dir_name, node_list):
+
+def execute_switch(node_list, dir_name):
     path = os.path.split(dir_name)
 
     bad_nodes_switch = []
@@ -245,7 +228,7 @@ def execute_switch(dir_name, node_list):
 
     return {'not_tested': list(not_tested_r), 'bad_nodes': list(set(bad_nodes_switch)), 'good_nodes': list(good_nodes_switch)}
 
-def execute_pair(dir_name, node_list):
+def execute_pair(node_list, dir_name):
     path = os.path.split(dir_name)
 
     bad_nodes_switch = []
@@ -264,13 +247,5 @@ def execute_pair(dir_name, node_list):
 
     A = set(not_tested_r).union(set(bad_nodes_switch))
     good_nodes_switch = set(node_list).difference(A)
-    #good_nodes_switch = set(tested_r).union(set(bad_nodes_switch)).union(set(bad_nodes_switch))
-
-    # print len(good_nodes_switch)
- #    print len(bad_nodes_switch)
- #    print len(tested_r)
- #    print len(not_tested_r)
- #
- #
 
     return {'not_tested': list(not_tested_r), 'bad_nodes': list(set(bad_nodes_switch)), 'good_nodes': list(good_nodes_switch)}

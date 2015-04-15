@@ -1,6 +1,6 @@
 import bench.util
 import bench.util.util
-import bench.import_tests.import_nodes
+import bench.tests.node
 import bench.import_tests.import_bandwidth
 import bench.import_tests.import_alltoall
 import hostlist
@@ -12,7 +12,7 @@ logger = logging.getLogger('Benchmarks')
 
 
 PROCESSORS = {
-    'node': bench.import_tests.import_nodes.execute,
+    'node': bench.tests.node.process,
     'bandwidth': bench.import_tests.import_bandwidth.execute,
     'alltoall-rack': bench.import_tests.import_alltoall.execute_rack,
     'alltoall-switch': bench.import_tests.import_alltoall.execute_switch,
@@ -36,101 +36,53 @@ def execute(prefix,
         or node_tests
     )
 
-    not_tested = set()
-    bad_nodes = set()
-
     # default to processing *all* test results
-    if not process_any_tests_explcitly:
+    if not process_any_tests_explicitly:
         for key in PROCESSORS:
-            results = process_tests(key, prefix, node_list)
-            not_tested |= results['not_tested']
-            bad_nodes |= results['bad_nodes']
-
+            process_tests(node_list, prefix, key)
     else:
         if alltoall_rack_tests:
-            results = process_tests('alltoall-rack', prefix, node_list)
-            not_tested |= results['not_tested']
-            bad_nodes |= results['bad_nodes']
+            process_tests(node_list, prefix, 'alltoall-rack')
         if alltoall_switch_tests:
-            results = process_tests('alltoall-switch', prefix, node_list)
-            not_tested |= results['not_tested']
-            bad_nodes |= results['bad_nodes']
+            process_tests(node_list, prefix, 'alltoall-switch')
         if alltoall_pair_tests:
-            results = process_tests('alltoall-pair', prefix, node_list)
-            not_tested |= results['not_tested']
-            bad_nodes |= results['bad_nodes']
+            process_tests(node_list, prefix, 'alltoall-pair')
         if bandwidth_tests:
-            results = process_tests('bandwidth', prefix, node_list)
-            not_tested |= results['not_tested']
-            bad_nodes |= results['bad_nodes']
+            process_tests(node_list, prefix, 'bandwidth')
         if node_tests:
-            results = process_tests('node', prefix, node_list)
-            not_tested |= results['not_tested']
-            bad_nodes |= results['bad_nodes']
-    
-    not_tested(prefix, node_list, not_tested, bad_nodes)
+            process_tests(node_list, prefix, 'node')
 
 
-def process_tests (key, prefix, node_list):
-    results = PROCESSORS[key](prefix, node_list)
-    log_result_summary(results)
-    write_result_files(os.path.join(prefix, key), results)
+def process_tests (nodes, prefix, key):
+    prefix_ = os.path.join(prefix, key)
+    results = PROCESSORS[key](nodes, prefix_)
+    logger.info('{0}: bad nodes: {1} / {2}'.format(
+        key, len(results['bad_nodes']), len(nodes)))
+    logger.info('{0}: good nodes: {1} / {2}'.format(
+        key, len(results['good_nodes']), len(nodes)))
+    logger.info('{0}: untested nodes: {1} / {2}'.format(
+        key, len(results['not_tested']), len(nodes)))
+    write_result_files(
+        prefix_,
+        results['good_nodes'],
+        results['bad_nodes'],
+        results['not_tested'],
+    )
     return results
 
 
-def log_result_summary(results):
-    all_nodes = (
-        set(results['good_nodes'])
-        | set(results['bad_nodes'])
-        | set(results['not_tested'])
-    )
-    logger.info('Bad nodes: {0} / {1}'.format(
-        len(results['bad_nodes']), len(all_nodes)))
-    logger.info('Good nodes: {0} / {1}'.format(
-        len(results['good_nodes']), len(all_nodes)))
-    logger.info('Untested nodes: {0} / {1}'.format(
-        len(results['not_tested']), len(all_nodes)))
-
-
-def write_result_files(prefix, data):
-    bench.util.write_node_list(
-        os.path.join(prefix, 'bad_nodes'),
-        data['bad_nodes'],
-    )
-
-    bench.util.write_node_list(
-        os.path.join(prefix, 'bad_not_tested_nodes'),
-        (set(data['bad_nodes']) | set(data['not_tested'])),
-    )
-
+def write_result_files(prefix, good_nodes, bad_nodes, not_tested):
     bench.util.write_node_list(
         os.path.join(prefix, 'good_nodes'),
-        data['good_nodes'],
+        good_nodes,
     )
 
-
-def not_tested(prefix, node_list, not_tested, bad_nodes):
-    not_good_nodes = set(bad_nodes) | set(not_tested)
-    good_nodes = set(node_list) - not_good_nodes
-    not_in_test = (
-        set(node_list)
-        - (bad_nodes | good_nodes | not_tested)
-    )
-
-    logger.info("Total not tested = " + str(len(not_tested)))
-    logger.info("Total bad nodes  = " + str(len(bad_nodes)))
-    logger.info("Total good nodes  = " + str(len(good_nodes)))
-    logger.info("Total not in test = " + str(len(not_in_test)))
-
-    bench.util.write_node_list(
-        os.path.join(prefix, 'not_tested'),
-        not_tested,
-    )
     bench.util.write_node_list(
         os.path.join(prefix, 'bad_nodes'),
         bad_nodes,
     )
+
     bench.util.write_node_list(
-        os.path.join(prefix, 'not_in_test'),
-        not_in_test,
+        os.path.join(prefix, 'not_tested'),
+        not_tested,
     )
