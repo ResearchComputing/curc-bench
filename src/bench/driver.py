@@ -52,7 +52,7 @@ def parser():
 
     sumbit = subparsers.add_parser('submit', help='Submit all the jobs from create to the scheduler.')
     sumbit.add_argument('-d','--directory', help='directory', dest='directory')
-    submit.set_defaults(directory=None)
+    
     sumbit.add_argument('-r', '--allrack', help='alltoall rack level', action='store_true')
     sumbit.add_argument('-s', '--allswitch', help='alltoall switch level', action='store_true')
     sumbit.add_argument('-p', '--allpair', help='alltoall pair level', action='store_true')
@@ -60,6 +60,7 @@ def parser():
     sumbit.add_argument('-b', '--bandwidth', help='bandwidth', action='store_true')
     submit.add_argument('-p', '--pause', help='number of jobs submitted before pause', action='store_true')
     submit.set_defaults(pause=None)
+    submit.set_defaults(directory=None)
     submit.add_argument('-res', '--reservation', help='reservation to run in', action='store_true')
     submit.set_defaults(reservation=None)
     submit.add_argument('-q', '--qos', help='qos', action='store_true')
