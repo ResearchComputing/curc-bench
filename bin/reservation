@@ -1,8 +1,0 @@
-#!/usr/bin/env python
-
-import bench as bn
-import sys
-
-if __name__ == '__main__':  
-    
-    bn.reservation()
