@@ -57,5 +57,10 @@
 * [osu-micro-benchmarks-3.8](https://www.nersc.gov/users/computational-systems/cori/nersc-8-procurement/trinity-nersc-8-rfp/nersc-8-trinity-benchmarks/omb-mpi-tests/)
   * latest version: http://mvapich.cse.ohio-state.edu/benchmarks/
 * [stream.c v5.9](https://github.com/gregs1104/stream-scaling/blob/master/stream.c)
+* Intel-provided linpack 10.3.9
+* openmpi
 
-*note: Some of the version numbers were changed in this (come back to this later)*
+*Some of the version numbers were changed in this (come back to this later)*
+
+*stream.c has been tuned. If you download a fresh copy it needs to be
+re-tuned.*
