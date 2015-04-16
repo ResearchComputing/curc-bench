@@ -1,3 +1,4 @@
+import bench.exc
 import errno
 import os
 import subprocess
@@ -19,6 +20,13 @@ def chunks(l, n):
     l = list(l)
     for i in xrange(0, len(l), n):
         yield l[i:i+n]
+
+
+def log_error (func):
+    try:
+        func()
+    except bench.exc.SlurmError as ex:
+        logger.error(ex)
 
 
 def subprocess_check_output (*popenargs, **kwargs):

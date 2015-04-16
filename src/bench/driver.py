@@ -1,11 +1,8 @@
 import argparse
 import bench.add
 import bench.create
-import bench.nodes
 import bench.process
 import bench.reserve
-import bench.showq
-import bench.status
 import bench.submit
 import datetime
 import glob
@@ -45,31 +42,17 @@ def parser():
     submit.add_argument('-p', '--allpair', help='alltoall pair level', action='store_true')
     submit.add_argument('-n', '--nodes', help='nodes', action='store_true')
     submit.add_argument('-b', '--bandwidth', help='bandwidth', action='store_true')
-    submit.add_argument('--pause', type=int, help='number of jobs submitted before pause', action='store_true')
-    submit.set_defaults(pause=0)
+    submit.add_argument('--pause', type=int, help='number of jobs submitted before pause')
     submit.add_argument('--res', '--reservation', help='reservation to run in', action='store_true')
-    submit.set_defaults(reservation=None)
     submit.add_argument('-q', '--qos', help='qos', action='store_true')
-    submit.set_defaults(qos=None)
     submit.add_argument('-a', '--account', help='account', action='store_true')
-    submit.set_defaults(account=None)
+    submit.set_defaults(pause=0)
 
     process = subparsers.add_parser('process', help='Process the test results')
     parser_add_test_arguments(process)
 
-    reserve = subparsers.add_parser('reserve', help='Create the necessary reservations.')
-    reserve.add_argument('-r','--allrack', help='alltoall rack level', action='store_true')
-    reserve.add_argument('-s','--allswitch', help='alltoall switch level', action='store_true')
-    reserve.add_argument('-p','--allpair', help='alltoall pair level', action='store_true')
-    reserve.add_argument('-n','--nodes', help='nodes', action='store_true')
-    reserve.add_argument('-b','--bandwidth', help='bandwidth', action='store_true')
-
-    showq = subparsers.add_parser('q', help='Checks the status of running jobs.')
-    showq.add_argument('-v','--verbose', help='verbose', action='store_true')
-
-    nodes = subparsers.add_parser('nodes', help='Checks the status of nodes.')
-
-    status = subparsers.add_parser('status', help='Concatentates the log file of the current directory.')
+    reserve = subparsers.add_parser('reserve', help='Reserve nodes based on processed results')
+    parser_add_test_arguments(reserve)
 
     return parser
 
@@ -176,7 +159,7 @@ def driver():
                              exclude_reservation = args.exclude_reservation,
         )
 
-    if args.command == 'add':
+    elif args.command == 'add':
         bench.add.execute(directory, args.topology_file,
                           add_alltoall_rack_tests = args.alltoall_rack_tests,
                           add_alltoall_switch_tests = args.alltoall_switch_tests,
@@ -185,7 +168,7 @@ def driver():
                           add_node_tests = args.node_tests,
         )
 
-    if args.command == 'submit':
+    elif args.command == 'submit':
         bench.submit.execute(directory,
                              allrack = args.allrack,
                              allswitch = args.allswitch,
@@ -198,7 +181,7 @@ def driver():
                              account = args.account,
         )
 
-    if args.command == 'process':
+    elif args.command == 'process':
         bench.process.execute(directory,
                               alltoall_rack_tests = args.alltoall_rack_tests,
                               alltoall_switch_tests = args.alltoall_switch_tests,
@@ -207,7 +190,7 @@ def driver():
                               bandwidth_tests = args.bandwidth_tests,
         )
 
-    if args.command == 'reserve':
+    elif args.command == 'reserve':
         bench.reserve.execute(directory, 
                               allrack = args.allrack,
                               allswitch = args.allswitch,
@@ -215,12 +198,3 @@ def driver():
                               nodes = args.nodes,
                               bandwidth = args.bandwidth,
         )
-        
-    if args.command == 'q':
-        bench.showq.execute(args.verbose)
-
-    if args.command == 'status':
-        bench.status.execute(directory)
-
-    if args.command == 'nodes':
-        bench.nodes.execute()

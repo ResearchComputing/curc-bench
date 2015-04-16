@@ -3,22 +3,14 @@ import os
 import shutil
 
 
-def read_node_list(node_list_name, dir=None):
-    node_list = []
-    if not dir:
-        file_in = open(os.path.join(os.getcwd(), node_list_name),'r')
-    else:
-        file_in = open(os.path.join(dir, node_list_name),'r')
-
-    node_name = file_in.readline()
-
-    while node_name:
-        if len(node_name.strip()) == 8:
-            node_list.append(node_name.strip())
-        node_name = file_in.readline()
-    file_in.close()
-
-    return node_list
+def read_node_list(node_list_path):
+    nodes = []
+    with open(node_list_path) as fp:
+        for line in fp:
+            node = line.strip()
+            if node:
+                nodes.append(node)
+    return nodes
 
 
 def categorize(node_list):
