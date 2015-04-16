@@ -1,6 +1,5 @@
 import bench.exc
 import bench.util
-import bench.util.util
 import os
 import pyslurm
 import time
@@ -45,7 +44,7 @@ def execute(prefix,
 
 
 def reserve_bad_nodes(prefix, key):
-    bad_nodes = set(bench.util.util.read_node_list(os.path.join(prefix, key, 'bad_nodes')))
+    bad_nodes = set(bench.util.read_node_list(os.path.join(prefix, key, 'bad_nodes')))
     if bad_nodes:
         reservation = pyslurm.create_reservation_dict()
         reservation['accounts'] = 'crcbenchmark'

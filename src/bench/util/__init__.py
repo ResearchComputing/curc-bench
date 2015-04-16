@@ -51,6 +51,16 @@ def patch_subprocess_check_output ():
     subprocess.check_output = subprocess_check_output
 
 
+def read_node_list(node_list_path):
+    nodes = []
+    with open(node_list_path) as fp:
+        for line in fp:
+            node = line.strip()
+            if node:
+                nodes.append(node)
+    return nodes
+
+
 def write_node_list (path, nodes):
     with open(path, 'w') as fp:
         for node in sorted(nodes):

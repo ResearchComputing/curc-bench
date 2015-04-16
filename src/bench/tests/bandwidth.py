@@ -1,6 +1,5 @@
 import bench.util.infiniband
 import bench.util
-import bench.util.util
 import jinja2
 import os
 import pkg_resources

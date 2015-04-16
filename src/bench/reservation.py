@@ -5,7 +5,7 @@ import sys
 import subprocess
 
 from hostlist import expand_hostlist
-from util.util import read_node_list
+import bench.util
 
 def get_args(argv):
 
@@ -33,7 +33,7 @@ def reservation():
     print args
     node_list = None
     if os.path.exists(args.nodelist):
-        node_list = read_node_list(args.nodelist)
+        node_list = bench.util.read_node_list(args.nodelist)
     else:
         node_list = expand_hostlist(args.nodelist)
 

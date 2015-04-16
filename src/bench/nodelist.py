@@ -5,13 +5,12 @@ import shutil
 import textwrap
 
 from hostlist import expand_hostlist
-from util.xml2obj import xml2obj
+from bench.util.xml2obj import xml2obj
 
 import logging
 logger = logging.getLogger('Benchmarks')
 
-import util.util
-from bench.util import util as util
+import bench.util
 
 def add_to_reservation():
     try:
@@ -139,7 +138,7 @@ def execute(directory, retest, list, exclude):
             logger.info("Free nodes".ljust(20)+str(len(free_nodes)).rjust(5))
                 
     else:
-        node_list = util.read_node_list(list)    
+        node_list = bench.util.read_node_list(list)    
         logger.info("Node list".ljust(20)+str(len(node_list)).rjust(5))
         
 

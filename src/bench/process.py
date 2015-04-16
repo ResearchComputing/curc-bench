@@ -1,5 +1,4 @@
 import bench.util
-import bench.util.util
 import bench.tests.node
 import bench.import_tests.import_bandwidth
 import bench.import_tests.import_alltoall
@@ -26,7 +25,7 @@ def execute(prefix,
             alltoall_pair_tests=None,
             bandwidth_tests=None,
             node_tests=None):
-    node_list = bench.util.util.read_node_list(os.path.join(prefix, 'node_list'))
+    node_list = bench.util.read_node_list(os.path.join(prefix, 'node_list'))
 
     process_any_tests_explicitly = (
         alltoall_rack_tests

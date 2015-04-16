@@ -16,13 +16,10 @@ import textwrap
 import re
 
 from hostlist import expand_hostlist
-from util.xml2obj import xml2obj
+from bench.util.xml2obj import xml2obj
 
 import logging
 logger = logging.getLogger('Benchmarks')
-
-import util.util
-import util as util
 
 ##TODO: change the reservation to be a user defined reservation
 

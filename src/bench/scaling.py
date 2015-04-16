@@ -1,6 +1,6 @@
 import bench.tests.scaling
 import bench.tests.hpl
-from bench.util import util
+import bench.util
 from bench.util import infiniband
 from bench.util import config
 import fileinput
@@ -17,7 +17,7 @@ logger = logging.getLogger('Benchmarks')
 def execute(directory):
     logger.info(directory)
 
-    node_list = util.read_node_list(os.path.join(directory,'node_list'))
+    node_list = bench.util.read_node_list(os.path.join(directory,'node_list'))
     logger.info("Node list".ljust(20)+str(len(node_list)).rjust(5))
 
     mypath = os.path.join(directory,"scaling")

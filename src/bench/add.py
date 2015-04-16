@@ -2,7 +2,6 @@ import bench.tests.alltoall
 import bench.tests.bandwidth
 import bench.tests.node
 import bench.util
-import bench.util.util
 import logging
 import os
 
@@ -16,7 +15,7 @@ def execute(prefix, topology_file,
             add_alltoall_pair_tests=None,
             add_bandwidth_tests=None,
             add_node_tests=None):
-    node_list = bench.util.util.read_node_list(os.path.join(prefix, 'node_list'))
+    node_list = bench.util.read_node_list(os.path.join(prefix, 'node_list'))
     logger.info('nodes: {0}'.format(len(node_list)))
 
     if topology_file is not None:
