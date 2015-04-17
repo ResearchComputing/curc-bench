@@ -31,7 +31,7 @@ def parser():
     add = subparsers.add_parser('add', help='Add a benchmark test')
     parser_add_test_arguments(add)
     add.add_argument('-t', '--topology-file',
-                     help = 'slurm topology.conf')
+                     help = 'slurm topology.conf')  
 
 
     submit = subparsers.add_parser('submit', help='Submit all the jobs from create to the scheduler.')
@@ -43,7 +43,7 @@ def parser():
     submit.add_argument('-n', '--nodes', help='nodes', action='store_true')
     submit.add_argument('-b', '--bandwidth', help='bandwidth', action='store_true')
     submit.add_argument('--pause', type=int, help='number of jobs submitted before pause')
-    submit.add_argument('--res', '--reservation', help='reservation to run in', action='store_true')
+    submit.add_argument('--res', help='reservation to run in', action='store_true')
     submit.add_argument('-q', '--qos', help='qos', action='store_true')
     submit.add_argument('-a', '--account', help='account', action='store_true')
     submit.set_defaults(pause=0)
@@ -67,7 +67,7 @@ def parser_add_test_arguments (parser):
     parser.add_argument('-p', '--alltoall-pair-tests',
                      help = 'alltoall pair level tests',
                      action = 'store_true')
-    parser.add_argument('-n', '--nodes-tests',
+    parser.add_argument('-n', '--node-tests',
                      help = 'individual node tests',
                      action = 'store_true')
     parser.add_argument('-b', '--bandwidth-tests',
@@ -176,7 +176,7 @@ def driver():
                              nodes = args.nodes,
                              bandwidth = args.bandwidth,
                              pause = args.pause,
-                             reservation = args.reservation,
+                             reservation = args.res,
                              qos = args.qos,
                              account = args.account,
         )
