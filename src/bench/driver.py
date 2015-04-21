@@ -67,7 +67,7 @@ def parser_add_test_arguments (parser):
     parser.add_argument('-p', '--alltoall-pair-tests',
                      help = 'alltoall pair level tests',
                      action = 'store_true')
-    parser.add_argument('-n', '--nodes-tests',
+    parser.add_argument('-n', '--node-tests',
                      help = 'individual node tests',
                      action = 'store_true')
     parser.add_argument('-b', '--bandwidth-tests',
