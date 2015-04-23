@@ -35,17 +35,11 @@ def parser():
 
 
     submit = subparsers.add_parser('submit', help='Submit all the jobs from create to the scheduler.')
-    submit.add_argument('-d','--directory', help='directory', dest='directory')
-    submit.set_defaults(directory=None)
-    submit.add_argument('-r', '--allrack', help='alltoall rack level', action='store_true')
-    submit.add_argument('-s', '--allswitch', help='alltoall switch level', action='store_true')
-    submit.add_argument('-p', '--allpair', help='alltoall pair level', action='store_true')
-    submit.add_argument('-n', '--nodes', help='nodes', action='store_true')
-    submit.add_argument('-b', '--bandwidth', help='bandwidth', action='store_true')
+    parser_add_test_arguments(submit)
     submit.add_argument('--pause', type=int, help='number of jobs submitted before pause')
-    submit.add_argument('--res', '--reservation', help='reservation to run in', action='store_true')
-    submit.add_argument('-q', '--qos', help='qos', action='store_true')
-    submit.add_argument('-a', '--account', help='account', action='store_true')
+    submit.add_argument('--reservation', help='reservation to run jobs in')
+    submit.add_argument('-q', '--qos', help='qos to associate with the jobs')
+    submit.add_argument('-a', '--account', help='account to use with the jobs')
     submit.set_defaults(pause=0)
 
     process = subparsers.add_parser('process', help='Process the test results')
@@ -110,8 +104,7 @@ class MyFormatter(logging.Formatter):
     def format(self, record):
         filename = record.filename.split('.')[0]
 
-        a = "%s %s: %s  " % (datetime.date.today(), filename.rjust(20), str(record.lineno).rjust(4))
-        return "%s %s" % (a, record.msg)
+        return "{0} {1}: {2}".format(datetime.date.today(), filename.rjust(20), record.msg)
 
 
 def get_logger(directory):
@@ -161,20 +154,20 @@ def driver():
 
     elif args.command == 'add':
         bench.add.execute(directory, args.topology_file,
-                          add_alltoall_rack_tests = args.alltoall_rack_tests,
-                          add_alltoall_switch_tests = args.alltoall_switch_tests,
-                          add_alltoall_pair_tests = args.alltoall_pair_tests,
-                          add_bandwidth_tests = args.bandwidth_tests,
-                          add_node_tests = args.node_tests,
+                          alltoall_rack_tests = args.alltoall_rack_tests,
+                          alltoall_switch_tests = args.alltoall_switch_tests,
+                          alltoall_pair_tests = args.alltoall_pair_tests,
+                          bandwidth_tests = args.bandwidth_tests,
+                          node_tests = args.node_tests,
         )
 
     elif args.command == 'submit':
         bench.submit.execute(directory,
-                             allrack = args.allrack,
-                             allswitch = args.allswitch,
-                             allpair = args.allpair,
-                             nodes = args.nodes,
-                             bandwidth = args.bandwidth,
+                             alltoall_rack_tests = args.alltoall_rack_tests,
+                             alltoall_switch_tests = args.alltoall_switch_tests,
+                             alltoall_pair_tests = args.alltoall_pair_tests,
+                             node_tests = args.node_tests,
+                             bandwidth_tests = args.bandwidth_tests,
                              pause = args.pause,
                              reservation = args.reservation,
                              qos = args.qos,
