@@ -1,3 +1,4 @@
+import bench.exc
 import logging
 import os
 import subprocess
@@ -12,64 +13,79 @@ if not hasattr(subprocess, 'check_output'):
 logger = logging.getLogger('Benchmarks')
 
 
-def submit(directory, folder, index, pause, reservation, qos, account):
-    sub_folder = os.path.join(directory, folder)
-    for dirname, dirnames, filenames in os.walk(sub_folder):
-        current = os.getcwd()
-        os.chdir(dirname)
-        for filename in filenames:
-            if filename.find("script_") == 0:
-                logger.info(filename)
-                cmd = "sbatch"
-                #User specified reservation, qos, account?
-                if reservation != None:
-                    cmd = cmd + " --reservation=" + reservation
-                if qos != None:
-                    cmd = cmd + " --qos=" + qos
-                if account != None:
-                    cmd = cmd + " --account=" + account
-                cmd = cmd + " " + filename
-                #User specified to wait between 'pause' job submissions?
-                if pause != None:
-                    if index % pause == 0:
-                        logger.info("waiting 10 seconds...")
-                        time.sleep(10)
-                try:
-                    out = bench.util.subprocess.check_output([cmd], shell=True)
-                except:
-                    logger.error("Cannot submit job " + cmd)
-                index += 1
+def execute(
+        directory,
+        node_tests=None,
+        bandwidth_tests=None,
+        alltoall_rack_tests=None,
+        alltoall_switch_tests=None,
+        alltoall_pair_tests=None,
+        pause=None, **kwargs):
 
-        os.chdir(current)
+    submit_any_tests_explicitly = (
+        alltoall_rack_tests
+        or alltoall_switch_tests
+        or alltoall_pair_tests
+        or bandwidth_tests
+        or node_tests
+    )
+
+    index = 1
+    if not submit_any_tests_explicitly:
+        index = submit(os.path.join(directory, 'node', 'tests'), index, pause, **kwargs)
+        index = submit(os.path.join(directory, 'bandwidth', 'tests'), index, pause, **kwargs)
+        index = submit(os.path.join(directory, 'alltoall-rack', 'tests'), index, pause, **kwargs)
+        index = submit(os.path.join(directory, 'alltoall-switch', 'tests'), index, pause, **kwargs)
+        index = submit(os.path.join(directory, 'alltoall-pair', 'tests'), index, pause, **kwargs)
+    else:
+        if alltoall_rack_tests:
+            index = submit(os.path.join(directory, 'alltoall-rack', 'tests'), index, pause, **kwargs)
+        if alltoall_switch_tests:
+            index = submit(os.path.join(directory, 'alltoall-switch', 'tests'), index, pause, **kwargs)
+        if alltoall_pair_tests:
+            index = submit(os.path.join(directory, 'alltoall-pair', 'tests'), index, pause, **kwargs)
+        if bandwidth_tests:
+            index = submit(os.path.join(directory, 'bandwidth', 'tests'), index, pause, **kwargs)
+        if node_tests:
+            index = submit(os.path.join(directory, 'node', 'tests'), index, pause, **kwargs)
+
+    logger.info('{0} jobs'.format(index-1))
+
+
+def submit(prefix, index, pause, **kwargs):
+    for test_basename in os.listdir(prefix):
+        test_dir = os.path.join(prefix, test_basename)
+        script = os.path.join(test_dir, '{0}.job'.format(test_basename))
+        if pause:
+            if index % pause == 0:
+                logger.info('waiting 10 seconds...')
+                time.sleep(10)
+        try:
+            sbatch(script, workdir=test_dir, **kwargs)
+        except Exception as ex:
+            logger.error('Cannot submit job {0}: {1}'.format(script, ex))
+        index += 1
     return index
 
 
-def execute(directory, pause=None, reservation=None, qos=None, account=None,
-            allrack=None, allswitch=None, bandwidth=None, nodes=None, allpair=None):
+def sbatch (script, workdir=None, reservation=None, qos=None, account=None, output=None):
+    command = ['sbatch']
+    if reservation:
+        command.extend(('--reservation', reservation))
+    if qos:
+        command.extend(('--qos', qos))
+    if account:
+        command.extend(('--account', account))
+    if workdir:
+        command.extend(('--workdir', workdir))
+    command.append(script)
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = process.communicate()
+    stdout_message = stdout.strip().replace('\n', ':')
 
-    # Create directory structure
-    logger.info(directory)
+    if stdout_message:
+        logger.info(stdout_message)
 
-    index = 1
-    if not (allrack or allswitch or bandwidth or nodes or allpair):
-
-        index = submit(directory, "nodes", index, pause, reservation, qos, account)
-        index = submit(directory, "bandwidth", index, pause, reservation, qos, account)
-        index = submit(directory, "alltoall_rack", index, pause, reservation, qos, account)
-        index = submit(directory, "alltoall_switch", index, pause, reservation, qos, account)
-        index = submit(directory, "alltoall_pair", index, pause, reservation, qos, account)
-
-    else:
-
-        if allrack == True:
-            index = submit(directory, "alltoall_rack", index, pause, reservation, qos, account)
-        if allswitch == True:
-            index = submit(directory, "alltoall_switch", index, pause, reservation, qos, account)
-        if allpair == True:
-            index = submit(directory, "alltoall_pair", index, pause, reservation, qos, account)
-        if bandwidth == True:
-            index = submit(directory, "bandwidth", index, pause, reservation, qos, account)
-        if nodes == True:
-            index = submit(directory, "nodes", index, pause, reservation, qos, account)
-
-    logger.info(str(index-1)+" jobs")
+    if process.returncode != 0:
+        stderr_message = stderr.strip().replace('\n', ':')
+        raise bench.exc.SlurmError(stderr_message)
