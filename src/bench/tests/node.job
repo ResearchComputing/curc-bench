@@ -3,6 +3,7 @@
 #SBATCH --nodelist={{node_name}}
 #SBATCH --time=0:45:00
 
+
 STREAM=/curc/tools/x86_64/rh6/software/stream/5.10/intel/15.0.2/stream_c.exe
 LINPACK=/curc/tools/x86_64/rh6/software/intel/15.0.2/mkl/benchmarks/linpack/xlinpack_xeon64
 
@@ -19,9 +20,6 @@ Intel(R) Optimized LINPACK Benchmark data
 function main
 {
     module load intel
-
-    mkdir -p {{node_name}}
-    cd {{node_name}}
 
     run_stream_benchmark
     run_linpack_benchmark

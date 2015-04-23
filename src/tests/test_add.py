@@ -26,16 +26,16 @@ class TestAddExecute (unittest.TestCase):
         shutil.rmtree(self.directory)
 
     def test_execute_add_node_tests (self):
-        bench.add.execute(self.directory, 'curc/topology.conf', add_node_tests=True)
+        bench.add.execute(self.directory, 'curc/topology.conf', node_tests=True)
 
-        prefix = os.path.join(self.directory, 'node')
-        scripts = set('{0}.job'.format(node) for node in self.nodes)
+        tests_dir = os.path.join(self.directory, 'node', 'tests')
+        expected_tests = set(self.nodes)
         self.assertEqual(
-            set(os.listdir(prefix)),
-            scripts,
+            set(os.listdir(tests_dir)),
+            expected_tests,
         )
         for node in self.nodes:
-            script = os.path.join(prefix, '{0}.job'.format(node))
+            script = os.path.join(tests_dir, node, '{0}.job'.format(node))
             self.assertNotEqual(os.stat(script).st_size, 0)
             with open(script) as fp:
                 match = NODELIST_P.search(fp.read())
@@ -45,7 +45,7 @@ class TestAddExecute (unittest.TestCase):
             )
 
     def test_execute_alltoall_rack_tests (self):
-        bench.add.execute(self.directory, 'curc/topology.conf', add_alltoall_rack_tests=True)
+        bench.add.execute(self.directory, 'curc/topology.conf', alltoall_rack_tests=True)
 
         prefix = os.path.join(self.directory, 'alltoall-rack')
         self.assertEqual(
@@ -62,7 +62,7 @@ class TestAddExecute (unittest.TestCase):
         )
 
     def test_execute_alltoall_switch_tests (self):
-        bench.add.execute(self.directory, 'curc/topology.conf', add_alltoall_switch_tests=True)
+        bench.add.execute(self.directory, 'curc/topology.conf', alltoall_switch_tests=True)
 
         prefix = os.path.join(self.directory, 'alltoall-switch')
         switches = set((
@@ -84,7 +84,7 @@ class TestAddExecute (unittest.TestCase):
         self.assertEqual(nodes, self.nodes)
 
     def test_execute_alltoall_pair_tests (self):
-        bench.add.execute(self.directory, 'curc/topology.conf', add_alltoall_pair_tests=True)
+        bench.add.execute(self.directory, 'curc/topology.conf', alltoall_pair_tests=True)
 
         prefix = os.path.join(self.directory, 'alltoall-pair')
         scripts = os.listdir(prefix)
@@ -98,7 +98,7 @@ class TestAddExecute (unittest.TestCase):
         self.assertEqual(nodes, self.nodes)
 
     def test_execute_bandwidth_tests (self):
-        bench.add.execute(self.directory, 'curc/topology.conf', add_bandwidth_tests=True)
+        bench.add.execute(self.directory, 'curc/topology.conf', bandwidth_tests=True)
 
         prefix = os.path.join(self.directory, 'bandwidth')
         scripts = os.listdir(prefix)

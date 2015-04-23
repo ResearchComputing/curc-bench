@@ -1,5 +1,7 @@
 import bench.exc
+import bench.util
 import jinja2
+import logging
 import os
 import pkg_resources
 import re
@@ -17,38 +19,54 @@ STREAM_ADD_P = re.compile(STREAM_P_T.format('Add'), flags=re.MULTILINE)
 STREAM_TRIAD_P = re.compile(STREAM_P_T.format('Triad'), flags=re.MULTILINE)
 
 
+logger = logging.getLogger('Benchmarks')
+
+
 def generate(nodes, prefix):
+    tests_dir = os.path.join(prefix, 'tests')
     for node in nodes:
-        output_file = os.path.join(prefix, '{0}.job'.format(node))
-        with open(output_file, 'w') as fp:
+        test_dir = os.path.join(tests_dir, node)
+        bench.util.mkdir_p(test_dir)
+
+        script_file = os.path.join(test_dir, '{0}.job'.format(node))
+        with open(script_file, 'w') as fp:
             fp.write(TEMPLATE.render(
                 node_name = node,
             ))
+
+        node_list_file = os.path.join(test_dir, 'node_list')
+        with open(node_list_file, 'w') as fp:
+            fp.write('{0}\n'.format(node))
 
 
 def process(nodes, prefix):
     bad_nodes = set()
     good_nodes = set()
-    for node in os.listdir(prefix):
+    tests_dir = os.path.join(prefix, 'tests')
+    for node in os.listdir(tests_dir):
         try:
-            with open(os.path.join(prefix, node, 'stream.out')) as fp:
+            with open(os.path.join(tests_dir, node, 'stream.out')) as fp:
                 stream_output = fp.read()
-        except IOError:
+        except IOError as ex:
+            logger.warn('{0}: {1}:'.format(node, ex))
             continue
         try:
             stream_data = parse_stream(stream_output)
-        except bench.exc.ParseError:
+        except bench.exc.ParseError as ex:
+            logger.warn('{0}: {1}:'.format(node, ex))
             continue
         stream_passed = process_stream(stream_data)
 
         try:
-            with open(os.path.join(prefix, node, 'linpack.out')) as fp:
+            with open(os.path.join(tests_dir, node, 'linpack.out')) as fp:
                 linpack_output = fp.read()
-        except IOError:
+        except IOError as ex:
+            logger.warn('{0}: {1}:'.format(node, ex))
             continue
         try:
             linpack_data = parse_linpack(linpack_output)
-        except bench.exc.ParseError:
+        except bench.exc.ParseError as ex:
+            logger.warn('{0}: {1}:'.format(node, ex))
             continue
         linpack_passed = process_linpack(linpack_data)
 
