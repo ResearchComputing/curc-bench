@@ -5,7 +5,7 @@ import pyslurm
 import time
 
 import logging
-logger = logging.getLogger('Benchmarks')
+logger = logging.getLogger(__name__)
 
 
 def execute(prefix,

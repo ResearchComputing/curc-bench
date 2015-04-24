@@ -10,11 +10,15 @@ import logging
 import os
 
 
+logger = logging.getLogger(__name__)
+
+
 def parser():
     parser = argparse.ArgumentParser()
+    parser.add_argument('-v', '--verbose', action='store_true')
     parser.add_argument('-P', '--directory-prefix', dest='prefix')
     parser.add_argument('-d', '--directory', help='directory')
-    parser.set_defaults(prefix='.')
+    parser.set_defaults(prefix='.', verbose=False)
 
     subparsers = parser.add_subparsers(dest='command')
 
@@ -99,34 +103,17 @@ def get_directory(prefix, new=False):
         return directory
 
 
-class MyFormatter(logging.Formatter):
+def configure_logging(directory, stderr_level=logging.WARNING):
+    root_logger = logging.getLogger('bench')
+    root_logger.setLevel(logging.DEBUG)
 
-    def format(self, record):
-        filename = record.filename.split('.')[0]
+    log_file_handler = logging.FileHandler(os.path.join(directory, 'bench.log'))
+    log_file_handler.setLevel(logging.DEBUG)
+    root_logger.addHandler(log_file_handler)
 
-        return "{0} {1}: {2}".format(datetime.date.today(), filename.rjust(20), record.msg)
-
-
-def get_logger(directory):
-
-    logger = logging.getLogger('Benchmarks')
-    logger.setLevel(logging.DEBUG)
-
-    # create console handler and set level to debug
-    ch = logging.FileHandler(os.path.join(directory,'bench.log'))
-    ch.setLevel(logging.DEBUG)
-    formatter = logging.Formatter('%(asctime)s:   %(message)s', datefmt='%I:%M:%S %p')
-    formatter = MyFormatter()
-    ch.setFormatter(formatter)
-    logger.addHandler(ch)
-
-    sh = logging.StreamHandler()
-    sh.setLevel(logging.INFO)
-    formatter = MyFormatter()
-    sh.setFormatter(formatter)
-    logger.addHandler(sh)
-
-    return logger
+    stderr_handler = logging.StreamHandler()
+    stderr_handler.setLevel(stderr_level)
+    root_logger.addHandler(stderr_handler)
 
 
 def driver():
@@ -142,7 +129,10 @@ def driver():
         if args.command == 'create':
             os.makedirs(directory)
 
-    logger = get_logger(directory)
+    if args.verbose:
+        configure_logging(directory, stderr_level=logging.INFO)
+    else:
+        configure_logging(directory, stderr_level=logging.WARNING)
 
     if args.command == 'create':
         bench.create.execute(directory,

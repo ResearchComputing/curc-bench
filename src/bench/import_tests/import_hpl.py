@@ -1,6 +1,6 @@
 import os
 import logging
-logger = logging.getLogger('Benchmarks')
+logger = logging.getLogger(__name__)
 from bench.util import infiniband
 
 def parse(node_path, subdirname, node_dic):

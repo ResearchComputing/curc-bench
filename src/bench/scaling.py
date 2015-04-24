@@ -11,7 +11,7 @@ import sys
 import uuid
 
 
-logger = logging.getLogger('Benchmarks')
+logger = logging.getLogger(__name__)
 
 
 def execute(directory):

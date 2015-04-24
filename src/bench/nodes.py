@@ -4,7 +4,7 @@ import subprocess
 import logging
 import os
 
-logger = logging.getLogger('Benchmarks')
+logger = logging.getLogger(__name__)
 
 def reservation_list(x):
     #try:

@@ -4,7 +4,7 @@ import os
 import pyslurm
 
 
-logger = logging.getLogger('Benchmarks')
+logger = logging.getLogger(__name__)
 
 
 def get_reserved_nodes(reservation_name):

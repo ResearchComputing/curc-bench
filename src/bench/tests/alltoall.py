@@ -1,7 +1,11 @@
 import bench.util
 import jinja2
+import logging
 import os
 import pkg_resources
+
+
+logger = logging.getLogger(__name__)
 
 
 TEMPLATE = jinja2.Template(

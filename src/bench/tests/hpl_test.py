@@ -11,7 +11,7 @@ from bench.util import infiniband
 from bench.util import config
 
 import logging
-logger = logging.getLogger('Benchmarks')
+logger = logging.getLogger(__name__)
 
 HPL_TEMPLATE = """\
 #!/bin/bash

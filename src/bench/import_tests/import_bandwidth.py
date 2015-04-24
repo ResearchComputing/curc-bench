@@ -4,7 +4,7 @@ from optparse import OptionParser
 
 from bench.util import config
 import logging
-logger = logging.getLogger('Benchmarks')
+logger = logging.getLogger(__name__)
 
 def bandwidth_data(in_file):
 

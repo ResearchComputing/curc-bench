@@ -6,7 +6,7 @@ import logging
 import os
 
 
-logger = logging.getLogger('Benchmarks')
+logger = logging.getLogger(__name__)
 
 
 def execute(prefix, topology_file,

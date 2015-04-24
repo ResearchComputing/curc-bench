@@ -19,7 +19,7 @@ STREAM_ADD_P = re.compile(STREAM_P_T.format('Add'), flags=re.MULTILINE)
 STREAM_TRIAD_P = re.compile(STREAM_P_T.format('Triad'), flags=re.MULTILINE)
 
 
-logger = logging.getLogger('Benchmarks')
+logger = logging.getLogger(__name__)
 
 
 def generate(nodes, prefix):

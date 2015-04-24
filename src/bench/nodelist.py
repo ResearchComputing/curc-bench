@@ -8,7 +8,7 @@ from hostlist import expand_hostlist
 from bench.util.xml2obj import xml2obj
 
 import logging
-logger = logging.getLogger('Benchmarks')
+logger = logging.getLogger(__name__)
 
 import bench.util
 

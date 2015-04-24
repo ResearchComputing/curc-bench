@@ -11,7 +11,7 @@ from bench.util import util
 from bench.util import infiniband
 
 import logging
-logger = logging.getLogger('Benchmarks')
+logger = logging.getLogger(__name__)
 
 SCALING_TEMPLATE = """\
 #!/bin/bash

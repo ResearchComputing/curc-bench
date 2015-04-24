@@ -10,7 +10,7 @@ if not hasattr(subprocess, 'check_output'):
     bench.util.patch_subprocess_check_output()
 
 
-logger = logging.getLogger('Benchmarks')
+logger = logging.getLogger(__name__)
 
 
 def execute(
