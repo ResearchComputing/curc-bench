@@ -21,34 +21,10 @@ function main
 {
     module load intel
 
-    run_stream_benchmark
-    run_linpack_benchmark
-}
-
-
-function run_stream_benchmark
-{
-    local start_time
-    local end_time
-
-    start_time=$(date +%s)
     $STREAM >stream.out
-    end_time=$(date +%s)
-    echo $((end_time - start_time)) >> time_data
-}
-
-
-function run_linpack_benchmark
-{
-    local start_time
-    local end_time
 
     echo >linpack_input "${LINPACK_INPUT}"
-
-    start_time=$(date +%s)
     $LINPACK linpack_input >linpack.out
-    end_time=$(date +%s)
-    echo $((end_time - start_time)) >> time_data
 }
 
 
