@@ -47,12 +47,12 @@ class TestAddExecute (unittest.TestCase):
     def test_execute_alltoall_rack_tests (self):
         bench.add.execute(self.directory, 'curc/topology.conf', alltoall_rack_tests=True)
 
-        prefix = os.path.join(self.directory, 'alltoall-rack')
+        prefix = os.path.join(self.directory, 'alltoall-rack', 'tests')
         self.assertEqual(
-            set(os.listdir(os.path.join(self.directory, 'alltoall-rack'))),
+            set(os.listdir(prefix)),
             set(('rack_01', )),
         )
-        script = os.path.join(prefix, 'rack_01')
+        script = os.path.join(prefix, 'rack_01', 'rack_01.job')
         self.assertNotEqual((os.stat(script)), 0)
         with open(script) as fp:
             match = NODELIST_P.search(fp.read())
@@ -64,7 +64,7 @@ class TestAddExecute (unittest.TestCase):
     def test_execute_alltoall_switch_tests (self):
         bench.add.execute(self.directory, 'curc/topology.conf', alltoall_switch_tests=True)
 
-        prefix = os.path.join(self.directory, 'alltoall-switch')
+        prefix = os.path.join(self.directory, 'alltoall-switch', 'tests')
         switches = set((
             'hpcf-ib-rack1-u43', 'hpcf-ib-rack1-u45',
             'hpcf-ib-rack1-u42', 'hpcf-ib-rack1-u44',
@@ -77,7 +77,7 @@ class TestAddExecute (unittest.TestCase):
 
         nodes = set()
         for switch in switches:
-            script = os.path.join(prefix, switch)
+            script = os.path.join(prefix, switch, '{0}.job'.format(switch))
             with open(script) as fp:
                 match = NODELIST_P.search(fp.read())
             nodes |= set(hostlist.expand_hostlist(match.group(3)))
@@ -86,11 +86,11 @@ class TestAddExecute (unittest.TestCase):
     def test_execute_alltoall_pair_tests (self):
         bench.add.execute(self.directory, 'curc/topology.conf', alltoall_pair_tests=True)
 
-        prefix = os.path.join(self.directory, 'alltoall-pair')
-        scripts = os.listdir(prefix)
+        prefix = os.path.join(self.directory, 'alltoall-pair', 'tests')
+        script_dirs = os.listdir(prefix)
         nodes = set()
-        for script in scripts:
-            with open(os.path.join(prefix, script)) as fp:
+        for script_dir in script_dirs:
+            with open(os.path.join(prefix, script_dir, '{0}.job'.format(script_dir))) as fp:
                 match = NODELIST_P.search(fp.read())
             node_pair = set(hostlist.expand_hostlist(match.group(3)))
             self.assertEqual(len(node_pair), 2)

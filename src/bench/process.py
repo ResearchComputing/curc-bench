@@ -1,7 +1,7 @@
 import bench.util
 import bench.tests.node
 import bench.import_tests.import_bandwidth
-import bench.import_tests.import_alltoall
+import bench.tests.alltoall
 import hostlist
 import logging
 import os
@@ -13,9 +13,9 @@ logger = logging.getLogger(__name__)
 PROCESSORS = {
     'node': bench.tests.node.process,
     'bandwidth': bench.import_tests.import_bandwidth.execute,
-    'alltoall-rack': bench.import_tests.import_alltoall.execute_rack,
-    'alltoall-switch': bench.import_tests.import_alltoall.execute_switch,
-    'alltoall-pair': bench.import_tests.import_alltoall.execute_pair,
+    'alltoall-rack': bench.tests.alltoall.process,
+    'alltoall-switch': bench.tests.alltoall.process,
+    'alltoall-pair': bench.tests.alltoall.process,
 }
 
 
