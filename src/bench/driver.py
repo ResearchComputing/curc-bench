@@ -159,7 +159,7 @@ def driver():
                              node_tests = args.node_tests,
                              bandwidth_tests = args.bandwidth_tests,
                              pause = args.pause,
-                             reservation = args.res,
+                             reservation = args.reservation,
                              qos = args.qos,
                              account = args.account,
         )

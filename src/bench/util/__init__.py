@@ -29,28 +29,6 @@ def log_error (func):
         logger.error(ex)
 
 
-def subprocess_check_output (*popenargs, **kwargs):
-    assert 'stdout' not in kwargs, 'stdout is used internally by check_output'
-
-    process = subprocess.Popen(*popenargs, stdout=subprocess.PIPE, **kwargs)
-    stdout, _ = process.communicate()
-    process.wait()
-    if process.returncode != 0:
-        cmd = kwargs.get('args')
-        if cmd is None:
-            cmd = popenargs[0]
-        ex = subprocess.CalledProcessError(
-            process.returncode, cmd)
-        ex.output = stdout
-        raise ex
-    else:
-        return stdout
-
-
-def patch_subprocess_check_output ():
-    subprocess.check_output = subprocess_check_output
-
-
 def read_node_list(node_list_path):
     nodes = []
     with open(node_list_path) as fp:
