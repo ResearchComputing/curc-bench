@@ -35,7 +35,7 @@ def parser():
     add = subparsers.add_parser('add', help='Add a benchmark test')
     parser_add_test_arguments(add)
     add.add_argument('-t', '--topology-file',
-                     help = 'slurm topology.conf')
+                     help = 'slurm topology.conf')  
 
 
     submit = subparsers.add_parser('submit', help='Submit all the jobs from create to the scheduler.')
@@ -159,7 +159,7 @@ def driver():
                              node_tests = args.node_tests,
                              bandwidth_tests = args.bandwidth_tests,
                              pause = args.pause,
-                             reservation = args.reservation,
+                             reservation = args.res,
                              qos = args.qos,
                              account = args.account,
         )

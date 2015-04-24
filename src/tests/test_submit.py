@@ -23,11 +23,13 @@ class TestSubmit(unittest.TestCase):
             pass # just create the file
         assert os.path.exists(self.script)
 
+
     def tearDown (self):
         shutil.rmtree(self.prefix)
 
     @mock.patch('bench.submit.subprocess.Popen',
                 return_value=fake_Popen())
+
     def test_submit(self, arg1):
         new_index = bench.submit.submit(
             self.prefix,
@@ -48,6 +50,7 @@ class TestSubmit(unittest.TestCase):
 
     @mock.patch('bench.submit.subprocess.Popen',
                 return_value=fake_Popen())
+
     def test_submit2(self, arg1):
         new_index = bench.submit.submit(
             self.prefix,
