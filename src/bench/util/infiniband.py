@@ -67,7 +67,7 @@ def get_node_pairs(nodes):
     data = {}
     for node_pair in bench.util.chunks(sorted(nodes), 2):
         try:
-            key = 'infiniband_{0}_{1}'.format(*list(sorted(node_pair)))
+            key = '{0},{1}'.format(*list(sorted(node_pair)))
         except IndexError:
             # odd-length list might end with a single node
             continue
