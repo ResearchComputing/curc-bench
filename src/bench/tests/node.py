@@ -44,29 +44,30 @@ def process(nodes, prefix):
     good_nodes = set()
     tests_dir = os.path.join(prefix, 'tests')
     for node in os.listdir(tests_dir):
+        test_dir = os.path.join(tests_dir, node)
         try:
-            with open(os.path.join(tests_dir, node, 'stream.out')) as fp:
+            with open(os.path.join(test_dir, 'stream.out')) as fp:
                 stream_output = fp.read()
         except IOError as ex:
-            logger.warn('{0}: {1}:'.format(node, ex))
+            logger.warn('{0}: {1}'.format(node, ex))
             continue
         try:
             stream_data = parse_stream(stream_output)
         except bench.exc.ParseError as ex:
-            logger.warn('{0}: {1}:'.format(node, ex))
+            logger.warn('{0}: {1}'.format(node, ex))
             continue
         stream_passed = process_stream(stream_data)
 
         try:
-            with open(os.path.join(tests_dir, node, 'linpack.out')) as fp:
+            with open(os.path.join(test_dir, 'linpack.out')) as fp:
                 linpack_output = fp.read()
         except IOError as ex:
-            logger.warn('{0}: {1}:'.format(node, ex))
+            logger.warn('{0}: {1}'.format(node, ex))
             continue
         try:
             linpack_data = parse_linpack(linpack_output)
         except bench.exc.ParseError as ex:
-            logger.warn('{0}: {1}:'.format(node, ex))
+            logger.warn('{0}: {1}'.format(node, ex))
             continue
         linpack_passed = process_linpack(linpack_data)
 
