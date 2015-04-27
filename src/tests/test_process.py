@@ -28,9 +28,11 @@ class TestProcessExecute (unittest.TestCase):
             for node in self.nodes:
                 fp.write('{0}\n'.format(node))
         for node in self.good_nodes:
+            self._populate_node_list(node)
             self._populate_stream_pass(node)
             self._populate_linpack_pass(node)
         for node in self.bad_nodes:
+            self._populate_node_list(node)
             self._populate_stream_fail(node)
             self._populate_linpack_fail(node)
 
@@ -112,6 +114,12 @@ class TestProcessExecute (unittest.TestCase):
         self.assertEqual(good_nodes, self.good_nodes - corrupt_linpack_nodes)
         self.assertEqual(bad_nodes, self.bad_nodes)
         self.assertEqual(not_tested, self.not_tested | corrupt_linpack_nodes)
+
+    def _populate_node_list (self, node):
+        bench.util.mkdir_p(os.path.join(self.tests_dir, node))
+        print os.path.join(self.tests_dir, node, 'node_list')
+        with open(os.path.join(self.tests_dir, node, 'node_list'), 'w') as fp:
+            fp.write('{0}\n'.format(node))
 
     def _remove_stream (self, node):
         os.remove(os.path.join(self.tests_dir, node, 'stream.out'))

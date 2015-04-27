@@ -78,9 +78,7 @@ def render(prefix, nodes, node_list_name):
         ))
 
     node_list_file = os.path.join(prefix, 'node_list')
-    with open(node_list_file, 'w') as fp:
-        for node in nodes:
-            fp.write('{0}\n'.format(node))
+    bench.util.write_node_list(node_list_file, nodes)
 
 
 def process(nodes, prefix):

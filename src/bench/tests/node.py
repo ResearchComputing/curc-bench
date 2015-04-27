@@ -34,25 +34,25 @@ def generate(nodes, prefix):
             ))
 
         node_list_file = os.path.join(test_dir, 'node_list')
-        with open(node_list_file, 'w') as fp:
-            fp.write('{0}\n'.format(node))
+        bench.util.write_node_list(node_list_file, [node])
 
 
 def process(nodes, prefix):
     bad_nodes = set()
     good_nodes = set()
-    for node in os.listdir(prefix):
-        test_dir = os.path.join(prefix, node)
+    for test in os.listdir(prefix):
+        test_dir = os.path.join(prefix, test)
+        test_nodes = set(bench.util.read_node_list(os.path.join(test_dir, 'node_list')))
         try:
             with open(os.path.join(test_dir, 'stream.out')) as fp:
                 stream_output = fp.read()
         except IOError as ex:
-            logger.warn('{0}: {1}'.format(node, ex))
+            logger.warn('{0}: {1}'.format(test, ex))
             continue
         try:
             stream_data = parse_stream(stream_output)
         except bench.exc.ParseError as ex:
-            logger.warn('{0}: {1}'.format(node, ex))
+            logger.warn('{0}: {1}'.format(test, ex))
             continue
         stream_passed = process_stream(stream_data)
 
@@ -60,19 +60,19 @@ def process(nodes, prefix):
             with open(os.path.join(test_dir, 'linpack.out')) as fp:
                 linpack_output = fp.read()
         except IOError as ex:
-            logger.warn('{0}: {1}'.format(node, ex))
+            logger.warn('{0}: {1}'.format(test, ex))
             continue
         try:
             linpack_data = parse_linpack(linpack_output)
         except bench.exc.ParseError as ex:
-            logger.warn('{0}: {1}'.format(node, ex))
+            logger.warn('{0}: {1}'.format(test, ex))
             continue
         linpack_passed = process_linpack(linpack_data)
 
         if stream_passed and linpack_passed:
-            good_nodes.add(node)
+            good_nodes |= test_nodes
         else:
-            bad_nodes.add(node)
+            bad_nodes |= test_nodes
 
     tested = good_nodes | bad_nodes
     not_tested = set(nodes) - tested

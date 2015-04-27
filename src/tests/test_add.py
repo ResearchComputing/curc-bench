@@ -100,11 +100,11 @@ class TestAddExecute (unittest.TestCase):
     def test_execute_bandwidth_tests (self):
         bench.add.execute(self.directory, 'curc/topology.conf', bandwidth_tests=True)
 
-        prefix = os.path.join(self.directory, 'bandwidth', 'tests')
-        scripts = os.listdir(prefix)
+        tests_dir = os.path.join(self.directory, 'bandwidth', 'tests')
         nodes = set()
-        for script in scripts:
-            with open(os.path.join(prefix, script)) as fp:
+        for test in os.listdir(tests_dir):
+            script = os.path.join(tests_dir, test, '{0}.job'.format(test))
+            with open(script) as fp:
                 match = NODELIST_P.search(fp.read())
             node_pair = set(hostlist.expand_hostlist(match.group(3)))
             self.assertEqual(len(node_pair), 2)

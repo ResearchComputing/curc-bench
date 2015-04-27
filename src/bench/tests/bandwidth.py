@@ -13,16 +13,24 @@ TEMPLATE = jinja2.Template(
 
 def generate(nodes, topology, prefix):
     switches = bench.util.infiniband.get_switch_nodes(nodes, topology)
+    print os.listdir(prefix)
     for switch_name, switch_nodes in switches.iteritems():
         if not switch_nodes:
             continue
+        
+        print os.listdir(prefix)
         node_pairs = bench.util.infiniband.get_node_pairs(switch_nodes)
         for node_pair in node_pairs.itervalues():
             node_pair = list(sorted(node_pair))
-            job_name = '-'.join(node_pair)
-            output_file = os.path.join(prefix, '{0}.job'.format(job_name))
-            with open(output_file, 'w') as fp:
+            node_pair_name = ','.join(node_pair)
+            test_dir = os.path.join(prefix, node_pair_name)
+            bench.util.mkdir_p(test_dir)
+            script = os.path.join(test_dir, '{0}.job'.format(node_pair_name))
+            with open(script, 'w') as fp:
                 fp.write(TEMPLATE.render(
-                    job_name = job_name,
+                    job_name = node_pair_name,
                     nodes = node_pair,
                 ))
+            bench.util.write_node_list(os.path.join(test_dir, 'node_list'), node_pair)
+        
+    print os.listdir(prefix)
