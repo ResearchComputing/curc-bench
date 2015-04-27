@@ -27,7 +27,7 @@ class TestSubmit(unittest.TestCase):
     def tearDown (self):
         shutil.rmtree(self.prefix)
 
-    @mock.patch('bench.submit.subprocess.Popen',
+    @mock.patch('bench.submit.bench.slurm.subprocess.Popen',
                 return_value=fake_Popen())
 
     def test_submit(self, arg1):
@@ -48,7 +48,7 @@ class TestSubmit(unittest.TestCase):
         self.assertTrue('--account' in call_args)
         self.assertTrue('Account' in call_args)
 
-    @mock.patch('bench.submit.subprocess.Popen',
+    @mock.patch('bench.submit.bench.slurm.subprocess.Popen',
                 return_value=fake_Popen())
 
     def test_submit2(self, arg1):

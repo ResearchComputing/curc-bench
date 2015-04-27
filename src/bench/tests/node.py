@@ -23,9 +23,8 @@ logger = logging.getLogger(__name__)
 
 
 def generate(nodes, prefix):
-    tests_dir = os.path.join(prefix, 'tests')
     for node in nodes:
-        test_dir = os.path.join(tests_dir, node)
+        test_dir = os.path.join(prefix, node)
         bench.util.mkdir_p(test_dir)
 
         script_file = os.path.join(test_dir, '{0}.job'.format(node))
@@ -42,9 +41,8 @@ def generate(nodes, prefix):
 def process(nodes, prefix):
     bad_nodes = set()
     good_nodes = set()
-    tests_dir = os.path.join(prefix, 'tests')
-    for node in os.listdir(tests_dir):
-        test_dir = os.path.join(tests_dir, node)
+    for node in os.listdir(prefix):
+        test_dir = os.path.join(prefix, node)
         try:
             with open(os.path.join(test_dir, 'stream.out')) as fp:
                 stream_output = fp.read()

@@ -52,17 +52,17 @@ def execute(prefix,
             process_tests(node_list, prefix, 'node')
 
 
-def process_tests (nodes, prefix, key):
-    prefix_ = os.path.join(prefix, key)
-    results = PROCESSORS[key](nodes, prefix_)
+def process_tests (node_list, prefix, key):
+    prefix_ = os.path.join(prefix, key, 'tests')
+    results = PROCESSORS[key](node_list, prefix_)
     logger.info('{0}: bad nodes: {1} / {2}'.format(
-        key, len(results['bad_nodes']), len(nodes)))
+        key, len(results['bad_nodes']), len(node_list)))
     logger.info('{0}: good nodes: {1} / {2}'.format(
-        key, len(results['good_nodes']), len(nodes)))
+        key, len(results['good_nodes']), len(node_list)))
     logger.info('{0}: untested nodes: {1} / {2}'.format(
-        key, len(results['not_tested']), len(nodes)))
+        key, len(results['not_tested']), len(node_list)))
     write_result_files(
-        prefix_,
+        os.path.join(prefix, key),
         results['good_nodes'],
         results['bad_nodes'],
         results['not_tested'],

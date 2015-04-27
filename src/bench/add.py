@@ -9,6 +9,15 @@ import os
 logger = logging.getLogger(__name__)
 
 
+GENERATORS = {
+    'node': bench.tests.node.generate,
+    'bandwidth': bench.tests.bandwidth.generate,
+    'alltoall-rack': bench.tests.alltoall.generate_alltoall_rack,
+    'alltoall-switch': bench.tests.alltoall.generate_alltoall_switch,
+    'alltoall-pair': bench.tests.alltoall.generate_alltoall_pair,
+}
+
+
 def execute(prefix, topology_file,
             alltoall_rack_tests=None,
             alltoall_switch_tests=None,
@@ -32,55 +41,26 @@ def execute(prefix, topology_file,
 
     # default to adding *all* tests
     if not add_any_tests_explicitly:
-        add_node_tests(node_list, prefix)
-        add_bandwidth_tests(node_list, topology, prefix)
-        add_alltoall_rack_tests(node_list, prefix)
-        add_alltoall_switch_tests(node_list, topology, prefix)
-        add_alltoall_pair_tests(node_list, topology, prefix)
-
+        for key in PROCESSORS:
+            add_tests(node_list, prefix, key, topology)
     else:
         if alltoall_rack_tests:
-            add_alltoall_rack_tests(node_list, prefix)
+            add_tests(node_list, prefix, 'alltoall-rack', topology)
         if alltoall_switch_tests:
-            add_alltoall_switch_tests(node_list, topology, prefix)
+            add_tests(node_list, prefix, 'alltoall-switch', topology)
         if alltoall_pair_tests:
-            add_alltoall_pair_tests(node_list, topology, prefix)
+            add_tests(node_list, prefix, 'alltoall-pair', topology)
         if bandwidth_tests:
-            add_bandwidth_tests(node_list, topology, prefix)
+            add_tests(node_list, prefix, 'bandwidth', topology)
         if node_tests:
-            add_node_tests(node_list, prefix)
+            add_tests(node_list, prefix, 'node', topology)
 
 
-def add_node_tests (node_list, prefix):
-    node_prefix = os.path.join(prefix, 'node')
-    logger.info('adding node tests to {0}'.format(node_prefix))
-    bench.util.mkdir_p(node_prefix)
-    bench.tests.node.generate(node_list, node_prefix)
-
-
-def add_bandwidth_tests (node_list, topology, prefix):
-    bandwidth_prefix = os.path.join(prefix, 'bandwidth')
-    logger.info('adding bandwidth tests to {0}'.format(bandwidth_prefix))
-    bench.util.mkdir_p(bandwidth_prefix)
-    bench.tests.bandwidth.generate(node_list, topology, bandwidth_prefix)
-
-
-def add_alltoall_rack_tests (node_list, prefix):
-    alltoall_rack_prefix = os.path.join(prefix, 'alltoall-rack')
-    logger.info('adding alltoall-rack tests to {0}'.format(alltoall_rack_prefix))
-    bench.util.mkdir_p(alltoall_rack_prefix)
-    bench.tests.alltoall.generate_alltoall_rack(node_list, alltoall_rack_prefix)
-
-
-def add_alltoall_switch_tests (node_list, topology, prefix):
-    alltoall_switch_prefix = os.path.join(prefix, 'alltoall-switch')
-    logger.info('adding alltoall-switch tests to {0}'.format(alltoall_switch_prefix))
-    bench.util.mkdir_p(alltoall_switch_prefix)
-    bench.tests.alltoall.generate_alltoall_switch(node_list, topology, alltoall_switch_prefix)
-
-
-def add_alltoall_pair_tests (node_list, topology, prefix):
-    alltoall_pair_prefix = os.path.join(prefix, 'alltoall-pair')
-    logger.info('adding alltoall-pair tests to {0}'.format(alltoall_pair_prefix))
-    bench.util.mkdir_p(alltoall_pair_prefix)
-    bench.tests.alltoall.generate_alltoall_pair(node_list, topology, alltoall_pair_prefix)
+def add_tests (node_list, prefix, key, topology=None):
+    tests_prefix = os.path.join(prefix, key, 'tests')
+    logger.info('adding {0} tests to {1}'.format(key, tests_prefix))
+    bench.util.mkdir_p(tests_prefix)
+    if key in ('bandwidth', 'alltoall-switch', 'alltoall-pair'):
+        GENERATORS[key](node_list, topology, tests_prefix)
+    else:
+        GENERATORS[key](node_list, tests_prefix)

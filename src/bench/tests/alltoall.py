@@ -44,29 +44,26 @@ TEMPLATE = jinja2.Template(
 
 
 def generate_alltoall_rack(nodes, prefix):
-    tests_dir = os.path.join(prefix, 'tests')
     rack_nodes = bench.util.infiniband.get_rack_nodes(nodes)
     for rack_name, rack_nodes in rack_nodes.iteritems():
         if rack_nodes:
-            test_dir = os.path.join(tests_dir, rack_name)
+            test_dir = os.path.join(prefix, rack_name)
             render(test_dir, rack_nodes, rack_name)
 
 
 def generate_alltoall_switch(nodes, topology, prefix):
-    tests_dir = os.path.join(prefix, 'tests')
     switch_nodes = bench.util.infiniband.get_switch_nodes(nodes, topology)
     for switch_name, switch_nodes in switch_nodes.iteritems():
         if switch_nodes:
-            test_dir = os.path.join(tests_dir, switch_name)
+            test_dir = os.path.join(prefix, switch_name)
             render(test_dir, switch_nodes, switch_name)
 
 
 def generate_alltoall_pair(nodes, topology, prefix):
-    tests_dir = os.path.join(prefix, 'tests')
     node_pairs = bench.util.infiniband.get_switch_node_pairs(nodes, topology)
     for pair_name, name_list in node_pairs.iteritems():
         if name_list:
-            test_dir = os.path.join(tests_dir, pair_name)
+            test_dir = os.path.join(prefix, pair_name)
             render(test_dir, name_list, pair_name)
 
 
@@ -89,9 +86,8 @@ def render(prefix, nodes, node_list_name):
 def process(nodes, prefix):
     bad_nodes = set()
     good_nodes = set()
-    tests_dir = os.path.join(prefix, 'tests')
-    for test in os.listdir(tests_dir):
-        test_dir = os.path.join(tests_dir, test)
+    for test in os.listdir(prefix):
+        test_dir = os.path.join(prefix, test)
         test_nodes = set(bench.util.read_node_list(os.path.join(test_dir, 'node_list')))
         try:
             with open(os.path.join(test_dir, 'osu_alltoall.out')) as fp:
