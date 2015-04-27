@@ -8,9 +8,6 @@ showq_time = 60
 # number of jobs to submit between waiting 10 seconds
 submit_jobs = 100
 
-hpl_percent = 20
-
-
 bandwidth_limits = {'percent': 20,
                   '4194304': 3400,
                   '1048576': 3400,
