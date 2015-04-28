@@ -3,9 +3,16 @@
 #SBATCH --time=0:45:00
 #SBATCH --ntasks-per-node=1
 
-module load openmpi/openmpi-1.6.4_intel-13.0.0_torque-4.1.4_ib
 
-mkdir -p {{job_name}}
-cd {{job_name}}
+OSU_BW=/curc/admin/benchmarks-test/software/osu-micro-benchmarks-3.8/mpi/pt2pt/osu_bw
 
-mpirun -np 2 ./lib/osu-micro-benchmarks-3.8/mpi/pt2pt/osu_bw > data_bw
+
+function main
+{
+    module load openmpi/openmpi-1.6.4_intel-13.0.0_torque-4.1.4_ib
+
+    mpirun $OSU_BW >osu_bw.out
+}
+
+
+main
