@@ -1,7 +1,17 @@
-## Tests supported
+curc-bench is a regression testing benchmark suite developed at and
+for University of Colorado Boulder Research Computing. It uses
+linpack, stream, and osu-micro-benchmarks.
+
+## Tests available
 
 * `-n`, `--node-tests`: each node in the test runs a stream and
   linpack benchmark
+* `-p`, `--alltoall-pair-tests`: pairs of nodes selected from each
+  swich run osu_alltoall
+* `-s`, `--alltoall-switch-tests`: the nodes connected to each switch
+  run osu_alltoall
+* `-r`, `--alltoall-rack-tests`: the nodes in each rack run
+  osu_alltoall
 
 ## Running curc-bench at CU-Boulder Research Computing
 
