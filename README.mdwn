@@ -2,6 +2,15 @@ curc-bench is a regression testing benchmark suite developed at and
 for University of Colorado Boulder Research Computing. It uses
 linpack, stream, and osu-micro-benchmarks.
 
+## Commands
+
+* `bench create`
+* `bench add`
+* `bench submit`
+* `bench process`
+* `bench reserve`
+* `bench update-nodes`
+
 ## Tests available
 
 * `-n`, `--node-tests`: each node in the test runs a stream and
@@ -12,6 +21,52 @@ linpack, stream, and osu-micro-benchmarks.
   run osu_alltoall
 * `-r`, `--alltoall-rack-tests`: the nodes in each rack run
   osu_alltoall
+  
+## Session directory
+
+The `bench create` command creates a new "session directory" which is
+used to track the state of a given benchmark run. The other commands
+expect this directory to exist ahead of time.
+
+* `node_list` (1)
+* `bench.log` (2)
+* `${test_type}/` (3)
+  * `good_nodes` (4)
+  * `bad_nodes` (5)
+  * `not_tested` (6)
+  * `tests/` (7)
+    * `${test}/` (8)
+      * `${test}.job` (9)
+      * `node_list` (10)
+      * `slurm-*.out` (11)
+      * `${output_files}` (12)
+
+`bench create` creates the base session directory, and generates the
+root `node_list` file (1).
+
+`bench add` consults the root `node_list` (1) to generate tests of the
+requested `${test_type}` (3). (Valid types are `node`, `bandwidth`,
+`alltoall-pair`, `alltoall-switch`, and `alltoall-rack`.) Each test
+generates a `${test}.job` (9) Slurm job script in an individual
+`${test}/` (8) directory, as well as a test-specific `node_list` file
+(10).
+
+`bench submit` submits a Slurm job for each `${test}/` (8)
+directory. This directory is used as the working directory for the
+job, which runs the contained `${test}.job` (9) script. Because it is
+the working directory for the job, Slurm and the payload tests are
+expected to write output to the `${test}/` (8) directory. (11, 12)
+
+`bench process` inspects the `${test}/` (8) directories for payload
+test output (12) to evaluate pass/fail for each test. Test results are
+summarized for each `${test_type}/` (3) in `good_nodes` (4),
+`bad_nodes` (5), and `not_tested` (6) files, which share the same
+format as `node_list` (1, 10). (The `tests/` directory serves to
+separate valid `${test}/` (8) directories from these summary files.)
+
+`bench reserve` and `bench update-node` create Slurm reservations or
+mark nodes down, respectively, based on the result summaries generated
+by `bench process`. (4, 5, 6)
 
 ## Running curc-bench at CU-Boulder Research Computing
 
