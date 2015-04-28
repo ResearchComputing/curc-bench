@@ -9,7 +9,6 @@ OSU_ALLTOALL=/curc/admin/benchmarks-test/software/osu-micro-benchmarks-3.8/mpi/c
 
 function main
 {
-    module load slurm
     module load openmpi/openmpi-1.6.4_intel-13.0.0_torque-4.1.4_ib
 
     mpirun $OSU_ALLTOALL -f >osu_alltoall.out
