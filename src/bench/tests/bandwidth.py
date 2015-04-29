@@ -52,10 +52,12 @@ def process(nodes, prefix):
         test_dir = os.path.join(prefix, test)
         test_nodes = set(bench.util.read_node_list(os.path.join(test_dir, 'node_list')))
         try:
-            with open(os.path.join(test_dir, 'osu_bw.out')) as fp:
+            osu_bw_out_path = os.path.join(test_dir, 'osu_bw.out')
+            with open(osu_bw_out_path) as fp:
                 data = parse_osu_bw(fp)
         except IOError as ex:
-            logger.info('{0}: file not found: osu_bw.out'.format(test))
+            logger.info('unable to read {0}'.format(osu_bw_out_path))
+            logger.debug(ex, exc_info=True)
             continue
         if evaluate_osu_bw(data):
             logger.info('{0}: pass'.format(test))

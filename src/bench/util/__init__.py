@@ -1,7 +1,11 @@
 import bench.exc
 import errno
+import logging
 import os
 import subprocess
+
+
+logger = logging.getLogger(__name__)
 
 
 def mkdir_p (path):
@@ -27,6 +31,7 @@ def log_error (func):
         func()
     except bench.exc.SlurmError as ex:
         logger.error(ex)
+        logger.debug(ex, exc_info=True)
 
 
 def read_node_list(node_list_path):

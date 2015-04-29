@@ -1,3 +1,4 @@
+import bench.util
 import hostlist
 import logging
 import os
@@ -20,7 +21,8 @@ def execute(directory,
             include_nodes=None, include_reservation=None,
             exclude_nodes=None, exclude_reservation=None,
 ):
-    logger.info('creating node list in {0}'.format(directory))
+    node_list_filename = os.path.join(directory, 'node_list')
+    logger.info('creating {0}'.format(node_list_filename))
 
     node_list = get_nodes()
 
@@ -42,10 +44,8 @@ def execute(directory,
 
     logger.info('nodes to test: {0}'.format(len(node_list)))
 
-    node_list_filename = os.path.join(directory, 'node_list')
     try:
-        with open(node_list_filename, 'w') as fp:
-            for node_name in sorted(node_list):
-                fp.write('{0}\n'.format(node_name))
+        bench.util.write_node_list(node_list_filename, sorted(node_list))
     except IOError, ex:
-        logger.error('could not write {0}: {1}'.format(node_list_filename, ex))
+        logger.error('unable to write {0}'.format(node_list_filename))
+        logger.debug(ex, exc_info=True)

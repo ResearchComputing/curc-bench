@@ -47,7 +47,8 @@ def update_nodes_from_tests (prefix, test_type, down=False):
     try:
         bad_nodes = set(bench.util.read_node_list(bad_nodes_path))
     except IOError as ex:
-        logger.info('update-nodes: file not found: {0}'.format(bad_nodes_path))
+        logger.info('unable to read {0}'.format(bad_nodes_path))
+        logger.debug(ex, exc_info=True)
         return
 
     if down:
@@ -71,8 +72,10 @@ def update_nodes_from_tests (prefix, test_type, down=False):
             }
             rc = pyslurm_node.update(node_update)
             if rc != 0:
-                logger.error('update-nodes: {0}'.format(
-                    pyslurm.slurm_strerror(pyslurm.slurm_get_errno())))
+                logger.error('unable to update node {0}: {1}'.format(
+                    node,
+                    pyslurm.slurm_strerror(pyslurm.slurm_get_errno())
+                ))
             else:
-                logger.info('update-nodes: {0}: {1}'.format(
+                logger.info('{0} set to {1}'.format(
                     node, node_state_s))

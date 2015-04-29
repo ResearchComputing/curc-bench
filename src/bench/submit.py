@@ -1,3 +1,4 @@
+import bench.exc
 import bench.slurm
 import logging
 import os
@@ -43,7 +44,7 @@ def execute(
         if node_tests:
             index = submit(os.path.join(directory, 'node', 'tests'), index, pause, **kwargs)
 
-    logger.info('{0} jobs'.format(index-1))
+    logger.info('submitted {0} jobs'.format(index-1))
 
 
 def submit(prefix, index, pause, **kwargs):
@@ -52,11 +53,12 @@ def submit(prefix, index, pause, **kwargs):
         script = os.path.join(test_dir, '{0}.job'.format(test_basename))
         if pause:
             if index % pause == 0:
-                logger.info('waiting 10 seconds...')
+                logger.info('pausing 10 seconds between {0} submissions'.format(pause))
                 time.sleep(10)
         try:
             bench.slurm.sbatch(script, workdir=test_dir, **kwargs)
-        except Exception as ex:
-            logger.error('Cannot submit job {0}: {1}'.format(script, ex))
+        except bench.exc.SlurmError as ex:
+            logger.error('failed to submit job {0}'.format(script))
+            logger.debug(ex, exc_info=True)
         index += 1
     return index

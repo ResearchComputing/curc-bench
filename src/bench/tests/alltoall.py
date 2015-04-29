@@ -87,11 +87,13 @@ def process(nodes, prefix):
     for test in os.listdir(prefix):
         test_dir = os.path.join(prefix, test)
         test_nodes = set(bench.util.read_node_list(os.path.join(test_dir, 'node_list')))
+        osu_alltoall_out_path = os.path.join(test_dir, 'osu_alltoall.out')
         try:
-            with open(os.path.join(test_dir, 'osu_alltoall.out')) as fp:
+            with open(osu_alltoall_out_path) as fp:
                 data = parse_osu_alltoall(fp.read())
         except IOError as ex:
-            logger.info('{0}: file not found'.format(test))
+            logger.info('unable to read {0}'.format(osu_alltoall_out_path))
+            logger.debug(ex, exc_info=True)
             continue
         if evaluate_osu_alltoall(data, len(test_nodes)):
             logger.info('{0}: pass'.format(test))

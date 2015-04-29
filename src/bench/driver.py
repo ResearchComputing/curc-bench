@@ -1,6 +1,7 @@
 import argparse
 import bench.add
 import bench.create
+import bench.log
 import bench.process
 import bench.reserve
 import bench.submit
@@ -9,6 +10,7 @@ import datetime
 import glob
 import logging
 import os
+import sys
 
 
 logger = logging.getLogger(__name__)
@@ -111,36 +113,37 @@ def get_directory(prefix, new=False):
         return directory
 
 
-def configure_logging(directory, stderr_level=logging.WARNING):
-    root_logger = logging.getLogger('bench')
-    root_logger.setLevel(logging.DEBUG)
-
-    log_file_handler = logging.FileHandler(os.path.join(directory, 'bench.log'))
-    log_file_handler.setLevel(logging.DEBUG)
-    root_logger.addHandler(log_file_handler)
-
-    stderr_handler = logging.StreamHandler()
-    stderr_handler.setLevel(stderr_level)
-    root_logger.addHandler(stderr_handler)
-
-
 def driver():
+    bench.log.configure_package_logger()
+
     args = parser().parse_args()
+
+    if args.verbose:
+        bench.log.configure_stderr_logging(level=logging.INFO)
+    else:
+        bench.log.configure_stderr_logging(level=logging.WARNING)
 
     directory = args.directory
     if directory is None:
         if args.command == 'create':
-            directory = get_directory(args.prefix, new=True)
+            try:
+                directory = get_directory(args.prefix, new=True)
+            except (OSError, IOError) as ex:
+                logger.error('unable to create session directory')
+                logger.debug(ex, exc_info=True)
+                sys.exit(-1)
         else:
             directory = get_directory(args.prefix, new=False)
     else:
         if args.command == 'create':
-            os.makedirs(directory)
+            try:
+                os.makedirs(directory)
+            except (OSError, IOError) as ex:
+                logger.error('unable to create session directory')
+                logger.debug(ex, exc_info=True)
+                sys.exit(-1)
 
-    if args.verbose:
-        configure_logging(directory, stderr_level=logging.INFO)
-    else:
-        configure_logging(directory, stderr_level=logging.WARNING)
+    bench.log.configure_file_logging(directory)
 
     if args.command == 'create':
         bench.create.execute(directory,

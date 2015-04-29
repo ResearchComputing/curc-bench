@@ -25,7 +25,6 @@ def execute(prefix, topology_file,
             bandwidth_tests=None,
             node_tests=None):
     node_list = bench.util.read_node_list(os.path.join(prefix, 'node_list'))
-    logger.info('nodes: {0}'.format(len(node_list)))
 
     if topology_file is not None:
         topology = bench.util.infiniband.get_topology(topology_file)
