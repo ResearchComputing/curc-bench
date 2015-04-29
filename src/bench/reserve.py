@@ -14,7 +14,6 @@ def execute(prefix,
             alltoall_pair_tests=None,
             bandwidth_tests=None,
             node_tests=None):
-    logger.info(prefix)
 
     reserve_any_tests_explicitly = (
         alltoall_rack_tests
