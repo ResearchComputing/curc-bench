@@ -4,6 +4,7 @@ import bench.create
 import bench.process
 import bench.reserve
 import bench.submit
+import bench.update_nodes
 import datetime
 import glob
 import logging
@@ -51,6 +52,13 @@ def parser():
 
     reserve = subparsers.add_parser('reserve', help='Reserve nodes based on processed results')
     parser_add_test_arguments(reserve)
+
+    update_nodes = subparsers.add_parser(
+        'update-nodes', help='Mark nodes down based on processed results')
+    update_nodes.add_argument('--down',
+                              help='set nodes down (default: drain)', action='store_true')
+    parser_add_test_arguments(update_nodes)
+    update_nodes.set_defaults(down=False)
 
     return parser
 
@@ -180,4 +188,14 @@ def driver():
                               alltoall_pair_tests = args.alltoall_pair_tests,
                               node_tests = args.node_tests,
                               bandwidth_tests = args.bandwidth_tests,
+        )
+
+    elif args.command == 'update-nodes':
+        bench.update_nodes.update_nodes(directory,
+                                        alltoall_rack_tests = args.alltoall_rack_tests,
+                                        alltoall_switch_tests = args.alltoall_switch_tests,
+                                        alltoall_pair_tests = args.alltoall_pair_tests,
+                                        node_tests = args.node_tests,
+                                        bandwidth_tests = args.bandwidth_tests,
+                                        down = args.down,
         )
