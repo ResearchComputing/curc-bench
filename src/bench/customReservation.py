@@ -16,7 +16,6 @@ import textwrap
 import re
 
 from hostlist import expand_hostlist
-from bench.util.xml2obj import xml2obj
 
 import logging
 logger = logging.getLogger(__name__)
