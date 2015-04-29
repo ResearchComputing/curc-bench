@@ -55,7 +55,7 @@ def update_nodes_from_tests (prefix, test_type, down=False):
         node_state_s = 'DOWN'
     else:
         node_state = pyslurm.NODE_STATE_DRAIN
-        node_state_s = 'DRAIN'
+        node_state_s = 'DRAINED'
 
     pyslurm_node = pyslurm.node()
 
