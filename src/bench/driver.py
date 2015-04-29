@@ -174,10 +174,10 @@ def driver():
         )
 
     elif args.command == 'reserve':
-        bench.reserve.execute(directory, 
-                              allrack = args.allrack,
-                              allswitch = args.allswitch,
-                              allpair = args.allpair,
-                              nodes = args.nodes,
-                              bandwidth = args.bandwidth,
+        bench.reserve.execute(directory,
+                              alltoall_rack_tests = args.alltoall_rack_tests,
+                              alltoall_switch_tests = args.alltoall_switch_tests,
+                              alltoall_pair_tests = args.alltoall_pair_tests,
+                              node_tests = args.node_tests,
+                              bandwidth_tests = args.bandwidth_tests,
         )
