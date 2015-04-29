@@ -25,7 +25,8 @@ def parser():
 
     subparsers = parser.add_subparsers(dest='command')
 
-    create = subparsers.add_parser('create', help='Create the benchmark test scripts')
+    create = subparsers.add_parser(
+        'create', help='Create the benchmark test scripts')
     create.add_argument('-N', '--nodes',
                         help = 'explicit list of nodes to test')
     create.add_argument('-x', '--exclude-nodes',
@@ -41,7 +42,8 @@ def parser():
                      help = 'slurm topology.conf')  
 
 
-    submit = subparsers.add_parser('submit', help='Submit all the jobs from create to the scheduler.')
+    submit = subparsers.add_parser(
+        'submit', help='Submit all the jobs from create to the scheduler.')
     parser_add_test_arguments(submit)
     submit.add_argument('--pause', type=int, help='number of jobs submitted before pause')
     submit.add_argument('--reservation', help='reservation to run jobs in')
@@ -49,10 +51,12 @@ def parser():
     submit.add_argument('-a', '--account', help='account to use with the jobs')
     submit.set_defaults(pause=0)
 
-    process = subparsers.add_parser('process', help='Process the test results')
+    process = subparsers.add_parser(
+        'process', help='Process the test results')
     parser_add_test_arguments(process)
 
-    reserve = subparsers.add_parser('reserve', help='Reserve nodes based on processed results')
+    reserve = subparsers.add_parser(
+        'reserve', help='Reserve nodes based on processed results')
     parser_add_test_arguments(reserve)
 
     update_nodes = subparsers.add_parser(
@@ -146,59 +150,65 @@ def driver():
     bench.log.configure_file_logging(directory)
 
     if args.command == 'create':
-        bench.create.execute(directory,
-                             include_nodes = args.nodes,
-                             include_reservation = args.reservation,
-                             exclude_nodes = args.exclude_nodes,
-                             exclude_reservation = args.exclude_reservation,
+        bench.create.execute(
+            directory,
+            include_nodes = args.nodes,
+            include_reservation = args.reservation,
+            exclude_nodes = args.exclude_nodes,
+            exclude_reservation = args.exclude_reservation,
         )
 
     elif args.command == 'add':
-        bench.add.execute(directory, args.topology_file,
-                          alltoall_rack_tests = args.alltoall_rack_tests,
-                          alltoall_switch_tests = args.alltoall_switch_tests,
-                          alltoall_pair_tests = args.alltoall_pair_tests,
-                          bandwidth_tests = args.bandwidth_tests,
-                          node_tests = args.node_tests,
+        bench.add.execute(
+            directory, args.topology_file,
+            alltoall_rack_tests = args.alltoall_rack_tests,
+            alltoall_switch_tests = args.alltoall_switch_tests,
+            alltoall_pair_tests = args.alltoall_pair_tests,
+            bandwidth_tests = args.bandwidth_tests,
+            node_tests = args.node_tests,
         )
 
     elif args.command == 'submit':
-        bench.submit.execute(directory,
-                             alltoall_rack_tests = args.alltoall_rack_tests,
-                             alltoall_switch_tests = args.alltoall_switch_tests,
-                             alltoall_pair_tests = args.alltoall_pair_tests,
-                             node_tests = args.node_tests,
-                             bandwidth_tests = args.bandwidth_tests,
-                             pause = args.pause,
-                             reservation = args.reservation,
-                             qos = args.qos,
-                             account = args.account,
+        bench.submit.execute(
+            directory,
+            alltoall_rack_tests = args.alltoall_rack_tests,
+            alltoall_switch_tests = args.alltoall_switch_tests,
+            alltoall_pair_tests = args.alltoall_pair_tests,
+            node_tests = args.node_tests,
+            bandwidth_tests = args.bandwidth_tests,
+            pause = args.pause,
+            reservation = args.reservation,
+            qos = args.qos,
+            account = args.account,
         )
 
     elif args.command == 'process':
-        bench.process.execute(directory,
-                              alltoall_rack_tests = args.alltoall_rack_tests,
-                              alltoall_switch_tests = args.alltoall_switch_tests,
-                              alltoall_pair_tests = args.alltoall_pair_tests,
-                              node_tests = args.node_tests,
-                              bandwidth_tests = args.bandwidth_tests,
+        bench.process.execute(
+            directory,
+            alltoall_rack_tests = args.alltoall_rack_tests,
+            alltoall_switch_tests = args.alltoall_switch_tests,
+            alltoall_pair_tests = args.alltoall_pair_tests,
+            node_tests = args.node_tests,
+            bandwidth_tests = args.bandwidth_tests,
         )
 
     elif args.command == 'reserve':
-        bench.reserve.execute(directory,
-                              alltoall_rack_tests = args.alltoall_rack_tests,
-                              alltoall_switch_tests = args.alltoall_switch_tests,
-                              alltoall_pair_tests = args.alltoall_pair_tests,
-                              node_tests = args.node_tests,
-                              bandwidth_tests = args.bandwidth_tests,
+        bench.reserve.execute(
+            directory,
+            alltoall_rack_tests = args.alltoall_rack_tests,
+            alltoall_switch_tests = args.alltoall_switch_tests,
+            alltoall_pair_tests = args.alltoall_pair_tests,
+            node_tests = args.node_tests,
+            bandwidth_tests = args.bandwidth_tests,
         )
 
     elif args.command == 'update-nodes':
-        bench.update_nodes.update_nodes(directory,
-                                        alltoall_rack_tests = args.alltoall_rack_tests,
-                                        alltoall_switch_tests = args.alltoall_switch_tests,
-                                        alltoall_pair_tests = args.alltoall_pair_tests,
-                                        node_tests = args.node_tests,
-                                        bandwidth_tests = args.bandwidth_tests,
-                                        down = args.down,
+        bench.update_nodes.update_nodes(
+            directory,
+            alltoall_rack_tests = args.alltoall_rack_tests,
+            alltoall_switch_tests = args.alltoall_switch_tests,
+            alltoall_pair_tests = args.alltoall_pair_tests,
+            node_tests = args.node_tests,
+            bandwidth_tests = args.bandwidth_tests,
+            down = args.down,
         )
