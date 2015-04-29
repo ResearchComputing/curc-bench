@@ -28,7 +28,7 @@ def chunks(l, n):
 
 def log_error (func):
     try:
-        func()
+        return func()
     except bench.exc.SlurmError as ex:
         logger.error(ex)
         logger.debug(ex, exc_info=True)

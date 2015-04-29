@@ -1,7 +1,7 @@
 import bench.exc
+import bench.slurm
 import bench.util
 import os
-import pyslurm
 import time
 
 import logging
@@ -45,16 +45,12 @@ def execute(prefix,
 def reserve_bad_nodes(prefix, key):
     bad_nodes = set(bench.util.read_node_list(os.path.join(prefix, key, 'bad_nodes')))
     if bad_nodes:
-        reservation = pyslurm.create_reservation_dict()
-        reservation['accounts'] = 'crcbenchmark'
-        reservation['flags'] = 16384 # 'OVERLAP'
-        reservation['start_time'] = time.time()
-        reservation['name'] = 'bench-{0}'.format(key)
-        reservation['node_list'] = ','.join(bad_nodes)
-        reservation['node_cnt'] = len(bad_nodes)
-        result = pyslurm.slurm_create_reservation(reservation)
-        errno = pyslurm.slurm_get_errno()
-        if errno != 0:
-            strerror = pyslurm.slurm_strerror(errno)
-            raise bench.exc.SlurmError(strerror)
+        result = bench.slurm.scontrol(
+            'create',
+            reservation='bench-{0}'.format(key),
+            accounts = 'crcbenchmark',
+            flags='overlap',
+            starttime='now',
+            nodes=','.join(bad_nodes),
+        )
         return result
