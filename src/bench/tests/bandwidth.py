@@ -32,7 +32,7 @@ def generate(nodes, topology, prefix):
         script = os.path.join(test_dir, '{0}.job'.format(pair_name))
         with open(script, 'w') as fp:
             fp.write(TEMPLATE.render(
-                job_name = pair_name,
+                job_name = 'bench-bandwidth-{0}'.format(pair_name),
                 nodes = node_pair,
             ))
         bench.util.write_node_list(os.path.join(test_dir, 'node_list'), node_pair)

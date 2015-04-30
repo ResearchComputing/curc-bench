@@ -30,6 +30,7 @@ def generate(nodes, prefix):
         script_file = os.path.join(test_dir, '{0}.job'.format(node))
         with open(script_file, 'w') as fp:
             fp.write(TEMPLATE.render(
+                job_name = 'bench-node-{0}'.format(node),
                 node_name = node,
             ))
 

@@ -72,9 +72,8 @@ def render(prefix, nodes, node_list_name):
     script_file = os.path.join(prefix, '{0}.job'.format(node_list_name))
     with open(script_file, 'w') as fp:
         fp.write(TEMPLATE.render(
-            node_list_name = node_list_name,
+            job_name = 'bench-alltoall-{0}'.format(node_list_name),
             nodes = list(sorted(nodes)),
-            num_nodes = len(nodes),
         ))
 
     node_list_file = os.path.join(prefix, 'node_list')

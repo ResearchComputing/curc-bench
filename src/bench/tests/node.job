@@ -1,5 +1,6 @@
 #!/bin/bash
-#SBATCH --nodes 1
+#SBATCH --job-name={{job_name}}
+#SBATCH --nodes=1
 #SBATCH --nodelist={{node_name}}
 #SBATCH --time=0:45:00
 
