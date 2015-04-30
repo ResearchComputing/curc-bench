@@ -26,14 +26,6 @@ def chunks(l, n):
         yield l[i:i+n]
 
 
-def log_error (func):
-    try:
-        return func()
-    except bench.exc.SlurmError as ex:
-        logger.error(ex)
-        logger.debug(ex, exc_info=True)
-
-
 def read_node_list(node_list_path):
     nodes = []
     with open(node_list_path) as fp:

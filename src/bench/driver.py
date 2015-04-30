@@ -58,6 +58,8 @@ def parser():
     reserve = subparsers.add_parser(
         'reserve', help='Reserve nodes based on processed results')
     parser_add_test_arguments(reserve)
+    parser.add_argument('--bad-nodes', action='store_true')
+    parser.add_argument('--not-tested', action='store_true')
 
     update_nodes = subparsers.add_parser(
         'update-nodes', help='Mark nodes down based on processed results')
@@ -200,6 +202,7 @@ def driver():
             alltoall_pair_tests = args.alltoall_pair_tests,
             node_tests = args.node_tests,
             bandwidth_tests = args.bandwidth_tests,
+            not_tested = args.not_tested,
         )
 
     elif args.command == 'update-nodes':
