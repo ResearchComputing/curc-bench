@@ -15,13 +15,15 @@ linpack, stream, and osu-micro-benchmarks.
 
 * `-n`, `--node-tests`: each node in the test runs a stream and
   linpack benchmark
+* `-b`, `--bandwidth-tests`: pairs of nodes selected from each switch
+  run osu_bw
 * `-p`, `--alltoall-pair-tests`: pairs of nodes selected from each
-  swich run osu_alltoall
+  swtich run osu_alltoall
 * `-s`, `--alltoall-switch-tests`: the nodes connected to each switch
   run osu_alltoall
 * `-r`, `--alltoall-rack-tests`: the nodes in each rack run
   osu_alltoall
-  
+
 ## Session directory
 
 The `bench create` command creates a new "session directory" which is

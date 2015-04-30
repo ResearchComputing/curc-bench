@@ -57,8 +57,8 @@ def get_switch_nodes(nodes, topology):
 
 def get_switch_node_pairs(nodes, topology):
     switch_node_pairs = {}
-    switch_nodes = get_switch_nodes(nodes, topology)
-    for switch_name, switch_nodes in switch_nodes.iteritems():
+    switches = get_switch_nodes(nodes, topology)
+    for switch_name, switch_nodes in switches.iteritems():
         switch_node_pairs.update(get_node_pairs(switch_nodes))
     return switch_node_pairs
 

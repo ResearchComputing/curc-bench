@@ -20,10 +20,10 @@ class TestReserveExecute (unittest.TestCase):
         self.directory = tempfile.mkdtemp()
         os.mkdir(os.path.join(self.directory, 'node'))
         with open(os.path.join(self.directory, 'node', 'bad_nodes'), 'w') as fp:
-            for node in ('node0101', 'node0102'):
+            for node in ('tnode0101', 'tnode0102'):
                 fp.write('{0}\n'.format(node))
         with open(os.path.join(self.directory, 'node', 'not_tested'), 'w') as fp:
-            for node in ('node0103', 'node0104'):
+            for node in ('tnode0103', 'tnode0104'):
                 fp.write('{0}\n'.format(node))
 
     def tearDown (self):
@@ -39,7 +39,7 @@ class TestReserveExecute (unittest.TestCase):
                                        'accounts=crcbenchmark',
                                        'flags=overlap',
                                        'starttime=now',
-                                       'nodes=node0101,node0102,node0103,node0104'],
+                                       'nodes=tnode0101,tnode0102,tnode0103,tnode0104'],
                                       stdout=subprocess.PIPE,
                                       stderr=subprocess.PIPE)
 
@@ -52,7 +52,7 @@ class TestReserveExecute (unittest.TestCase):
                                        'accounts=crcbenchmark',
                                        'flags=overlap',
                                        'starttime=now',
-                                       'nodes=node0101,node0102'],
+                                       'nodes=tnode0101,tnode0102'],
                                       stdout=subprocess.PIPE,
                                       stderr=subprocess.PIPE)
 
@@ -65,7 +65,7 @@ class TestReserveExecute (unittest.TestCase):
                                        'accounts=crcbenchmark',
                                        'flags=overlap',
                                        'starttime=now',
-                                       'nodes=node0103,node0104'],
+                                       'nodes=tnode0103,tnode0104'],
                                       stdout=subprocess.PIPE,
                                       stderr=subprocess.PIPE)
 
@@ -79,6 +79,6 @@ class TestReserveExecute (unittest.TestCase):
                                        'accounts=crcbenchmark',
                                        'flags=overlap',
                                        'starttime=now',
-                                       'nodes=node0101,node0102,node0103,node0104'],
+                                       'nodes=tnode0101,tnode0102,tnode0103,tnode0104'],
                                       stdout=subprocess.PIPE,
                                       stderr=subprocess.PIPE)

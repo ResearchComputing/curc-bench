@@ -42,14 +42,33 @@ def update_nodes (
             update_nodes_from_tests(prefix, 'alltoall-rack', **kwargs)
 
 
-def update_nodes_from_tests (prefix, test_type, down=False):
+def update_nodes_from_tests (prefix, test_type, bad_nodes=None,
+                             not_tested=None, down=False):
     bad_nodes_path = os.path.join(prefix, test_type, 'bad_nodes')
     try:
-        bad_nodes = set(bench.util.read_node_list(bad_nodes_path))
+        bad_nodes_ = set(bench.util.read_node_list(bad_nodes_path))
     except IOError as ex:
         logger.info('unable to read {0}'.format(bad_nodes_path))
         logger.debug(ex, exc_info=True)
-        return
+        bad_nodes_ = set()
+
+    not_tested_path = os.path.join(prefix, test_type, 'not_tested')
+    try:
+        not_tested_ = set(bench.util.read_node_list(not_tested_path))
+    except IOError as ex:
+        logger.info('unable to read {0}'.format(not_tested_path))
+        logger.debug(ex, exc_info=True)
+        not_tested_ = set()
+
+    # by default, reserve bad_nodes and not_tested
+    if bad_nodes is None and not_tested is None:
+        nodes_to_update = bad_nodes_ | not_tested_
+    else:
+        nodes_to_update = set()
+        if bad_nodes:
+            nodes_to_update |= bad_nodes_
+        if not_tested:
+            nodes_to_update |= not_tested_
 
     if down:
         node_state = pyslurm.NODE_STATE_DOWN
@@ -60,22 +79,21 @@ def update_nodes_from_tests (prefix, test_type, down=False):
 
     pyslurm_node = pyslurm.node()
 
-    if bad_nodes:
-        for node in bad_nodes:
-            current_node_state = pyslurm_node.find_id(node)['node_state']
-            if current_node_state.startswith(node_state_s):
-                continue
-            node_update = {
-                'node_names': node,
-                'node_state': node_state,
-                'reason': 'bench:{0}'.format(test_type),
-            }
-            rc = pyslurm_node.update(node_update)
-            if rc != 0:
-                logger.error('unable to update node {0}: {1}'.format(
-                    node,
-                    pyslurm.slurm_strerror(pyslurm.slurm_get_errno())
-                ))
-            else:
-                logger.info('{0} set to {1}'.format(
-                    node, node_state_s))
+    for node in sorted(nodes_to_update):
+        current_node_state = pyslurm_node.find_id(node)['node_state']
+        if current_node_state.startswith(node_state_s):
+            continue
+        node_update = {
+            'node_names': node,
+            'node_state': node_state,
+            'reason': 'bench:{0}'.format(test_type),
+        }
+        rc = pyslurm_node.update(node_update)
+        if rc != 0:
+            logger.error('unable to update node {0}: {1}'.format(
+                node,
+                pyslurm.slurm_strerror(pyslurm.slurm_get_errno())
+            ))
+        else:
+            logger.info('{0} set to {1}'.format(
+                node, node_state_s))
