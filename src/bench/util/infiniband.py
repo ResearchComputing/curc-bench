@@ -28,16 +28,6 @@ def get_topology (topology_file):
     return dict(parse_topology_conf(topology_file))
 
 
-def read_info_file(in_file):
-    node_list = []
-    line = in_file.readline()
-    while line:
-        if line.startswith('node'):
-            node_list.append(line.strip())
-        line = in_file.readline()
-    return node_list
-
-
 def get_rack_nodes(nodes):
     rack_nodes = collections.defaultdict(set)
     for node in nodes:
