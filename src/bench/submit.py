@@ -56,9 +56,11 @@ def submit(prefix, index, pause, **kwargs):
                 logger.info('pausing 10 seconds between {0} submissions'.format(pause))
                 time.sleep(10)
         try:
-            bench.slurm.sbatch(script, workdir=test_dir, **kwargs)
+            result = bench.slurm.sbatch(script, workdir=test_dir, **kwargs)
         except bench.exc.SlurmError as ex:
             logger.error('failed to submit job {0}'.format(script))
             logger.debug(ex, exc_info=True)
+        else:
+            logger.info(': '.join(result.splitlines()))
         index += 1
     return index
