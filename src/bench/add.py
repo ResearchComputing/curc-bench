@@ -1,3 +1,4 @@
+import bench.infiniband
 import bench.tests.alltoall
 import bench.tests.bandwidth
 import bench.tests.node
@@ -27,7 +28,7 @@ def execute(prefix, topology_file,
     node_list = bench.util.read_node_list(os.path.join(prefix, 'node_list'))
 
     if topology_file is not None:
-        topology = bench.util.infiniband.get_topology(topology_file)
+        topology = bench.infiniband.get_topology(topology_file)
     else:
         topology = {}
 

@@ -1,11 +1,5 @@
-import bench.exc
 import errno
-import logging
 import os
-import subprocess
-
-
-logger = logging.getLogger(__name__)
 
 
 def mkdir_p (path):

@@ -1,3 +1,4 @@
+import bench.infiniband
 import bench.util
 import jinja2
 import logging
@@ -14,7 +15,7 @@ TEMPLATE = jinja2.Template(
 
 
 def generate_alltoall_rack(nodes, prefix):
-    rack_nodes = bench.util.infiniband.get_rack_nodes(nodes)
+    rack_nodes = bench.infiniband.get_rack_nodes(nodes)
     for rack_name, rack_nodes in rack_nodes.iteritems():
         if rack_nodes:
             test_dir = os.path.join(prefix, rack_name)
@@ -22,7 +23,7 @@ def generate_alltoall_rack(nodes, prefix):
 
 
 def generate_alltoall_switch(nodes, topology, prefix):
-    switch_nodes = bench.util.infiniband.get_switch_nodes(nodes, topology)
+    switch_nodes = bench.infiniband.get_switch_nodes(nodes, topology)
     for switch_name, switch_nodes in switch_nodes.iteritems():
         if switch_nodes:
             test_dir = os.path.join(prefix, switch_name)
@@ -30,7 +31,7 @@ def generate_alltoall_switch(nodes, topology, prefix):
 
 
 def generate_alltoall_pair(nodes, topology, prefix):
-    node_pairs = bench.util.infiniband.get_switch_node_pairs(nodes, topology)
+    node_pairs = bench.infiniband.get_switch_node_pairs(nodes, topology)
     for pair_name, name_list in node_pairs.iteritems():
         if name_list:
             test_dir = os.path.join(prefix, pair_name)

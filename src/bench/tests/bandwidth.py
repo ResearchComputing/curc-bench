@@ -1,4 +1,4 @@
-import bench.util.infiniband
+import bench.infiniband
 import bench.util
 import jinja2
 import logging
@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 def generate(nodes, topology, prefix):
-    node_pairs = bench.util.infiniband.get_switch_node_pairs(nodes, topology)
+    node_pairs = bench.infiniband.get_switch_node_pairs(nodes, topology)
     for pair_name, node_pair in node_pairs.iteritems():
         test_dir = os.path.join(prefix, pair_name)
         bench.util.mkdir_p(test_dir)
