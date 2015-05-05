@@ -6,15 +6,6 @@ import os
 import pkg_resources
 
 
-OSU_BW_PERCENT = 20
-
-OSU_BW_LIMITS = {
-    4194304: 3400,
-    1048576: 3400,
-    262144: 3400,
-    65536: 3400,
-}
-
 TEMPLATE = jinja2.Template(
     pkg_resources.resource_string(__name__, 'bandwidth.job'),
     keep_trailing_newline=True,
@@ -81,9 +72,18 @@ def parse_osu_bw(output):
     return data
 
 
-def evaluate_osu_bw(data):
-    for size, bandwidth in OSU_BW_LIMITS.iteritems():
-        threshold = bandwidth - (OSU_BW_PERCENT * bandwidth)
-        if size not in data or data[size] < threshold:
+OSU_BW_PERCENT = 20
+
+def evaluate_osu_bw(
+        data,
+        expected_bandwidths = {
+            4194304: 2720.0,
+            1048576: 2720.0,
+            262144: 2720.0,
+            65536: 2720.0,
+        },
+):
+    for size, bandwidth in expected_bandwidths.iteritems():
+        if size not in data or data[size] < expected_bandwidths[size]:
             return False
     return True

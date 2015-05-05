@@ -154,22 +154,20 @@ def parse_linpack(output):
 
 def process_stream(
         data,
-        expected_copy = 26500.0,
-        expected_scale = 40000.0,
-        expected_add = 41500.0,
-        expected_triad = 42000.0,
-        tolerance = .1,
+        expected_copy = 23850.0,
+        expected_scale = 36000.0,
+        expected_add = 37350.0,
+        expected_triad = 37800.0,
 ):
     copy, scale, add, triad = data
-    required = 1.0 - tolerance
 
-    if copy < required * expected_copy:
+    if copy < expected_copy:
         return False
-    elif scale < required * expected_scale:
+    elif scale < expected_scale:
         return False
-    elif add < required * expected_add:
+    elif add < expected_add:
         return False
-    elif triad < required * expected_triad:
+    elif triad < expected_triad:
         return False
     else:
         return True
@@ -178,17 +176,14 @@ def process_stream(
 def process_linpack(
         data,
         expected_averages = {
-            (5000, 5000, 4): 105.0,
-            (10000, 10000, 4): 114.0,
-            (20000, 20000, 4): 121.0,
-            (25000, 25000, 4): 122.0,
+            (5000, 5000, 4): 94.5,
+            (10000, 10000, 4): 102.6,
+            (20000, 20000, 4): 108.9,
+            (25000, 25000, 4): 109.8,
         },
-        tolerance = .1,
 ):
-    required = 1.0 - tolerance
-
     for key, expected_average in expected_averages.iteritems():
-        if key not in data or data[key] < required * expected_average:
+        if key not in data or data[key] < expected_average:
             return False
     else:
         return True

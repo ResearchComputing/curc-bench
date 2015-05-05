@@ -5,7 +5,8 @@
 #SBATCH --time=0:45:00
 
 
-STREAM=/curc/tools/x86_64/rh6/software/stream/5.10/intel/15.0.2/stream_c.exe
+#STREAM=/curc/tools/x86_64/rh6/software/stream/5.10/intel/15.0.2/stream_c.exe
+STREAM=/home/molu8455/projects/redhat_6/software/stream/stream
 LINPACK=/curc/tools/x86_64/rh6/software/intel/15.0.2/mkl/benchmarks/linpack/xlinpack_xeon64
 
 LINPACK_INPUT="\
