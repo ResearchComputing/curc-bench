@@ -60,12 +60,21 @@ def process(nodes, prefix):
         osu_alltoall_out_path = os.path.join(test_dir, 'osu_alltoall.out')
         try:
             with open(osu_alltoall_out_path) as fp:
-                data = parse_osu_alltoall(fp.read())
+                try:
+                    data = list(parse_osu_alltoall(fp.read()))
+                except ValueError as ex:
+                    logger.info('{0}: fail (malformed osu_alltoall)'.format(test))
+                    logger.debug(ex, exc_info=True)
+                    bad_nodes |= test_nodes
+                    continue
         except IOError as ex:
             logger.info('unable to read {0}'.format(osu_alltoall_out_path))
             logger.debug(ex, exc_info=True)
             continue
-        if evaluate_osu_alltoall(data, len(test_nodes)):
+        if not data:
+            logger.info('{0}: fail (empty osu_alltoall)'.format(test))
+            bad_nodes |= test_nodes
+        elif evaluate_osu_alltoall(data, len(test_nodes)):
             logger.info('{0}: pass'.format(test))
             good_nodes |= test_nodes
         else:

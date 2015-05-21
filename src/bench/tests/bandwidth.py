@@ -43,6 +43,7 @@ def process(nodes, prefix):
                     data = parse_osu_bw(fp)
                 except ValueError as ex:
                     logger.info('{0}: fail (malformed osu_bw)'.format(test))
+                    logger.debug(ex, exc_info=True)
                     bad_nodes |= test_nodes
                     continue
         except IOError as ex:
