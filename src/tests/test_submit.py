@@ -19,11 +19,9 @@ class TestSubmit(unittest.TestCase):
         self.prefix = tempfile.mkdtemp()
         self.test_dir = tempfile.mkdtemp(dir=self.prefix)
         self.script = os.path.join(self.test_dir, '{0}.job'.format(os.path.basename(self.test_dir)))
-        print self.script
         with open(self.script, 'w') as fp:
             pass # just create the file
         assert os.path.exists(self.script)
-
 
     def tearDown (self):
         if os.path.exists(self.prefix):
