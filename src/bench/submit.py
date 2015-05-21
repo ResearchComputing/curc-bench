@@ -48,13 +48,20 @@ def execute(
 
 
 def submit(prefix, index, pause, **kwargs):
+    if not os.path.exists(prefix):
+        return index
+
     for test_basename in os.listdir(prefix):
         test_dir = os.path.join(prefix, test_basename)
         script = os.path.join(test_dir, '{0}.job'.format(test_basename))
+        if not os.path.exists(script):
+            continue
+
         if pause:
             if index % pause == 0:
                 logger.info('pausing 10 seconds between {0} submissions'.format(pause))
                 time.sleep(10)
+
         try:
             result = bench.slurm.sbatch(script, workdir=test_dir, **kwargs)
         except bench.exc.SlurmError as ex:

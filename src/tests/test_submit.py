@@ -9,6 +9,7 @@ import unittest
 def fake_Popen():
     popen = mock.Mock()
     popen.communicate = lambda: ('', '')
+    popen.returncode = 0
     return popen
 
 
@@ -25,11 +26,31 @@ class TestSubmit(unittest.TestCase):
 
 
     def tearDown (self):
-        shutil.rmtree(self.prefix)
+        if os.path.exists(self.prefix):
+            shutil.rmtree(self.prefix)
 
     @mock.patch('bench.submit.bench.slurm.subprocess.Popen',
                 return_value=fake_Popen())
+    def test_submit_missing_tests_dir (self, arg1):
+        shutil.rmtree(self.prefix)
+        new_index = bench.submit.submit(
+            self.prefix,
+            index=0, pause=None, reservation='PM', qos='High', account='Account')
+        self.assertEqual(new_index, 0)
+        self.assertEqual(arg1.call_args_list, [])
 
+    @mock.patch('bench.submit.bench.slurm.subprocess.Popen',
+                return_value=fake_Popen())
+    def test_submit_missing_script (self, arg1):
+        os.remove(self.script)
+        new_index = bench.submit.submit(
+            self.prefix,
+            index=0, pause=None, reservation='PM', qos='High', account='Account')
+        self.assertEqual(new_index, 0)
+        self.assertEqual(arg1.call_args_list, [])
+
+    @mock.patch('bench.submit.bench.slurm.subprocess.Popen',
+                return_value=fake_Popen())
     def test_submit(self, arg1):
         new_index = bench.submit.submit(
             self.prefix,
@@ -50,7 +71,6 @@ class TestSubmit(unittest.TestCase):
 
     @mock.patch('bench.submit.bench.slurm.subprocess.Popen',
                 return_value=fake_Popen())
-
     def test_submit2(self, arg1):
         new_index = bench.submit.submit(
             self.prefix,
