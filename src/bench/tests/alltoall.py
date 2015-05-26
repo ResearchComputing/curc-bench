@@ -74,7 +74,7 @@ def process(nodes, prefix):
         if not data:
             logger.info('{0}: fail (empty osu_alltoall)'.format(test))
             bad_nodes |= test_nodes
-        elif evaluate_osu_alltoall(data, len(test_nodes)):
+        elif evaluate_osu_alltoall(data, len(test_nodes), test=test):
             logger.info('{0}: pass'.format(test))
             good_nodes |= test_nodes
         else:
@@ -147,9 +147,22 @@ EXPECTED_LATENCIES = { 2:13613.5219632, 3:28375.5187868,
                        79:2390130.61328, 80:2456822.63393, }
 
 
-def evaluate_osu_alltoall (data, num_nodes, expected_latencies=EXPECTED_LATENCIES, fudge_factor=1.55):
+def evaluate_osu_alltoall (
+        data,
+        num_nodes,
+        expected_latencies=EXPECTED_LATENCIES,
+        fudge_factor=1.55,
+        test='unknown',
+):
     data = list(data)
     average_latency = 1.0 * sum(datum[1] for datum in data) / len(data)
-    return (
-        num_nodes in expected_latencies
-        and average_latency <= fudge_factor * expected_latencies[num_nodes])
+    if num_nodes not in expected_latencies:
+        logger.debug('alltoall: {0}: {1}: average {2}, not defined'.format(
+            test, num_nodes, average_latency))
+        return False
+    elif average_latency > (fudge_factor * expected_latencies[num_nodes]):
+        logger.debug('alltoall: {0}: {1}: average {2}, expected {3}'.format(
+            test, num_nodes, average_latency, expected_latencies[num_nodes]))
+        return False
+    else:
+        return True

@@ -54,28 +54,28 @@ class TestParseLinpack (unittest.TestCase):
         self.assertRaises(bench.exc.ParseError, bench.tests.node.parse_linpack, '')
 
 
-class TestProcessStream (unittest.TestCase):
+class TestEvaluateStream (unittest.TestCase):
 
     def test_pass_stream (self):
         stream_data = bench.tests.node.parse_stream(STREAM_PASS)
-        self.assertTrue(bench.tests.node.process_stream(stream_data))
+        self.assertTrue(bench.tests.node.evaluate_stream(stream_data))
 
     def test_fail_stream (self):
         stream_data = bench.tests.node.parse_stream(STREAM_FAIL)
-        self.assertFalse(bench.tests.node.process_stream(stream_data))
+        self.assertFalse(bench.tests.node.evaluate_stream(stream_data))
 
 
-class TestProcessLinpack (unittest.TestCase):
+class TestEvaluateLinpack (unittest.TestCase):
 
     def test_pass_linpack (self):
         linpack_data = bench.tests.node.parse_linpack(LINPACK_PASS)
         print linpack_data
-        self.assertTrue(bench.tests.node.process_linpack(linpack_data))
+        self.assertTrue(bench.tests.node.evaluate_linpack(linpack_data))
 
     def test_fail_linpack (self):
         linpack_data = bench.tests.node.parse_linpack(LINPACK_FAIL)
         print linpack_data
-        self.assertFalse(bench.tests.node.process_linpack(linpack_data))
+        self.assertFalse(bench.tests.node.evaluate_linpack(linpack_data))
 
 
 class TestNodeProcess (unittest.TestCase):

@@ -50,7 +50,7 @@ def process(nodes, prefix):
             logger.info('unable to read {0}'.format(osu_bw_out_path))
             logger.debug(ex, exc_info=True)
             continue
-        if evaluate_osu_bw(data):
+        if evaluate_osu_bw(data, test=test):
             logger.info('{0}: pass'.format(test))
             good_nodes |= test_nodes
         else:
@@ -79,8 +79,6 @@ def parse_osu_bw(output):
     return data
 
 
-OSU_BW_PERCENT = 20
-
 def evaluate_osu_bw(
         data,
         expected_bandwidths = {
@@ -89,8 +87,15 @@ def evaluate_osu_bw(
             262144: 2720.0,
             65536: 2720.0,
         },
+        test='unknown',
 ):
     for size, bandwidth in expected_bandwidths.iteritems():
-        if size not in data or data[size] < expected_bandwidths[size]:
+        if size not in data:
+            logger.debug('bandwidth: {0}: {1}: expected {2}, not found'.format(
+                test, size, expected_bandwidths[size]))
+            return False
+        if data[size] < expected_bandwidths[size]:
+            logger.debug('bandwidth: {0}: {1}: expected {2}, found {3}'.format(
+                test, size, expected_bandwidths[size], data[size]))
             return False
     return True

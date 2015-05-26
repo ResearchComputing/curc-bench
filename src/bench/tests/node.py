@@ -58,7 +58,7 @@ def process(nodes, prefix):
             logger.warn('unable to parse {0}'.format(stream_out_path))
             logger.debug(ex, exc_info=True)
             continue
-        stream_passed = process_stream(stream_data)
+        stream_passed = evaluate_stream(stream_data, test=test)
 
         try:
             linpack_out_path = os.path.join(test_dir, 'linpack.out')
@@ -74,7 +74,7 @@ def process(nodes, prefix):
             logger.warn('unable to parse {0}'.format(linpack_out_path))
             logger.debug(ex, exc_info=True)
             continue
-        linpack_passed = process_linpack(linpack_data)
+        linpack_passed = evaluate_linpack(linpack_data, test=test)
 
         if stream_passed and linpack_passed:
             logger.info('{0}: pass'.format(test))
@@ -152,28 +152,37 @@ def parse_linpack(output):
     return data
 
 
-def process_stream(
+def evaluate_stream(
         data,
         expected_copy = 23850.0,
         expected_scale = 36000.0,
         expected_add = 37350.0,
         expected_triad = 37800.0,
+        test='unknown',
 ):
     copy, scale, add, triad = data
 
     if copy < expected_copy:
+        logger.debug('stream: copy: expected {0}, found {1}'.format(
+            expected_copy, copy))
         return False
     elif scale < expected_scale:
+        logger.debug('stream: scale: expected {0}, found {1}'.format(
+            expected_scale, scale))
         return False
     elif add < expected_add:
+        logger.debug('stream: add: expected {0}, found {1}'.format(
+            expected_add, add))
         return False
     elif triad < expected_triad:
+        logger.debug('stream: triad: expected {0}, found {1}'.format(
+            expected_triad, triad))
         return False
     else:
         return True
 
 
-def process_linpack(
+def evaluate_linpack(
         data,
         expected_averages = {
             (5000, 5000, 4): 94.5,
@@ -181,9 +190,16 @@ def process_linpack(
             (20000, 20000, 4): 108.9,
             (25000, 25000, 4): 109.8,
         },
+        test='unknown',
 ):
     for key, expected_average in expected_averages.iteritems():
-        if key not in data or data[key] < expected_average:
+        if key not in data:
+            logger.debug('linpack: {0}: {1}: expected {2}, not found'.format(
+                test, key, expected_average))
+            return False
+        if data[key] < expected_average:
+            logger.debug('linpack: {0}: {1}: expected {2}, found {3}'.format(
+                test, key, expected_average, data[key]))
             return False
     else:
         return True
