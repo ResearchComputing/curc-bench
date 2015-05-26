@@ -38,7 +38,7 @@ def parser():
     create.add_argument('--include-state', action='append', dest='include_states')
     create.add_argument('--exclude-state', action='append', dest='exclude_states')
     create.add_argument('--include-file', action='append', dest='include_files')
-    create_add_argument('--exclude-files', action='append', dest='exclude_files')
+    create.add_argument('--exclude-files', action='append', dest='exclude_files')
 
     add = subparsers.add_parser('add', help='Add a benchmark test')
     parser_add_test_arguments(add)
@@ -53,6 +53,9 @@ def parser():
     submit.add_argument('--reservation', help='reservation to run jobs in')
     submit.add_argument('-q', '--qos', help='qos to associate with the jobs')
     submit.add_argument('-a', '--account', help='account to use with the jobs')
+    submit.add_argument('--not-tested')
+    submit.add_argument('--bad-nodes')
+    submit.add_argument('--good-nodes')
     submit.set_defaults(pause=0)
 
     process = subparsers.add_parser(
