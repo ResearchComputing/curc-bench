@@ -35,6 +35,8 @@ def parser():
                         help = 'test a set of reserved nodes')
     create.add_argument('-X', '--exclude-reservation',
                         help = 'exclude nodes in a reservation from testing')
+    create.add_argument('--include-state', action='append', dest='include_states')
+    create.add_argument('--exclude-state', action='append', dest='exclude_states')
 
     add = subparsers.add_parser('add', help='Add a benchmark test')
     parser_add_test_arguments(add)
