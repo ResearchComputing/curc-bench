@@ -79,6 +79,11 @@ def execute(directory,
 
     not_tested_filename = os.path.join(directory, 'not_tested')
     not_tested_nodes = all_nodes - node_list
+    if not_tested_nodes:
+        logger.warn('not tested: {0} ({1} nodes)'.format(
+            hostlist.collect_hostlist(not_tested_nodes),
+            len(not_tested_nodes),
+        ))
     try:
         bench.util.write_node_list(not_tested_filename, sorted(not_tested_nodes))
     except IOError, ex:
