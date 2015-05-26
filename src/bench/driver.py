@@ -37,6 +37,8 @@ def parser():
                         help = 'exclude nodes in a reservation from testing')
     create.add_argument('--include-state', action='append', dest='include_states')
     create.add_argument('--exclude-state', action='append', dest='exclude_states')
+    create.add_argument('--include-file', action='append', dest='include_files')
+    create_add_argument('--exclude-files', action='append', dest='exclude_files')
 
     add = subparsers.add_parser('add', help='Add a benchmark test')
     parser_add_test_arguments(add)
@@ -157,9 +159,13 @@ def driver():
         bench.create.execute(
             directory,
             include_nodes = args.nodes,
-            include_reservation = args.reservation,
             exclude_nodes = args.exclude_nodes,
+            include_reservation = args.reservation,
             exclude_reservation = args.exclude_reservation,
+            include_states = args.include_states,
+            exclude_states = args.exclude_states,
+            include_files = args.include_files,
+            exclude_files = args.exclude_files,
         )
 
     elif args.command == 'add':

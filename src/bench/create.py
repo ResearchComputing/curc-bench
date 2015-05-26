@@ -39,13 +39,22 @@ def execute(directory,
 
             include_states=None,
             exclude_states=None,
+
+            include_files=None,
+            exclude_files=None,
 ):
     node_list_filename = os.path.join(directory, 'node_list')
     logger.info('creating {0}'.format(node_list_filename))
 
     all_nodes = get_nodes()
 
-    if include_states is None and exclude_states is None:
+    if (
+            include_states is None
+            and exclude_states is None
+            and include_nodes is None
+            and include_reservation is None
+            and include_files is None
+    ):
         exclude_states = ['down', 'draining', 'drained']
 
     node_list = get_nodes(
@@ -53,20 +62,26 @@ def execute(directory,
         exclude_states=exclude_states,
     )
 
-    if include_nodes is not None or include_reservation is not None:
+    if include_nodes or include_reservation or include_files:
         include_nodes_ = set()
         if include_nodes is not None:
             include_nodes_ |= set(hostlist.expand_hostlist(include_nodes))
         if include_reservation is not None:
             include_nodes_ |= get_reserved_nodes(include_reservation)
+        if include_files:
+            for include_file in include_files:
+                include_nodes_ |= set(bench.util.read_node_list(include_file))
         node_list = node_list & include_nodes_
 
-    if exclude_nodes is not None or exclude_reservation is not None:
+    if exclude_nodes or exclude_reservation or exclude_files:
         exclude_nodes_ = set()
         if exclude_nodes is not None:
             exclude_nodes_ |= set(hostlist.expand_hostlist(exclude_nodes))
         if exclude_reservation is not None:
             exclude_nodes_ |= get_reserved_nodes(exclude_reservation)
+        if exclude_files:
+            for exclude_file in exclude_files:
+                exclude_nodes_ |= set(benchutil.read_node_list(exclude_file))
         node_list = node_list - exclude_nodes_
 
     logger.info('nodes to test: {0}'.format(len(node_list)))
