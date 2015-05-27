@@ -53,9 +53,9 @@ def parser():
     submit.add_argument('--reservation', help='reservation to run jobs in')
     submit.add_argument('-q', '--qos', help='qos to associate with the jobs')
     submit.add_argument('-a', '--account', help='account to use with the jobs')
-    submit.add_argument('--not-tested')
-    submit.add_argument('--bad-nodes')
-    submit.add_argument('--good-nodes')
+    submit.add_argument('--not-tested', action="store_true")
+    submit.add_argument('--bad-nodes', action="store_true")
+    submit.add_argument('--good-nodes', action="store_true")
     submit.set_defaults(pause=0)
 
     process = subparsers.add_parser(
@@ -193,6 +193,9 @@ def driver():
             reservation = args.reservation,
             qos = args.qos,
             account = args.account,
+            good_nodes = args.good_nodes,
+            bad_nodes = args.bad_nodes,
+            not_tested = args.not_tested,
         )
 
     elif args.command == 'process':
