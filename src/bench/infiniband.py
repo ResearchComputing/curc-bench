@@ -2,6 +2,7 @@ import bench.util
 import collections
 import hostlist
 import json
+import random
 import re
 
 
@@ -49,18 +50,15 @@ def get_switch_node_pairs(nodes, topology):
     switch_node_pairs = {}
     switches = get_switch_nodes(nodes, topology)
     for switch_name, switch_nodes in switches.iteritems():
-        switch_node_pairs.update(get_node_pairs(switch_nodes))
+        for node_pair in get_node_pairs(switch_nodes):
+            key = ','.join(sorted(node_pair))
+            switch_node_pairs[key] = node_pair
     return switch_node_pairs
 
 
 def get_node_pairs(nodes):
-    data = {}
     for node_pair in bench.util.chunks(sorted(nodes), 2):
-        try:
-            key = '{0},{1}'.format(*list(sorted(node_pair)))
-        except IndexError:
-            # odd-length list might end with a single node
-            continue
-        else:
-            data[key] = node_pair
-    return data
+        node_pair = set(node_pair)
+        if len(node_pair) == 1:
+            node_pair.add(random.choice(list(set(nodes) - set(node_pair))))
+        yield node_pair
