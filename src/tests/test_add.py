@@ -17,7 +17,7 @@ class TestAddExecute (unittest.TestCase):
 
     def setUp (self):
         self.directory = tempfile.mkdtemp()
-        self.nodes = set('node01{0:02}'.format(i) for i in xrange(1, 81))
+        self.nodes = set('tnode01{0:02}'.format(i) for i in xrange(1, 81))
         with open(os.path.join(self.directory, 'node_list'), 'w') as fp:
             for node in self.nodes:
                 fp.write('{0}\n'.format(node))
@@ -26,7 +26,7 @@ class TestAddExecute (unittest.TestCase):
         shutil.rmtree(self.directory)
 
     def test_execute_add_node_tests (self):
-        bench.add.execute(self.directory, 'curc/topology.conf', node_tests=True)
+        bench.add.execute(self.directory, 'src/tests/topology.conf', node_tests=True)
 
         tests_dir = os.path.join(self.directory, 'node', 'tests')
         expected_tests = set(self.nodes)
@@ -45,7 +45,7 @@ class TestAddExecute (unittest.TestCase):
             )
 
     def test_execute_alltoall_rack_tests (self):
-        bench.add.execute(self.directory, 'curc/topology.conf', alltoall_rack_tests=True)
+        bench.add.execute(self.directory, 'src/tests/topology.conf', alltoall_rack_tests=True)
 
         prefix = os.path.join(self.directory, 'alltoall-rack', 'tests')
         self.assertEqual(
@@ -62,7 +62,7 @@ class TestAddExecute (unittest.TestCase):
         )
 
     def test_execute_alltoall_switch_tests (self):
-        bench.add.execute(self.directory, 'curc/topology.conf', alltoall_switch_tests=True)
+        bench.add.execute(self.directory, 'src/tests/topology.conf', alltoall_switch_tests=True)
 
         prefix = os.path.join(self.directory, 'alltoall-switch', 'tests')
         switches = set((
@@ -84,7 +84,7 @@ class TestAddExecute (unittest.TestCase):
         self.assertEqual(nodes, self.nodes)
 
     def test_execute_alltoall_pair_tests (self):
-        bench.add.execute(self.directory, 'curc/topology.conf', alltoall_pair_tests=True)
+        bench.add.execute(self.directory, 'src/tests/topology.conf', alltoall_pair_tests=True)
 
         prefix = os.path.join(self.directory, 'alltoall-pair', 'tests')
         script_dirs = os.listdir(prefix)
@@ -98,7 +98,7 @@ class TestAddExecute (unittest.TestCase):
         self.assertEqual(nodes, self.nodes)
 
     def test_execute_bandwidth_tests (self):
-        bench.add.execute(self.directory, 'curc/topology.conf', bandwidth_tests=True)
+        bench.add.execute(self.directory, 'src/tests/topology.conf', bandwidth_tests=True)
 
         tests_dir = os.path.join(self.directory, 'bandwidth', 'tests')
         nodes = set()
@@ -110,3 +110,62 @@ class TestAddExecute (unittest.TestCase):
             self.assertEqual(len(node_pair), 2)
             nodes |= node_pair
         self.assertEqual(nodes, self.nodes)
+
+    def test_execute_add_include_file (self):
+        good_nodes = os.path.join(self.directory, 'good_nodes')
+        with open(good_nodes, 'w') as fp:
+            for node in ['tnode0101', 'tnode0102', 'nonode0101']:
+                fp.write('{0}\n'.format(node))
+
+        bench.add.execute(
+            self.directory,
+            topology_file='src/tests/topology.conf',
+            node_tests=True,
+            include_files=[good_nodes],
+        )
+
+        tests_dir = os.path.join(self.directory, 'node', 'tests')
+        expected_tests = set(['tnode0101', 'tnode0102'])
+        self.assertEqual(
+            set(os.listdir(tests_dir)),
+            expected_tests,
+        )
+        for node in expected_tests:
+            script = os.path.join(tests_dir, node, '{0}.job'.format(node))
+            self.assertNotEqual(os.stat(script).st_size, 0)
+            with open(script) as fp:
+                match = NODELIST_P.search(fp.read())
+            self.assertEqual(
+                set(hostlist.expand_hostlist(match.group(3))),
+                set((node, )),
+            )
+
+    def test_execute_add_exclude_file (self):
+        bad_nodes = os.path.join(self.directory, 'bad_nodes')
+        with open(bad_nodes, 'w') as fp:
+            for node in ['tnode0101', 'tnode0102', 'tnode0208', 'nonode0101']:
+                fp.write('{0}\n'.format(node))
+
+        bench.add.execute(
+            self.directory,
+            topology_file='src/tests/topology.conf',
+            node_tests=True,
+            exclude_files=[bad_nodes],
+        )
+
+        tests_dir = os.path.join(self.directory, 'node', 'tests')
+        expected_tests = set(self.nodes) - set(['tnode0101', 'tnode0102', 'tnode0208', 'nonode0101'])
+        self.assertEqual(
+            set(os.listdir(tests_dir)),
+            expected_tests,
+        )
+        for node in expected_tests:
+            script = os.path.join(tests_dir, node, '{0}.job'.format(node))
+            self.assertNotEqual(os.stat(script).st_size, 0)
+            with open(script) as fp:
+                match = NODELIST_P.search(fp.read())
+            self.assertEqual(
+                set(hostlist.expand_hostlist(match.group(3))),
+                set((node, )),
+            )
+

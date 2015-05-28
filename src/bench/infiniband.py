@@ -8,6 +8,7 @@ import re
 
 SWITCH_NAME_P = re.compile(r'SwitchName=([^ ]+)')
 NODES_P = re.compile(r'Nodes=([^ ]+)')
+NODE_HOSTNAME_P = re.compile(r'^(.*)node([0-9][0-9])([0-9]+)$')
 
 
 def parse_topology_conf (topology_file):
@@ -32,9 +33,11 @@ def get_topology (topology_file):
 def get_rack_nodes(nodes):
     rack_nodes = collections.defaultdict(set)
     for node in nodes:
-        rack_num = node[4:6]
-        rack_name = 'rack_{0}'.format(rack_num)
-        rack_nodes[rack_name].add(node)
+        match = NODE_HOSTNAME_P.match(node)
+        if match:
+            rack_num = match.group(2)
+            rack_name = 'rack_{0}'.format(rack_num)
+            rack_nodes[rack_name].add(node)
     return rack_nodes
 
 

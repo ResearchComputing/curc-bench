@@ -38,12 +38,14 @@ def parser():
     create.add_argument('--include-state', action='append', dest='include_states')
     create.add_argument('--exclude-state', action='append', dest='exclude_states')
     create.add_argument('--include-file', action='append', dest='include_files')
-    create.add_argument('--exclude-files', action='append', dest='exclude_files')
+    create.add_argument('--exclude-file', action='append', dest='exclude_files')
 
     add = subparsers.add_parser('add', help='Add a benchmark test')
     parser_add_test_arguments(add)
     add.add_argument('-t', '--topology-file',
-                     help = 'slurm topology.conf')  
+                     help = 'slurm topology.conf')
+    add.add_argument('--include-file', action='append', dest='include_files')
+    add.add_argument('--exclude-file', action='append', dest='exclude_files')
 
 
     submit = subparsers.add_parser(
@@ -179,6 +181,8 @@ def driver():
             alltoall_pair_tests = args.alltoall_pair_tests,
             bandwidth_tests = args.bandwidth_tests,
             node_tests = args.node_tests,
+            include_files = args.include_files,
+            exclude_files = args.exclude_files,
         )
 
     elif args.command == 'submit':

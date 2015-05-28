@@ -24,8 +24,17 @@ def execute(prefix, topology_file,
             alltoall_switch_tests=None,
             alltoall_pair_tests=None,
             bandwidth_tests=None,
-            node_tests=None):
-    node_list = bench.util.read_node_list(os.path.join(prefix, 'node_list'))
+            node_tests=None,
+            include_files=None,
+            exclude_files=None,
+):
+    node_list = set(bench.util.read_node_list(os.path.join(prefix, 'node_list')))
+    if include_files:
+        for include_file in include_files:
+            node_list &= set(bench.util.read_node_list(include_file))
+    if exclude_files:
+        for exclude_file in exclude_files:
+            node_list -= set(bench.util.read_node_list(exclude_file))
 
     if topology_file is not None:
         topology = bench.infiniband.get_topology(topology_file)
