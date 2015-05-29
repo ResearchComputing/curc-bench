@@ -5,7 +5,7 @@
 #SBATCH --ntasks-per-node=1
 
 
-OSU_BW=/curc/admin/benchmarks-test/software/osu-micro-benchmarks-3.8/mpi/pt2pt/osu_bw
+OSU_BW=/projects/molu8455/redhat_6/software/bandwidth/osu_bw
 
 
 function main
