@@ -59,7 +59,7 @@ def process_tests (node_list, prefix, key):
         key, len(results['bad_nodes']), len(node_list)))
     logger.info('{0}: good nodes: {1} / {2}'.format(
         key, len(results['good_nodes']), len(node_list)))
-    logger.info('{0}: untested nodes: {1} / {2}'.format(
+    logger.info('{0}: not tested: {1} / {2}'.format(
         key, len(results['not_tested']), len(node_list)))
     write_result_files(
         os.path.join(prefix, key),
