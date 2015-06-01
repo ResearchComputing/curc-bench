@@ -68,7 +68,7 @@ def process(nodes, prefix):
                     bad_nodes |= test_nodes
                     continue
         except IOError as ex:
-            logger.info('unable to read {0}'.format(osu_alltoall_out_path))
+            logger.info('{0}: not tested (unable to read {1})'.format(test, osu_alltoall_out_path))
             logger.debug(ex, exc_info=True)
             continue
         if not data:

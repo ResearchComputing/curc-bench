@@ -49,13 +49,13 @@ def process(nodes, prefix):
             with open(stream_out_path) as fp:
                 stream_output = fp.read()
         except IOError as ex:
-            logger.info('unable to read {0}'.format(stream_out_path))
+            logger.info('{0}: not tested (unable to read {1})'.format(test, stream_out_path))
             logger.debug(ex, exc_info=True)
             continue
         try:
             stream_data = parse_stream(stream_output)
         except bench.exc.ParseError as ex:
-            logger.warn('unable to parse {0}'.format(stream_out_path))
+            logger.warn('{0}: not tested (unable to parse {1})'.format(test, stream_out_path))
             logger.debug(ex, exc_info=True)
             continue
         stream_passed = evaluate_stream(stream_data, test=test)
@@ -65,13 +65,13 @@ def process(nodes, prefix):
             with open(linpack_out_path) as fp:
                 linpack_output = fp.read()
         except IOError as ex:
-            logger.info('unable to read {0}'.format(linpack_out_path))
+            logger.info('{0}: not tested (unable to read {1})'.format(test, linpack_out_path))
             logger.debug(ex, exc_info=True)
             continue
         try:
             linpack_data = parse_linpack(linpack_output)
         except bench.exc.ParseError as ex:
-            logger.warn('unable to parse {0}'.format(linpack_out_path))
+            logger.warn('{0}: not tested (unable to parse {1})'.format(test, linpack_out_path))
             logger.debug(ex, exc_info=True)
             continue
         linpack_passed = evaluate_linpack(linpack_data, test=test)

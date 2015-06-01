@@ -1,3 +1,4 @@
+
 import bench.infiniband
 import bench.util
 import jinja2
@@ -47,7 +48,7 @@ def process(nodes, prefix):
                     bad_nodes |= test_nodes
                     continue
         except IOError as ex:
-            logger.info('unable to read {0}'.format(osu_bw_out_path))
+            logger.info('{0}: not tested (unable to read {1})'.format(test, osu_bw_out_path))
             logger.debug(ex, exc_info=True)
             continue
         if evaluate_osu_bw(data, test=test):
