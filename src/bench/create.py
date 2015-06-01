@@ -48,13 +48,7 @@ def execute(directory,
 
     all_nodes = get_nodes()
 
-    if (
-            include_states is None
-            and exclude_states is None
-            and include_nodes is None
-            and include_reservation is None
-            and include_files is None
-    ):
+    if not (include_states or exclude_states):
         exclude_states = ['down', 'draining', 'drained']
 
     node_list = get_nodes(
