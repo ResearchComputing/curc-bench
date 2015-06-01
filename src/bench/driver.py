@@ -27,11 +27,11 @@ def parser():
 
     create = subparsers.add_parser(
         'create', help='Create the benchmark test scripts')
-    create.add_argument('-N', '--nodes',
+    create.add_argument('-N', '--include-nodes',
                         help = 'explicit list of nodes to test')
     create.add_argument('-x', '--exclude-nodes',
                         help = 'explicit list of nodes to exclude from testing')
-    create.add_argument('-r', '--reservation',
+    create.add_argument('-r', '--include-reservation',
                         help = 'test a set of reserved nodes')
     create.add_argument('-X', '--exclude-reservation',
                         help = 'exclude nodes in a reservation from testing')
@@ -163,9 +163,9 @@ def driver():
     if args.command == 'create':
         bench.create.execute(
             directory,
-            include_nodes = args.nodes,
+            include_nodes = args.include_nodes,
             exclude_nodes = args.exclude_nodes,
-            include_reservation = args.reservation,
+            include_reservation = args.include_reservation,
             exclude_reservation = args.exclude_reservation,
             include_states = args.include_states,
             exclude_states = args.exclude_states,
