@@ -16,18 +16,20 @@ TEMPLATE = jinja2.Template(
 
 def generate_alltoall_rack(nodes, prefix):
     rack_nodes = bench.infiniband.get_rack_nodes(nodes)
-    for rack_name, rack_nodes in rack_nodes.iteritems():
-        if rack_nodes:
+    for rack_name, rack_nodes_ in rack_nodes.iteritems():
+        if rack_nodes_:
             test_dir = os.path.join(prefix, rack_name)
-            render(test_dir, rack_nodes, rack_name)
+            render(test_dir, rack_nodes_, rack_name)
+    logger.info('alltoall-rack: add: {0}'.format(len(rack_nodes)))
 
 
 def generate_alltoall_switch(nodes, topology, prefix):
     switch_nodes = bench.infiniband.get_switch_nodes(nodes, topology)
-    for switch_name, switch_nodes in switch_nodes.iteritems():
-        if switch_nodes:
+    for switch_name, switch_nodes_ in switch_nodes.iteritems():
+        if switch_nodes_:
             test_dir = os.path.join(prefix, switch_name)
-            render(test_dir, switch_nodes, switch_name)
+            render(test_dir, switch_nodes_, switch_name)
+    logger.info('alltoall-switch: add: {0}'.format(len(switch_nodes)))
 
 
 def generate_alltoall_pair(nodes, topology, prefix):
@@ -36,6 +38,7 @@ def generate_alltoall_pair(nodes, topology, prefix):
         if name_list:
             test_dir = os.path.join(prefix, pair_name)
             render(test_dir, name_list, pair_name)
+    logger.info('alltoall-pair: add: {0}'.format(len(node_pairs)))
 
 
 def render(prefix, nodes, node_list_name):

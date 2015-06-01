@@ -28,6 +28,7 @@ def generate(nodes, topology, prefix):
                 nodes = node_pair,
             ))
         bench.util.write_node_list(os.path.join(test_dir, 'node_list'), node_pair)
+    logger.info('bandwidth: add: {0}'.format(len(node_pairs)))
 
 
 def process(nodes, prefix):

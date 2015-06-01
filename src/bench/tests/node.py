@@ -36,6 +36,7 @@ def generate(nodes, prefix):
 
         node_list_file = os.path.join(test_dir, 'node_list')
         bench.util.write_node_list(node_list_file, [node])
+    logger.info('node: add: {0}'.format(len(nodes)))
 
 
 def process(nodes, prefix):
