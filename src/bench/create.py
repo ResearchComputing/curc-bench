@@ -27,6 +27,14 @@ def get_nodes(include_states=None, exclude_states=None):
         nodes = (node for node in nodes
                  if node['node_state'].rstrip('*').lower()
                  not in exclude_states)
+
+        # Maintenance reservations shadow node state with MAINT*,
+        # making it impossible to detect state DOWN, etc. Treat nodes
+        # that have a "reason" as though they are down for purposes of
+        # exclusion.
+        if 'down' in exclude_states:
+            nodes = (node for node in nodes
+                     if not node['reason'])
     return set(node['name'] for node in nodes)
 
 
