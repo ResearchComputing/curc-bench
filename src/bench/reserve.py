@@ -51,7 +51,7 @@ def reserve_nodes (prefix, key, bad_nodes=None, not_tested=None):
     except IOError as ex:
         logger.info('unable to read {0}'.format(bad_nodes_path))
         logger.debug(ex, exc_info=True)
-        bad_nodes = set()
+        bad_nodes_ = set()
 
     not_tested_path = os.path.join(prefix, key, 'not_tested')
     try:
