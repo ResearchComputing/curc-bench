@@ -62,7 +62,7 @@ def reserve_nodes (prefix, key, bad_nodes=None, not_tested=None):
         not_tested_ = set()
 
     # by default, reserve bad_nodes and not_tested
-    if bad_nodes is None and not_tested is None:
+    if not (bad_nodes or not_tested):
         reserve_nodes_ = bad_nodes_ | not_tested_
     else:
         reserve_nodes_ = set()

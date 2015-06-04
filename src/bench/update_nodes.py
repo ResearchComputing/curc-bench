@@ -61,7 +61,7 @@ def update_nodes_from_tests (prefix, test_type, bad_nodes=None,
         not_tested_ = set()
 
     # by default, reserve bad_nodes and not_tested
-    if bad_nodes is None and not_tested is None:
+    if not (bad_nodes or not_tested):
         nodes_to_update = bad_nodes_ | not_tested_
     else:
         nodes_to_update = set()
