@@ -67,14 +67,16 @@ def parser():
     reserve = subparsers.add_parser(
         'reserve', help='Reserve nodes based on processed results')
     parser_add_test_arguments(reserve)
-    parser.add_argument('--bad-nodes', action='store_true')
-    parser.add_argument('--not-tested', action='store_true')
+    reserve.add_argument('--bad-nodes', action='store_true')
+    reserve.add_argument('--not-tested', action='store_true')
 
     update_nodes = subparsers.add_parser(
         'update-nodes', help='Mark nodes down based on processed results')
     update_nodes.add_argument('--down',
                               help='set nodes down (default: drain)', action='store_true')
     parser_add_test_arguments(update_nodes)
+    update_nodes.add_argument('--bad-nodes', action='store_true')
+    update_nodes.add_argument('--not-tested', action='store_true')
     update_nodes.set_defaults(down=False)
 
     return parser
@@ -220,6 +222,7 @@ def driver():
             alltoall_pair_tests = args.alltoall_pair_tests,
             node_tests = args.node_tests,
             bandwidth_tests = args.bandwidth_tests,
+            bad_nodes = args.bad_nodes,
             not_tested = args.not_tested,
         )
 
@@ -231,5 +234,7 @@ def driver():
             alltoall_pair_tests = args.alltoall_pair_tests,
             node_tests = args.node_tests,
             bandwidth_tests = args.bandwidth_tests,
+            bad_nodes = args.bad_nodes,
+            not_tested = args.not_tested,
             down = args.down,
         )
