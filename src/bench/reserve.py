@@ -72,15 +72,19 @@ def reserve_nodes (prefix, key, bad_nodes=None, not_tested=None):
             reserve_nodes_ |= not_tested_
 
     if reserve_nodes_:
+        reservation_name = 'bench-{0}'.format(key)
         try:
             bench.slurm.scontrol(
                 'create',
-                reservation='bench-{0}'.format(key),
+                reservation=reservation_name,
                 accounts = 'crcbenchmark',
                 flags='overlap',
                 starttime='now',
+                duration='UNLIMITED',
                 nodes=','.join(sorted(reserve_nodes_)),
             )
         except bench.exc.SlurmError as ex:
             logger.error(ex)
             logger.debug(ex, exc_info=True)
+        else:
+            logger.info('{0}: {1}'.format(reservation_name, len(reserve_nodes_)))
