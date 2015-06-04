@@ -75,7 +75,7 @@ def execute(directory,
             exclude_nodes_ |= get_reserved_nodes(exclude_reservation)
         if exclude_files:
             for exclude_file in exclude_files:
-                exclude_nodes_ |= set(benchutil.read_node_list(exclude_file))
+                exclude_nodes_ |= set(bench.util.read_node_list(exclude_file))
         node_list = node_list - exclude_nodes_
 
     logger.info('nodes to test: {0}'.format(len(node_list)))
