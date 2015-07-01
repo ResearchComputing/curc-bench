@@ -27,26 +27,13 @@ def parser():
 
     create = subparsers.add_parser(
         'create', help='Create the benchmark test scripts')
-    create.add_argument('-N', '--include-nodes',
-                        help = 'explicit list of nodes to test')
-    create.add_argument('-x', '--exclude-nodes',
-                        help = 'explicit list of nodes to exclude from testing')
-    create.add_argument('-r', '--include-reservation',
-                        help = 'test a set of reserved nodes')
-    create.add_argument('-X', '--exclude-reservation',
-                        help = 'exclude nodes in a reservation from testing')
-    create.add_argument('--include-state', action='append', dest='include_states')
-    create.add_argument('--exclude-state', action='append', dest='exclude_states')
-    create.add_argument('--include-file', action='append', dest='include_files')
-    create.add_argument('--exclude-file', action='append', dest='exclude_files')
+    parser_add_filter_arguments(create)
 
     add = subparsers.add_parser('add', help='Add a benchmark test')
     parser_add_test_arguments(add)
     add.add_argument('-t', '--topology-file',
                      help = 'slurm topology.conf')
-    add.add_argument('--include-file', action='append', dest='include_files')
-    add.add_argument('--exclude-file', action='append', dest='exclude_files')
-
+    parser_add_filter_arguments(add)
 
     submit = subparsers.add_parser(
         'submit', help='Submit all the jobs from create to the scheduler.')
@@ -98,6 +85,21 @@ def parser_add_test_arguments (parser):
     parser.add_argument('-b', '--bandwidth-tests',
                      help = 'bandwidth tests',
                      action = 'store_true')
+
+
+def parser_add_filter_arguments (parser):
+    parser.add_argument('--include-nodes',
+                        help = 'explicit list of nodes to test')
+    parser.add_argument('--exclude-nodes',
+                        help = 'explicit list of nodes to exclude from testing')
+    parser.add_argument('--include-reservation',
+                        help = 'test a set of reserved nodes')
+    parser.add_argument('--exclude-reservation',
+                        help = 'exclude nodes in a reservation from testing')
+    parser.add_argument('--include-state', action='append', dest='include_states')
+    parser.add_argument('--exclude-state', action='append', dest='exclude_states')
+    parser.add_argument('--include-file', action='append', dest='include_files')
+    parser.add_argument('--exclude-file', action='append', dest='exclude_files')
 
 
 def get_directory(prefix, new=False):

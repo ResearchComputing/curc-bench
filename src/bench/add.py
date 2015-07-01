@@ -25,16 +25,18 @@ def execute(prefix, topology_file,
             alltoall_pair_tests=None,
             bandwidth_tests=None,
             node_tests=None,
-            include_files=None,
-            exclude_files=None,
+            include_states=None,
+            exclude_states=None,
+            **kwargs
 ):
-    node_list = set(bench.util.read_node_list(os.path.join(prefix, 'node_list')))
-    if include_files:
-        for include_file in include_files:
-            node_list &= set(bench.util.read_node_list(include_file))
-    if exclude_files:
-        for exclude_file in exclude_files:
-            node_list -= set(bench.util.read_node_list(exclude_file))
+    if not (include_states or exclude_states):
+        exclude_states = ['down', 'draining', 'drained']
+
+    global_node_list = set(bench.util.read_node_list(os.path.join(prefix, 'node_list')))
+    node_list = bench.util.filter_node_list(global_node_list,
+                                            include_states=include_states,
+                                            exclude_states=exclude_states,
+                                            **kwargs)
 
     if topology_file is not None:
         topology = bench.infiniband.get_topology(topology_file)
@@ -50,7 +52,7 @@ def execute(prefix, topology_file,
 
     # default to adding *all* tests
     if not add_any_tests_explicitly:
-        for key in PROCESSORS:
+        for key in GENERATORS:
             add_tests(node_list, prefix, key, topology)
     else:
         if alltoall_rack_tests:
