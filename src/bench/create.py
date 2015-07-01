@@ -34,7 +34,7 @@ def get_nodes(include_states=None, exclude_states=None):
         # exclusion.
         if 'down' in exclude_states:
             nodes = (node for node in nodes
-                     if not node['reason'])
+                     if not node.get('reason'))
     return set(node['name'] for node in nodes)
 
 
