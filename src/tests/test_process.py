@@ -42,6 +42,13 @@ class TestProcessExecute (unittest.TestCase):
     def read_node_list (self, path):
         with open(path) as fp:
             return set(fp.read().splitlines())
+
+    def test_execute_missing_node_tests (self):
+        shutil.rmtree(self.prefix)
+        bench.process.execute(self.directory, node_tests=True)
+        assert not os.path.exists(os.path.join(self.prefix, 'good_nodes'))
+        assert not os.path.exists(os.path.join(self.prefix, 'bad_nodes'))
+        assert not os.path.exists(os.path.join(self.prefix, 'not_tested'))
     
     def test_execute_node_tests (self):
         bench.process.execute(self.directory, node_tests=True)
@@ -117,7 +124,6 @@ class TestProcessExecute (unittest.TestCase):
 
     def _populate_node_list (self, node):
         bench.util.mkdir_p(os.path.join(self.tests_dir, node))
-        print os.path.join(self.tests_dir, node, 'node_list')
         with open(os.path.join(self.tests_dir, node, 'node_list'), 'w') as fp:
             fp.write('{0}\n'.format(node))
 

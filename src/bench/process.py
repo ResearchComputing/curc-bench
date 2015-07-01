@@ -54,6 +54,9 @@ def execute(prefix,
 
 def process_tests (node_list, prefix, key):
     prefix_ = os.path.join(prefix, key, 'tests')
+    if not os.path.exists(prefix_):
+        logger.warn('{0}: not found'.format(key))
+        return
     results = PROCESSORS[key](node_list, prefix_)
     logger.info('{0}: bad nodes: {1} / {2}'.format(
         key, len(results['bad_nodes']), len(node_list)))
@@ -67,7 +70,6 @@ def process_tests (node_list, prefix, key):
         results['bad_nodes'],
         results['not_tested'],
     )
-    return results
 
 
 def write_result_files(prefix, good_nodes, bad_nodes, not_tested):
