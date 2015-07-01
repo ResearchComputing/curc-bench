@@ -24,7 +24,7 @@ class TestProcessExecute (unittest.TestCase):
         self.bad_nodes = set(sorted(self.nodes)[-10:])
         self.assertEqual(len(self.good_nodes & self.bad_nodes), 0)
         self.not_tested = self.nodes - (self.good_nodes | self.bad_nodes)
-        with open(os.path.join(self.directory, 'node_list'), 'w') as fp:
+        with open(os.path.join(self.directory, 'node', 'node_list'), 'w') as fp:
             for node in self.nodes:
                 fp.write('{0}\n'.format(node))
         for node in self.good_nodes:

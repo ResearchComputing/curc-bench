@@ -73,3 +73,6 @@ def add_tests (node_list, prefix, key, topology=None):
         GENERATORS[key](node_list, topology, tests_prefix)
     else:
         GENERATORS[key](node_list, tests_prefix)
+    bench.util.write_node_list(
+        os.path.join(prefix, key, 'node_list'),
+        node_list)

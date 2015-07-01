@@ -28,6 +28,9 @@ class TestAddExecute (unittest.TestCase):
     def test_execute_add_node_tests (self):
         bench.add.execute(self.directory, 'src/tests/topology.conf', node_tests=True)
 
+        self.assertEqual(
+            open(os.path.join(self.directory, 'node', 'node_list')).read(),
+            ''.join('{0}\n'.format(node) for node in sorted(self.nodes)))
         tests_dir = os.path.join(self.directory, 'node', 'tests')
         expected_tests = set(self.nodes)
         self.assertEqual(

@@ -25,7 +25,6 @@ def execute(prefix,
             alltoall_pair_tests=None,
             bandwidth_tests=None,
             node_tests=None):
-    node_list = bench.util.read_node_list(os.path.join(prefix, 'node_list'))
 
     process_any_tests_explicitly = (
         alltoall_rack_tests
@@ -38,25 +37,26 @@ def execute(prefix,
     # default to processing *all* test results
     if not process_any_tests_explicitly:
         for key in PROCESSORS:
-            process_tests(node_list, prefix, key)
+            process_tests(prefix, key)
     else:
         if alltoall_rack_tests:
-            process_tests(node_list, prefix, 'alltoall-rack')
+            process_tests(prefix, 'alltoall-rack')
         if alltoall_switch_tests:
-            process_tests(node_list, prefix, 'alltoall-switch')
+            process_tests(prefix, 'alltoall-switch')
         if alltoall_pair_tests:
-            process_tests(node_list, prefix, 'alltoall-pair')
+            process_tests(prefix, 'alltoall-pair')
         if bandwidth_tests:
-            process_tests(node_list, prefix, 'bandwidth')
+            process_tests(prefix, 'bandwidth')
         if node_tests:
-            process_tests(node_list, prefix, 'node')
+            process_tests(prefix, 'node')
 
 
-def process_tests (node_list, prefix, key):
+def process_tests (prefix, key):
     prefix_ = os.path.join(prefix, key, 'tests')
     if not os.path.exists(prefix_):
         logger.warn('{0}: not found'.format(key))
         return
+    node_list = bench.util.read_node_list(os.path.join(prefix, key, 'node_list'))
     results = PROCESSORS[key](node_list, prefix_)
     logger.info('{0}: bad nodes: {1} / {2}'.format(
         key, len(results['bad_nodes']), len(node_list)))
