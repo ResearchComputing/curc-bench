@@ -39,6 +39,7 @@ class TestReserveExecute (unittest.TestCase):
                                        'accounts=crcbenchmark',
                                        'flags=overlap',
                                        'starttime=now',
+                                       'duration=UNLIMITED',
                                        'nodes=tnode0101,tnode0102,tnode0103,tnode0104'],
                                       stdout=subprocess.PIPE,
                                       stderr=subprocess.PIPE)
@@ -52,6 +53,7 @@ class TestReserveExecute (unittest.TestCase):
                                        'accounts=crcbenchmark',
                                        'flags=overlap',
                                        'starttime=now',
+                                       'duration=UNLIMITED',
                                        'nodes=tnode0101,tnode0102'],
                                       stdout=subprocess.PIPE,
                                       stderr=subprocess.PIPE)
@@ -65,6 +67,7 @@ class TestReserveExecute (unittest.TestCase):
                                        'accounts=crcbenchmark',
                                        'flags=overlap',
                                        'starttime=now',
+                                       'duration=UNLIMITED',
                                        'nodes=tnode0103,tnode0104'],
                                       stdout=subprocess.PIPE,
                                       stderr=subprocess.PIPE)
@@ -79,6 +82,7 @@ class TestReserveExecute (unittest.TestCase):
                                        'accounts=crcbenchmark',
                                        'flags=overlap',
                                        'starttime=now',
+                                       'duration=UNLIMITED',
                                        'nodes=tnode0101,tnode0102,tnode0103,tnode0104'],
                                       stdout=subprocess.PIPE,
                                       stderr=subprocess.PIPE)
