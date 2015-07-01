@@ -53,6 +53,8 @@ def get_switch_node_pairs(nodes, topology):
     switch_node_pairs = {}
     switches = get_switch_nodes(nodes, topology)
     for switch_name, switch_nodes in switches.iteritems():
+        if len(switch_nodes) < 2:
+            continue
         for node_pair in get_node_pairs(switch_nodes):
             key = ','.join(sorted(node_pair))
             switch_node_pairs[key] = node_pair

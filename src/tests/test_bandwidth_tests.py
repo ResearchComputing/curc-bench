@@ -5,6 +5,16 @@ import tempfile
 import unittest
 
 
+class TestBandwidthGenerate (unittest.TestCase):
+
+    def setUp (self):
+        self.prefix = tempfile.mkdtemp()
+
+    def test_one (self):
+        result = bench.tests.bandwidth.generate(['tnode1'], {'tsw1': set(['tnode1'])}, self.prefix)
+        self.assertEqual(os.listdir(self.prefix), [])
+
+
 class TestBandwidthProcess (unittest.TestCase):
 
     def setUp (self):
