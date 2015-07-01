@@ -50,7 +50,7 @@ class TestSubmit(unittest.TestCase):
 
     @mock.patch('bench.submit.bench.slurm.subprocess.Popen',
                 return_value=fake_Popen())
-    def test_submit_missing_tests_dir (self, arg1):
+    def test_missing_tests_dir (self, arg1):
         shutil.rmtree(self.tests_dir)
         new_index = bench.submit.submit(
             self.prefix,
@@ -60,7 +60,7 @@ class TestSubmit(unittest.TestCase):
 
     @mock.patch('bench.submit.bench.slurm.subprocess.Popen',
                 return_value=fake_Popen())
-    def test_submit_missing_script (self, arg1):
+    def test_missing_script (self, arg1):
         test_dir = self._add_test('tnode1')
         os.remove(os.path.join(test_dir, '{0}.job'.format('tnode1')))
         new_index = bench.submit.submit(
@@ -93,7 +93,7 @@ class TestSubmit(unittest.TestCase):
 
     @mock.patch('bench.submit.bench.slurm.subprocess.Popen',
                 return_value=fake_Popen())
-    def test_submit_good_nodes (self, popen):
+    def test_good_nodes (self, popen):
         self._add_test('tnode1')
         self._add_test('tnode2')
         self._add_test('tnode3')
@@ -105,7 +105,7 @@ class TestSubmit(unittest.TestCase):
 
     @mock.patch('bench.submit.bench.slurm.subprocess.Popen',
                 return_value=fake_Popen())
-    def test_submit_bad_nodes (self, popen):
+    def test_bad_nodes (self, popen):
         self._add_test('tnode1')
         self._add_test('tnode2')
         self._add_test('tnode3')
@@ -116,7 +116,7 @@ class TestSubmit(unittest.TestCase):
 
     @mock.patch('bench.submit.bench.slurm.subprocess.Popen',
                 return_value=fake_Popen())
-    def test_submit_not_tested (self, popen):
+    def test_not_tested (self, popen):
         self._add_test('tnode1')
         self._add_test('tnode2')
         self._add_test('tnode3')
@@ -127,7 +127,7 @@ class TestSubmit(unittest.TestCase):
 
     @mock.patch('bench.submit.bench.slurm.subprocess.Popen',
                 return_value=fake_Popen())
-    def test_submit_good_nodes_missing_file (self, popen):
+    def test_good_nodes_missing_file (self, popen):
         self._add_test('tnode1')
         self._add_test('tnode2')
         self._add_test('tnode3')
@@ -137,7 +137,7 @@ class TestSubmit(unittest.TestCase):
 
     @mock.patch('bench.submit.bench.slurm.subprocess.Popen',
                 return_value=fake_Popen())
-    def test_submit_bad_nodes_missing_file (self, popen):
+    def test_bad_nodes_missing_file (self, popen):
         self._add_test('tnode1')
         self._add_test('tnode2')
         self._add_test('tnode3')
@@ -148,7 +148,7 @@ class TestSubmit(unittest.TestCase):
 
     @mock.patch('bench.submit.bench.slurm.subprocess.Popen',
                 return_value=fake_Popen())
-    def test_submit_not_tested_missing_file (self, popen):
+    def test_not_tested_missing_file (self, popen):
         self._add_test('tnode1')
         self._add_test('tnode2')
         self._add_test('tnode3')

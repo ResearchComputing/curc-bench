@@ -43,14 +43,14 @@ class TestProcessExecute (unittest.TestCase):
         with open(path) as fp:
             return set(fp.read().splitlines())
 
-    def test_execute_missing_node_tests (self):
+    def test_missing_node_tests (self):
         shutil.rmtree(self.prefix)
         bench.process.execute(self.directory, node_tests=True)
         assert not os.path.exists(os.path.join(self.prefix, 'good_nodes'))
         assert not os.path.exists(os.path.join(self.prefix, 'bad_nodes'))
         assert not os.path.exists(os.path.join(self.prefix, 'not_tested'))
     
-    def test_execute_node_tests (self):
+    def test_node_tests (self):
         bench.process.execute(self.directory, node_tests=True)
         good_nodes = self.read_node_list(
             os.path.join(self.prefix, 'good_nodes'))
@@ -62,7 +62,7 @@ class TestProcessExecute (unittest.TestCase):
         self.assertEqual(bad_nodes, self.bad_nodes)
         self.assertEqual(not_tested, self.not_tested)
     
-    def test_execute_node_tests_missing_stream (self):
+    def test_node_tests_missing_stream (self):
         missing_stream_nodes = set(sorted(self.good_nodes)[:5])
         for node in missing_stream_nodes:
             self._remove_stream(node)
@@ -77,7 +77,7 @@ class TestProcessExecute (unittest.TestCase):
         self.assertEqual(bad_nodes, self.bad_nodes)
         self.assertEqual(not_tested, self.not_tested | missing_stream_nodes)
     
-    def test_execute_node_tests_missing_linpack (self):
+    def test_node_tests_missing_linpack (self):
         missing_linpack_nodes = set(sorted(self.good_nodes)[-5:])
         for node in missing_linpack_nodes:
             self._remove_linpack(node)
@@ -92,7 +92,7 @@ class TestProcessExecute (unittest.TestCase):
         self.assertEqual(bad_nodes, self.bad_nodes)
         self.assertEqual(not_tested, self.not_tested | missing_linpack_nodes)
     
-    def test_execute_node_tests_corrupt_stream (self):
+    def test_node_tests_corrupt_stream (self):
         corrupt_stream_nodes = set(sorted(self.good_nodes)[:5])
         for node in corrupt_stream_nodes:
             self._corrupt_stream(node)
@@ -107,7 +107,7 @@ class TestProcessExecute (unittest.TestCase):
         self.assertEqual(bad_nodes, self.bad_nodes)
         self.assertEqual(not_tested, self.not_tested | corrupt_stream_nodes)
     
-    def test_execute_node_tests_corrupt_linpack (self):
+    def test_node_tests_corrupt_linpack (self):
         corrupt_linpack_nodes = set(sorted(self.good_nodes)[-5:])
         for node in corrupt_linpack_nodes:
             self._corrupt_linpack(node)

@@ -50,7 +50,7 @@ class TestAddExecute (unittest.TestCase):
 
     @mock.patch('bench.create.bench.util.pyslurm.node',
                 return_value=fake_node(dict((node, {}) for node in NODES)))
-    def test_execute_add_node_tests (self, _):
+    def test_node_tests (self, _):
         bench.add.execute(self.directory, TOPOLOGY_FILE, node_tests=True)
 
         self.assertEqual(
@@ -74,7 +74,7 @@ class TestAddExecute (unittest.TestCase):
 
     @mock.patch('bench.create.bench.util.pyslurm.node',
                 return_value=fake_node(dict((node, {}) for node in NODES)))
-    def test_execute_alltoall_rack_tests (self, _):
+    def test_alltoall_rack_tests (self, _):
         bench.add.execute(self.directory, TOPOLOGY_FILE, alltoall_rack_tests=True)
 
         prefix = os.path.join(self.directory, 'alltoall-rack', 'tests')
@@ -93,7 +93,7 @@ class TestAddExecute (unittest.TestCase):
 
     @mock.patch('bench.create.bench.util.pyslurm.node',
                 return_value=fake_node(dict((node, {}) for node in NODES)))
-    def test_execute_alltoall_switch_tests (self, _):
+    def test_alltoall_switch_tests (self, _):
         self.nodes = NODES
         bench.util.write_node_list(os.path.join(self.directory, 'node_list'),
                                    self.nodes)
@@ -120,7 +120,7 @@ class TestAddExecute (unittest.TestCase):
 
     @mock.patch('bench.create.bench.util.pyslurm.node',
                 return_value=fake_node(dict((node, {}) for node in NODES)))
-    def test_execute_alltoall_pair_tests (self, _):
+    def test_alltoall_pair_tests (self, _):
         bench.add.execute(self.directory, TOPOLOGY_FILE, alltoall_pair_tests=True)
 
         prefix = os.path.join(self.directory, 'alltoall-pair', 'tests')
@@ -136,7 +136,7 @@ class TestAddExecute (unittest.TestCase):
 
     @mock.patch('bench.create.bench.util.pyslurm.node',
                 return_value=fake_node(dict((node, {}) for node in NODES)))
-    def test_execute_bandwidth_tests (self, _):
+    def test_bandwidth_tests (self, _):
         bench.add.execute(self.directory, TOPOLOGY_FILE, bandwidth_tests=True)
 
         tests_dir = os.path.join(self.directory, 'bandwidth', 'tests')
@@ -152,7 +152,7 @@ class TestAddExecute (unittest.TestCase):
 
     @mock.patch('bench.create.bench.util.pyslurm.node',
                 return_value=fake_node(dict((node, {}) for node in NODES)))
-    def test_execute_add_include_file (self, _):
+    def test_include_file (self, _):
         good_nodes = os.path.join(self.directory, 'good_nodes')
         with open(good_nodes, 'w') as fp:
             for node in ['tnode0101', 'tnode0102', 'nonode0101']:
@@ -183,7 +183,7 @@ class TestAddExecute (unittest.TestCase):
 
     @mock.patch('bench.create.bench.util.pyslurm.node',
                 return_value=fake_node(dict((node, {}) for node in NODES)))
-    def test_execute_add_exclude_file (self, _):
+    def test_exclude_file (self, _):
         bad_nodes = os.path.join(self.directory, 'bad_nodes')
         with open(bad_nodes, 'w') as fp:
             for node in ['tnode0101', 'tnode0102', 'tnode0208', 'nonode0101']:
@@ -216,7 +216,7 @@ class TestAddExecute (unittest.TestCase):
                 return_value=fake_node(dict((node, {}) for node in NODES)))
     @mock.patch('bench.add.bench.util.pyslurm.reservation',
                 return_value=fake_reservation({'res1': {'node_list': 'tnode0101,tnode0103'}}))
-    def test_execute_include_reservation (self, _n, _r):
+    def test_include_reservation (self, _n, _r):
         bench.add.execute(
             self.directory,
             topology_file=TOPOLOGY_FILE,
@@ -232,7 +232,7 @@ class TestAddExecute (unittest.TestCase):
                 return_value=fake_node(dict((node, {}) for node in NODES)))
     @mock.patch('bench.add.bench.util.pyslurm.reservation',
                 return_value=fake_reservation({'res1': {'node_list': 'tnode0101,tnode0103'}}))
-    def test_execute_include_reservation_include_nodes (self, _n, _r):
+    def test_include_reservation_include_nodes (self, _n, _r):
         bench.add.execute(
             self.directory,
             topology_file=TOPOLOGY_FILE,
@@ -248,7 +248,7 @@ class TestAddExecute (unittest.TestCase):
                 return_value=fake_node(dict((node, {}) for node in NODES)))
     @mock.patch('bench.add.bench.util.pyslurm.reservation',
                 return_value=fake_reservation({'res1': {'node_list': 'tnode0101,tnode0103'}}))
-    def test_execute_include_reservation_exclude_nodes (self, _n, _r):
+    def test_include_reservation_exclude_nodes (self, _n, _r):
         bench.add.execute(
             self.directory,
             topology_file=TOPOLOGY_FILE,
@@ -265,7 +265,7 @@ class TestAddExecute (unittest.TestCase):
                 return_value=fake_node(dict((node, {}) for node in NODES)))
     @mock.patch('bench.add.bench.util.pyslurm.reservation',
                 return_value=fake_reservation({'res1': {'node_list': 'tnode0101,tnode0103'}}))
-    def test_execute_exclude_reservation (self, _n, _r):
+    def test_exclude_reservation (self, _n, _r):
         bench.add.execute(
             self.directory,
             topology_file=TOPOLOGY_FILE,
@@ -280,7 +280,7 @@ class TestAddExecute (unittest.TestCase):
                 return_value=fake_node(dict((node, {}) for node in NODES)))
     @mock.patch('bench.add.bench.util.pyslurm.reservation',
                 return_value=fake_reservation({'res1': {'node_list': 'tnode0101,tnode0103'}}))
-    def test_execute_exclude_reservation_include_nodes (self, _n, _r):
+    def test_exclude_reservation_include_nodes (self, _n, _r):
         bench.add.execute(
             self.directory,
             topology_file=TOPOLOGY_FILE,
@@ -296,7 +296,7 @@ class TestAddExecute (unittest.TestCase):
                 return_value=fake_node(dict((node, {}) for node in NODES)))
     @mock.patch('bench.add.bench.util.pyslurm.reservation',
                 return_value=fake_reservation({'res1': {'node_list': 'tnode0101,tnode0103'}}))
-    def test_execute_exclude_reservation_exclude_nodes (self, _n, _r):
+    def test_exclude_reservation_exclude_nodes (self, _n, _r):
         bench.add.execute(
             self.directory,
             topology_file=TOPOLOGY_FILE,
