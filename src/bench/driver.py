@@ -88,13 +88,13 @@ def parser_add_test_arguments (parser):
 
 
 def parser_add_filter_arguments (parser):
-    parser.add_argument('--include-nodes',
+    parser.add_argument('--include-nodes', action='append',
                         help = 'explicit list of nodes to test')
-    parser.add_argument('--exclude-nodes',
+    parser.add_argument('--exclude-nodes', action='append',
                         help = 'explicit list of nodes to exclude from testing')
-    parser.add_argument('--include-reservation',
+    parser.add_argument('--include-reservation', action='append', dest='include_reservations',
                         help = 'test a set of reserved nodes')
-    parser.add_argument('--exclude-reservation',
+    parser.add_argument('--exclude-reservation', action='append', dest='exclude_reservations',
                         help = 'exclude nodes in a reservation from testing')
     parser.add_argument('--include-state', action='append', dest='include_states')
     parser.add_argument('--exclude-state', action='append', dest='exclude_states')
@@ -169,8 +169,8 @@ def driver():
             directory,
             include_nodes = args.include_nodes,
             exclude_nodes = args.exclude_nodes,
-            include_reservation = args.include_reservation,
-            exclude_reservation = args.exclude_reservation,
+            include_reservation = args.include_reservations,
+            exclude_reservation = args.exclude_reservations,
             include_states = args.include_states,
             exclude_states = args.exclude_states,
             include_files = args.include_files,
@@ -185,6 +185,12 @@ def driver():
             alltoall_pair_tests = args.alltoall_pair_tests,
             bandwidth_tests = args.bandwidth_tests,
             node_tests = args.node_tests,
+            include_nodes = args.include_nodes,
+            exclude_nodes = args.exclude_nodes,
+            include_reservation = args.include_reservations,
+            exclude_reservation = args.exclude_reservations,
+            include_states = args.include_states,
+            exclude_states = args.exclude_states,
             include_files = args.include_files,
             exclude_files = args.exclude_files,
         )

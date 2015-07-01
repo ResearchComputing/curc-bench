@@ -42,8 +42,8 @@ def filter_node_list (nodes,
                       include_nodes=None,
                       exclude_nodes=None,
 
-                      include_reservation=None,
-                      exclude_reservation=None,
+                      include_reservations=None,
+                      exclude_reservations=None,
 
                       include_states=None,
                       exclude_states=None,
@@ -59,23 +59,27 @@ def filter_node_list (nodes,
             exclude_states=exclude_states,
         ))
 
-    if include_nodes or include_reservation or include_files:
+    if include_nodes or include_reservations or include_files:
         include_nodes_ = set()
-        if include_nodes is not None:
-            include_nodes_ |= set(hostlist.expand_hostlist(include_nodes))
-        if include_reservation is not None:
-            include_nodes_ |= get_reserved_nodes(include_reservation)
+        if include_nodes:
+            for hostlist_ in include_nodes:
+                include_nodes_ |= set(hostlist.expand_hostlist(hostlist_))
+        if include_reservations:
+            for reservation in include_reservations:
+                include_nodes_ |= get_reserved_nodes(reservation)
         if include_files:
             for include_file in include_files:
                 include_nodes_ |= set(read_node_list(include_file))
         nodes &= include_nodes_
 
-    if exclude_nodes or exclude_reservation or exclude_files:
+    if exclude_nodes or exclude_reservations or exclude_files:
         exclude_nodes_ = set()
-        if exclude_nodes is not None:
-            exclude_nodes_ |= set(hostlist.expand_hostlist(exclude_nodes))
-        if exclude_reservation is not None:
-            exclude_nodes_ |= get_reserved_nodes(exclude_reservation)
+        if exclude_nodes:
+            for hostlist_ in exclude_nodes:
+                exclude_nodes_ |= set(hostlist.expand_hostlist(hostlist_))
+        if exclude_reservations:
+            for reservation in exclude_reservations:
+                exclude_nodes_ |= get_reserved_nodes(reservation)
         if exclude_files:
             for exclude_file in exclude_files:
                 exclude_nodes_ |= set(read_node_list(exclude_file))

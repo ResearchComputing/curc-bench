@@ -221,7 +221,7 @@ class TestAddExecute (unittest.TestCase):
             self.directory,
             topology_file=TOPOLOGY_FILE,
             node_tests=True,
-            include_reservation='res1',
+            include_reservations=['res1'],
         )
 
         node_list = os.path.join(self.directory, 'node', 'node_list')
@@ -237,8 +237,8 @@ class TestAddExecute (unittest.TestCase):
             self.directory,
             topology_file=TOPOLOGY_FILE,
             node_tests=True,
-            include_reservation='res1',
-            include_nodes='tnode0102',
+            include_reservations=['res1'],
+            include_nodes=['tnode0102'],
         )
         node_list = os.path.join(self.directory, 'node', 'node_list')
         self.assertTrue(os.path.exists(node_list), node_list)
@@ -253,8 +253,8 @@ class TestAddExecute (unittest.TestCase):
             self.directory,
             topology_file=TOPOLOGY_FILE,
             node_tests=True,
-            include_reservation='res1',
-            exclude_nodes='tnode0101',
+            include_reservations=['res1'],
+            exclude_nodes=['tnode0101'],
         )
 
         node_list = os.path.join(self.directory, 'node', 'node_list')
@@ -270,7 +270,7 @@ class TestAddExecute (unittest.TestCase):
             self.directory,
             topology_file=TOPOLOGY_FILE,
             node_tests=True,
-            exclude_reservation='res1',
+            exclude_reservations=['res1'],
         )
         node_list = os.path.join(self.directory, 'node', 'node_list')
         self.assertTrue(os.path.exists(node_list), node_list)
@@ -285,8 +285,8 @@ class TestAddExecute (unittest.TestCase):
             self.directory,
             topology_file=TOPOLOGY_FILE,
             node_tests=True,
-            exclude_reservation='res1',
-            include_nodes='tnode0101',
+            exclude_reservations=['res1'],
+            include_nodes=['tnode0101'],
         )
         node_list = os.path.join(self.directory, 'node', 'node_list')
         self.assertTrue(os.path.exists(node_list), node_list)
@@ -301,8 +301,8 @@ class TestAddExecute (unittest.TestCase):
             self.directory,
             topology_file=TOPOLOGY_FILE,
             node_tests=True,
-            exclude_reservation='res1',
-            exclude_nodes='tnode0102',
+            exclude_reservations=['res1'],
+            exclude_nodes=['tnode0102'],
         )
         node_list = os.path.join(self.directory, 'node', 'node_list')
         self.assertTrue(os.path.exists(node_list), node_list)

@@ -43,7 +43,7 @@ class TestCreateExecute (unittest.TestCase):
     @mock.patch('bench.create.bench.util.pyslurm.node',
                 return_value=fake_node({'tnode0101': {}, 'tnode0102': {}}))
     def test_execute_include_nodes (self, _):
-        bench.create.execute(self.directory, include_nodes='tnode0101')
+        bench.create.execute(self.directory, include_nodes=['tnode0101'])
         node_list = os.path.join(self.directory, 'node_list')
         self.assertTrue(os.path.exists(node_list), node_list)
         self.assertEqual(open(node_list).read(), 'tnode0101\n')
@@ -51,7 +51,7 @@ class TestCreateExecute (unittest.TestCase):
     @mock.patch('bench.create.bench.util.pyslurm.node',
                 return_value=fake_node({'tnode0101': {}, 'tnode0102': {}, 'tnode0103': {}}))
     def test_execute_include_nodes_pattern (self, _):
-        bench.create.execute(self.directory, include_nodes='tnode01[02-03]')
+        bench.create.execute(self.directory, include_nodes=['tnode01[02-03]'])
         node_list = os.path.join(self.directory, 'node_list')
         self.assertTrue(os.path.exists(node_list), node_list)
         self.assertEqual(open(node_list).read(), 'tnode0102\ntnode0103\n')
@@ -59,7 +59,7 @@ class TestCreateExecute (unittest.TestCase):
     @mock.patch('bench.create.bench.util.pyslurm.node',
                 return_value=fake_node({'tnode0101': {}, 'tnode0102': {}}))
     def test_execute_exclude_nodes (self, _):
-        bench.create.execute(self.directory, exclude_nodes='tnode0101')
+        bench.create.execute(self.directory, exclude_nodes=['tnode0101'])
         node_list = os.path.join(self.directory, 'node_list')
         self.assertTrue(os.path.exists(node_list), node_list)
         self.assertEqual(open(node_list).read(), 'tnode0102\n')
@@ -67,7 +67,7 @@ class TestCreateExecute (unittest.TestCase):
     @mock.patch('bench.create.bench.util.pyslurm.node',
                 return_value=fake_node({'tnode0101': {}, 'tnode0102': {}, 'tnode0103': {}}))
     def test_execute_exclude_nodes_pattern (self, _):
-        bench.create.execute(self.directory, exclude_nodes='tnode01[01-02]')
+        bench.create.execute(self.directory, exclude_nodes=['tnode01[01-02]'])
         node_list = os.path.join(self.directory, 'node_list')
         self.assertTrue(os.path.exists(node_list), node_list)
         self.assertEqual(open(node_list).read(), 'tnode0103\n')
@@ -76,8 +76,8 @@ class TestCreateExecute (unittest.TestCase):
                 return_value=fake_node({'tnode0101': {}, 'tnode0102': {}, 'tnode0103': {}}))
     def test_execute_include_exclude_nodes (self, _):
         bench.create.execute(self.directory,
-                             include_nodes='tnode01[01-02]',
-                             exclude_nodes='tnode0101')
+                             include_nodes=['tnode01[01-02]'],
+                             exclude_nodes=['tnode0101'])
         node_list = os.path.join(self.directory, 'node_list')
         self.assertTrue(os.path.exists(node_list), node_list)
         self.assertEqual(open(node_list).read(), 'tnode0102\n')
@@ -88,7 +88,7 @@ class TestCreateExecute (unittest.TestCase):
                 return_value=fake_reservation({'res1': {'node_list': 'tnode0101,tnode0103'}}))
     def test_execute_include_reservation (self, _n, _r):
         bench.create.execute(self.directory,
-                             include_reservation='res1')
+                             include_reservations=['res1'])
         node_list = os.path.join(self.directory, 'node_list')
         self.assertTrue(os.path.exists(node_list), node_list)
         self.assertEqual(open(node_list).read(), 'tnode0101\ntnode0103\n')
@@ -99,8 +99,8 @@ class TestCreateExecute (unittest.TestCase):
                 return_value=fake_reservation({'res1': {'node_list': 'tnode0101,tnode0103'}}))
     def test_execute_include_reservation_include_nodes (self, _n, _r):
         bench.create.execute(self.directory,
-                             include_reservation='res1',
-                             include_nodes='tnode0102')
+                             include_reservations=['res1'],
+                             include_nodes=['tnode0102'])
         node_list = os.path.join(self.directory, 'node_list')
         self.assertTrue(os.path.exists(node_list), node_list)
         self.assertEqual(open(node_list).read(), 'tnode0101\ntnode0102\ntnode0103\n')
@@ -111,8 +111,8 @@ class TestCreateExecute (unittest.TestCase):
                 return_value=fake_reservation({'res1': {'node_list': 'tnode0101,tnode0103'}}))
     def test_execute_include_reservation_exclude_nodes (self, _n, _r):
         bench.create.execute(self.directory,
-                             include_reservation='res1',
-                             exclude_nodes='tnode0101')
+                             include_reservations=['res1'],
+                             exclude_nodes=['tnode0101'])
         node_list = os.path.join(self.directory, 'node_list')
         self.assertTrue(os.path.exists(node_list), node_list)
         self.assertEqual(open(node_list).read(), 'tnode0103\n')
@@ -123,7 +123,7 @@ class TestCreateExecute (unittest.TestCase):
                 return_value=fake_reservation({'res1': {'node_list': 'tnode0101,tnode0103'}}))
     def test_execute_exclude_reservation (self, _n, _r):
         bench.create.execute(self.directory,
-                             exclude_reservation='res1')
+                             exclude_reservations=['res1'])
         node_list = os.path.join(self.directory, 'node_list')
         self.assertTrue(os.path.exists(node_list), node_list)
         self.assertEqual(open(node_list).read(), 'tnode0102\n')
@@ -134,8 +134,8 @@ class TestCreateExecute (unittest.TestCase):
                 return_value=fake_reservation({'res1': {'node_list': 'tnode0101,tnode0103'}}))
     def test_execute_exclude_reservation_include_nodes (self, _n, _r):
         bench.create.execute(self.directory,
-                             exclude_reservation='res1',
-                             include_nodes='tnode0101')
+                             exclude_reservations=['res1'],
+                             include_nodes=['tnode0101'])
         node_list = os.path.join(self.directory, 'node_list')
         self.assertTrue(os.path.exists(node_list), node_list)
         self.assertEqual(open(node_list).read(), '')
@@ -146,8 +146,8 @@ class TestCreateExecute (unittest.TestCase):
                 return_value=fake_reservation({'res1': {'node_list': 'tnode0101,tnode0103'}}))
     def test_execute_exclude_reservation_exclude_nodes (self, _n, _r):
         bench.create.execute(self.directory,
-                             exclude_reservation='res1',
-                             exclude_nodes='tnode0102')
+                             exclude_reservations=['res1'],
+                             exclude_nodes=['tnode0102'])
         node_list = os.path.join(self.directory, 'node_list')
         self.assertTrue(os.path.exists(node_list), node_list)
         self.assertEqual(open(node_list).read(), '')
