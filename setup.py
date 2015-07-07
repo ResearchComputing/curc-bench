@@ -14,7 +14,7 @@ def read(fname):
 
 setuptools.setup(
     name = "bench",
-    version = "0.0.0",
+    version = "0.2.0",
     author = "Research Computing",
     author_email = "",
     description = ("HPC Benchmarking"),
