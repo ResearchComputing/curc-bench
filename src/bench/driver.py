@@ -178,8 +178,12 @@ def driver():
         )
 
     elif args.command == 'add':
+        if args.topology_file:
+            topology_file = args.topology_file
+        else:
+            topology_file = os.environ.get('CURC_TOPOLOGY')
         bench.add.execute(
-            directory, args.topology_file,
+            directory, topology_file,
             alltoall_rack_tests = args.alltoall_rack_tests,
             alltoall_switch_tests = args.alltoall_switch_tests,
             alltoall_pair_tests = args.alltoall_pair_tests,
