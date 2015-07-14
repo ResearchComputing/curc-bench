@@ -27,15 +27,15 @@ def execute(directory, include_states=None, exclude_states=None, **kwargs):
         logger.error('unable to write {0}'.format(node_list_filename))
         logger.debug(ex, exc_info=True)
 
-    not_tested_filename = os.path.join(directory, 'not_tested')
-    not_tested_nodes = all_nodes - node_list
-    if not_tested_nodes:
-        logger.warn('not tested: {0} ({1} nodes)'.format(
-            hostlist.collect_hostlist(not_tested_nodes),
-            len(not_tested_nodes),
+    error_nodes_filename = os.path.join(directory, 'error_nodes')
+    error_nodes = all_nodes - node_list
+    if error_nodes:
+        logger.warn('error nodes: {0} ({1} nodes)'.format(
+            hostlist.collect_hostlist(error_nodes),
+            len(error_nodes),
         ))
     try:
-        bench.util.write_node_list(not_tested_filename, sorted(not_tested_nodes))
+        bench.util.write_node_list(error_nodes_filename, sorted(error_nodes))
     except IOError, ex:
-        logger.error('unable to write {0}'.format(not_tested_filename))
+        logger.error('unable to write {0}'.format(error_nodes_filename))
         logger.debug(ex, exc_info=True)

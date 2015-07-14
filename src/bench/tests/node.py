@@ -40,8 +40,8 @@ def generate(nodes, prefix):
 
 
 def process(nodes, prefix):
-    bad_nodes = set()
-    good_nodes = set()
+    fail_nodes = set()
+    pass_nodes = set()
     for test in os.listdir(prefix):
         test_dir = os.path.join(prefix, test)
         test_nodes = set(bench.util.read_node_list(os.path.join(test_dir, 'node_list')))
@@ -50,13 +50,13 @@ def process(nodes, prefix):
             with open(stream_out_path) as fp:
                 stream_output = fp.read()
         except IOError as ex:
-            logger.info('{0}: not tested (unable to read {1})'.format(test, stream_out_path))
+            logger.info('{0}: error nodes (unable to read {1})'.format(test, stream_out_path))
             logger.debug(ex, exc_info=True)
             continue
         try:
             stream_data = parse_stream(stream_output)
         except bench.exc.ParseError as ex:
-            logger.warn('{0}: not tested (unable to parse {1})'.format(test, stream_out_path))
+            logger.warn('{0}: error nodes (unable to parse {1})'.format(test, stream_out_path))
             logger.debug(ex, exc_info=True)
             continue
         stream_passed = evaluate_stream(stream_data, test=test)
@@ -66,22 +66,22 @@ def process(nodes, prefix):
             with open(linpack_out_path) as fp:
                 linpack_output = fp.read()
         except IOError as ex:
-            logger.info('{0}: not tested (unable to read {1})'.format(test, linpack_out_path))
+            logger.info('{0}: error nodes (unable to read {1})'.format(test, linpack_out_path))
             logger.debug(ex, exc_info=True)
             continue
         try:
             linpack_data = parse_linpack(linpack_output)
         except bench.exc.ParseError as ex:
-            logger.warn('{0}: not tested (unable to parse {1})'.format(test, linpack_out_path))
+            logger.warn('{0}: error nodes (unable to parse {1})'.format(test, linpack_out_path))
             logger.debug(ex, exc_info=True)
             continue
         linpack_passed = evaluate_linpack(linpack_data, test=test)
 
         if stream_passed and linpack_passed:
             logger.info('{0}: pass'.format(test))
-            good_nodes |= test_nodes
+            pass_nodes |= test_nodes
         else:
-            bad_nodes |= test_nodes
+            fail_nodes |= test_nodes
             if not stream_passed and not linpack_passed:
                 logger.info('{0}: fail (stream, linpack)'.format(test))
             elif not stream_passed:
@@ -89,13 +89,13 @@ def process(nodes, prefix):
             elif not linpack_passed:
                 logger.info('{0}: fail (linpack)'.format(test))
 
-    tested = good_nodes | bad_nodes
-    not_tested = set(nodes) - tested
+    tested = pass_nodes | fail_nodes
+    error_nodes = set(nodes) - tested
 
     return {
-        'not_tested': not_tested,
-        'bad_nodes': bad_nodes,
-        'good_nodes': good_nodes,
+        'error_nodes': error_nodes,
+        'fail_nodes': fail_nodes,
+        'pass_nodes': pass_nodes,
     }
 
 

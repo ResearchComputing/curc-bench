@@ -33,9 +33,9 @@ expect this directory to exist ahead of time.
 * `node_list` (1)
 * `bench.log` (2)
 * `${test_type}/` (3)
-  * `good_nodes` (4)
-  * `bad_nodes` (5)
-  * `not_tested` (6)
+  * `pass_nodes` (4)
+  * `fail_nodes` (5)
+  * `error_nodes` (6)
   * `tests/` (7)
     * `${test}/` (8)
       * `${test}.job` (9)
@@ -61,8 +61,8 @@ expected to write output to the `${test}/` (8) directory. (11, 12)
 
 `bench process` inspects the `${test}/` (8) directories for payload
 test output (12) to evaluate pass/fail for each test. Test results are
-summarized for each `${test_type}/` (3) in `good_nodes` (4),
-`bad_nodes` (5), and `not_tested` (6) files, which share the same
+summarized for each `${test_type}/` (3) in `pass_nodes` (4),
+`fail_nodes` (5), and `error_nodes` (6) files, which share the same
 format as `node_list` (1, 10). (The `tests/` directory serves to
 separate valid `${test}/` (8) directories from these summary files.)
 

@@ -32,8 +32,8 @@ def generate(nodes, topology, prefix):
 
 
 def process(nodes, prefix):
-    bad_nodes = set()
-    good_nodes = set()
+    fail_nodes = set()
+    pass_nodes = set()
     for test in os.listdir(prefix):
         test_dir = os.path.join(prefix, test)
         test_nodes = set(bench.util.read_node_list(os.path.join(test_dir, 'node_list')))
@@ -46,26 +46,26 @@ def process(nodes, prefix):
                 except ValueError as ex:
                     logger.info('{0}: fail (malformed osu_bw)'.format(test))
                     logger.debug(ex, exc_info=True)
-                    bad_nodes |= test_nodes
+                    fail_nodes |= test_nodes
                     continue
         except IOError as ex:
-            logger.info('{0}: not tested (unable to read {1})'.format(test, osu_bw_out_path))
+            logger.info('{0}: error nodes (unable to read {1})'.format(test, osu_bw_out_path))
             logger.debug(ex, exc_info=True)
             continue
         if evaluate_osu_bw(data, test=test):
             logger.info('{0}: pass'.format(test))
-            good_nodes |= test_nodes
+            pass_nodes |= test_nodes
         else:
             logger.info('{0}: fail (osu_bw)'.format(test))
-            bad_nodes |= test_nodes
+            fail_nodes |= test_nodes
 
-    tested = good_nodes | bad_nodes
-    not_tested = set(nodes) - tested
+    tested = pass_nodes | fail_nodes
+    error_nodes = set(nodes) - tested
 
     return {
-        'not_tested': not_tested,
-        'bad_nodes': bad_nodes,
-        'good_nodes': good_nodes,
+        'error_nodes': error_nodes,
+        'fail_nodes': fail_nodes,
+        'pass_nodes': pass_nodes,
     }
 
 

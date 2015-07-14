@@ -44,32 +44,32 @@ def execute(prefix,
             reserve_nodes(prefix, 'node', **kwargs)
 
 
-def reserve_nodes (prefix, key, bad_nodes=None, not_tested=None):
-    bad_nodes_path = os.path.join(prefix, key, 'bad_nodes')
+def reserve_nodes (prefix, key, fail_nodes=None, error_nodes=None):
+    fail_nodes_path = os.path.join(prefix, key, 'fail_nodes')
     try:
-        bad_nodes_ = set(bench.util.read_node_list(bad_nodes_path))
+        fail_nodes_ = set(bench.util.read_node_list(fail_nodes_path))
     except IOError as ex:
-        logger.info('unable to read {0}'.format(bad_nodes_path))
+        logger.info('unable to read {0}'.format(fail_nodes_path))
         logger.debug(ex, exc_info=True)
-        bad_nodes_ = set()
+        fail_nodes_ = set()
 
-    not_tested_path = os.path.join(prefix, key, 'not_tested')
+    error_nodes_path = os.path.join(prefix, key, 'error_nodes')
     try:
-        not_tested_ = set(bench.util.read_node_list(not_tested_path))
+        error_nodes_ = set(bench.util.read_node_list(error_nodes_path))
     except IOError as ex:
-        logger.info('unable to read {0}'.format(not_tested_path))
+        logger.info('unable to read {0}'.format(error_nodes_path))
         logger.debug(ex, exc_info=True)
-        not_tested_ = set()
+        error_nodes_ = set()
 
-    # by default, reserve bad_nodes and not_tested
-    if not (bad_nodes or not_tested):
-        reserve_nodes_ = bad_nodes_ | not_tested_
+    # by default, reserve fail_nodes and error_nodes
+    if not (fail_nodes or error_nodes):
+        reserve_nodes_ = fail_nodes_ | error_nodes_
     else:
         reserve_nodes_ = set()
-        if bad_nodes:
-            reserve_nodes_ |= bad_nodes_
-        if not_tested:
-            reserve_nodes_ |= not_tested_
+        if fail_nodes:
+            reserve_nodes_ |= fail_nodes_
+        if error_nodes:
+            reserve_nodes_ |= error_nodes_
 
     if reserve_nodes_:
         reservation_name = 'bench-{0}'.format(key)

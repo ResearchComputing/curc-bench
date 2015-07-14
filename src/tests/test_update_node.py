@@ -20,10 +20,10 @@ class TestUpdateNodeUpdate (unittest.TestCase):
     def setUp (self):
         self.directory = tempfile.mkdtemp()
         os.mkdir(os.path.join(self.directory, 'node'))
-        with open(os.path.join(self.directory, 'node', 'bad_nodes'), 'w') as fp:
+        with open(os.path.join(self.directory, 'node', 'fail_nodes'), 'w') as fp:
             for node in ('tnode0101', 'tnode0102'):
                 fp.write('{0}\n'.format(node))
-        with open(os.path.join(self.directory, 'node', 'not_tested'), 'w') as fp:
+        with open(os.path.join(self.directory, 'node', 'error_nodes'), 'w') as fp:
             for node in ('tnode0103', 'tnode0104'):
                 fp.write('{0}\n'.format(node))
 
@@ -46,8 +46,8 @@ class TestUpdateNodeUpdate (unittest.TestCase):
 
     @mock.patch('bench.update_nodes.pyslurm.node',
                 return_value=fake_pyslurm_node())
-    def test_bad_nodes (self, pyslurm_node):
-        bench.update_nodes.update_nodes(self.directory, bad_nodes=True)
+    def test_fail_nodes (self, pyslurm_node):
+        bench.update_nodes.update_nodes(self.directory, fail_nodes=True)
         self.assertEqual(
             pyslurm_node.return_value.update.call_args_list,
             [
@@ -57,8 +57,8 @@ class TestUpdateNodeUpdate (unittest.TestCase):
 
     @mock.patch('bench.update_nodes.pyslurm.node',
                 return_value=fake_pyslurm_node())
-    def test_not_tested (self, pyslurm_node):
-        bench.update_nodes.update_nodes(self.directory, not_tested=True)
+    def test_error_nodes (self, pyslurm_node):
+        bench.update_nodes.update_nodes(self.directory, error_nodes=True)
         self.assertEqual(
             pyslurm_node.return_value.update.call_args_list,
             [
@@ -69,8 +69,8 @@ class TestUpdateNodeUpdate (unittest.TestCase):
 
     @mock.patch('bench.update_nodes.pyslurm.node',
                 return_value=fake_pyslurm_node())
-    def test_bad_nodes_and_not_tested (self, pyslurm_node):
-        bench.update_nodes.update_nodes(self.directory, bad_nodes=True, not_tested=True)
+    def test_fail_nodes_and_error_nodes (self, pyslurm_node):
+        bench.update_nodes.update_nodes(self.directory, fail_nodes=True, error_nodes=True)
         self.assertEqual(
             pyslurm_node.return_value.update.call_args_list,
             [

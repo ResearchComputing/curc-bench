@@ -19,10 +19,10 @@ class TestReserveExecute (unittest.TestCase):
     def setUp (self):
         self.directory = tempfile.mkdtemp()
         os.mkdir(os.path.join(self.directory, 'node'))
-        with open(os.path.join(self.directory, 'node', 'bad_nodes'), 'w') as fp:
+        with open(os.path.join(self.directory, 'node', 'fail_nodes'), 'w') as fp:
             for node in ('tnode0101', 'tnode0102'):
                 fp.write('{0}\n'.format(node))
-        with open(os.path.join(self.directory, 'node', 'not_tested'), 'w') as fp:
+        with open(os.path.join(self.directory, 'node', 'error_nodes'), 'w') as fp:
             for node in ('tnode0103', 'tnode0104'):
                 fp.write('{0}\n'.format(node))
 
@@ -46,8 +46,8 @@ class TestReserveExecute (unittest.TestCase):
 
     @mock.patch('bench.reserve.bench.slurm.subprocess.Popen',
                 return_value=fake_Popen())
-    def test_bad_nodes (self, popen):
-        bench.reserve.execute(self.directory, bad_nodes=True)
+    def test_fail_nodes (self, popen):
+        bench.reserve.execute(self.directory, fail_nodes=True)
         popen.assert_called_once_with(['scontrol', 'create',
                                        'reservation=bench-node',
                                        'accounts=crcbenchmark',
@@ -60,8 +60,8 @@ class TestReserveExecute (unittest.TestCase):
 
     @mock.patch('bench.reserve.bench.slurm.subprocess.Popen',
                 return_value=fake_Popen())
-    def test_not_tested (self, popen):
-        bench.reserve.execute(self.directory, not_tested=True)
+    def test_error_nodes (self, popen):
+        bench.reserve.execute(self.directory, error_nodes=True)
         popen.assert_called_once_with(['scontrol', 'create',
                                        'reservation=bench-node',
                                        'accounts=crcbenchmark',
@@ -75,8 +75,8 @@ class TestReserveExecute (unittest.TestCase):
 
     @mock.patch('bench.reserve.bench.slurm.subprocess.Popen',
                 return_value=fake_Popen())
-    def test_bad_nodes_and_not_tested (self, popen):
-        bench.reserve.execute(self.directory, bad_nodes=True, not_tested=True)
+    def test_fail_nodes_and_error_nodes (self, popen):
+        bench.reserve.execute(self.directory, fail_nodes=True, error_nodes=True)
         popen.assert_called_once_with(['scontrol', 'create',
                                        'reservation=bench-node',
                                        'accounts=crcbenchmark',

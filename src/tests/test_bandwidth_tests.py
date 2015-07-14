@@ -34,14 +34,14 @@ class TestBandwidthProcess (unittest.TestCase):
 
     def test_empty (self):
         result = bench.tests.bandwidth.process([], self.prefix)
-        self.assertEqual(result['good_nodes'], set())
-        self.assertEqual(result['bad_nodes'], set(['tnode1']))
-        self.assertEqual(result['not_tested'], set())
+        self.assertEqual(result['pass_nodes'], set())
+        self.assertEqual(result['fail_nodes'], set(['tnode1']))
+        self.assertEqual(result['error_nodes'], set())
 
     def test_garbage (self):
         with open(self.osu_bw, 'w') as fp:
             fp.write('asfd\nhjkl\n')
         result = bench.tests.bandwidth.process([], self.prefix)
-        self.assertEqual(result['good_nodes'], set())
-        self.assertEqual(result['bad_nodes'], set(['tnode1']))
-        self.assertEqual(result['not_tested'], set())
+        self.assertEqual(result['pass_nodes'], set())
+        self.assertEqual(result['fail_nodes'], set(['tnode1']))
+        self.assertEqual(result['error_nodes'], set())

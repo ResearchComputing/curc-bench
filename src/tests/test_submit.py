@@ -32,16 +32,16 @@ class TestSubmit(unittest.TestCase):
             fp.write('{0}\n'.format(node))
         return test_dir
 
-    def _add_good_node (self, node):
-        with open(os.path.join(self.prefix, 'good_nodes'), 'a') as fp:
+    def _add_pass_node (self, node):
+        with open(os.path.join(self.prefix, 'pass_nodes'), 'a') as fp:
             fp.write('{0}\n'.format(node))
 
-    def _add_bad_node (self, node):
-        with open(os.path.join(self.prefix, 'bad_nodes'), 'a') as fp:
+    def _add_fail_node (self, node):
+        with open(os.path.join(self.prefix, 'fail_nodes'), 'a') as fp:
             fp.write('{0}\n'.format(node))
 
-    def _add_not_tested (self, node):
-        with open(os.path.join(self.prefix, 'not_tested'), 'a') as fp:
+    def _add_error_nodes (self, node):
+        with open(os.path.join(self.prefix, 'error_nodes'), 'a') as fp:
             fp.write('{0}\n'.format(node))
 
     def tearDown (self):
@@ -93,66 +93,66 @@ class TestSubmit(unittest.TestCase):
 
     @mock.patch('bench.submit.bench.slurm.subprocess.Popen',
                 return_value=fake_Popen())
-    def test_good_nodes (self, popen):
+    def test_pass_nodes (self, popen):
         self._add_test('tnode1')
         self._add_test('tnode2')
         self._add_test('tnode3')
-        self._add_good_node('tnode1')
-        self._add_good_node('tnode3')
-        new_index = bench.submit.submit(self.prefix, good_nodes=True)
+        self._add_pass_node('tnode1')
+        self._add_pass_node('tnode3')
+        new_index = bench.submit.submit(self.prefix, pass_nodes=True)
         self.assertEqual(new_index, 2)
         self.assertEqual(len(popen.call_args_list), 2)
 
     @mock.patch('bench.submit.bench.slurm.subprocess.Popen',
                 return_value=fake_Popen())
-    def test_bad_nodes (self, popen):
+    def test_fail_nodes (self, popen):
         self._add_test('tnode1')
         self._add_test('tnode2')
         self._add_test('tnode3')
-        self._add_bad_node('tnode2')
-        new_index = bench.submit.submit(self.prefix, bad_nodes=True)
+        self._add_fail_node('tnode2')
+        new_index = bench.submit.submit(self.prefix, fail_nodes=True)
         self.assertEqual(new_index, 1)
         self.assertEqual(len(popen.call_args_list), 1)
 
     @mock.patch('bench.submit.bench.slurm.subprocess.Popen',
                 return_value=fake_Popen())
-    def test_not_tested (self, popen):
+    def test_error_nodes (self, popen):
         self._add_test('tnode1')
         self._add_test('tnode2')
         self._add_test('tnode3')
-        self._add_not_tested('tnode3')
-        new_index = bench.submit.submit(self.prefix, not_tested=True)
+        self._add_error_nodes('tnode3')
+        new_index = bench.submit.submit(self.prefix, error_nodes=True)
         self.assertEqual(new_index, 1)
         self.assertEqual(len(popen.call_args_list), 1)
 
     @mock.patch('bench.submit.bench.slurm.subprocess.Popen',
                 return_value=fake_Popen())
-    def test_good_nodes_missing_file (self, popen):
+    def test_pass_nodes_missing_file (self, popen):
         self._add_test('tnode1')
         self._add_test('tnode2')
         self._add_test('tnode3')
-        new_index = bench.submit.submit(self.prefix, good_nodes=True)
+        new_index = bench.submit.submit(self.prefix, pass_nodes=True)
         self.assertEqual(new_index, 0)
         self.assertEqual(len(popen.call_args_list), 0)
 
     @mock.patch('bench.submit.bench.slurm.subprocess.Popen',
                 return_value=fake_Popen())
-    def test_bad_nodes_missing_file (self, popen):
+    def test_fail_nodes_missing_file (self, popen):
         self._add_test('tnode1')
         self._add_test('tnode2')
         self._add_test('tnode3')
-        new_index = bench.submit.submit(self.prefix, bad_nodes=True)
+        new_index = bench.submit.submit(self.prefix, fail_nodes=True)
         self.assertEqual(new_index, 0)
         self.assertEqual(len(popen.call_args_list), 0)
 
 
     @mock.patch('bench.submit.bench.slurm.subprocess.Popen',
                 return_value=fake_Popen())
-    def test_not_tested_missing_file (self, popen):
+    def test_error_nodes_missing_file (self, popen):
         self._add_test('tnode1')
         self._add_test('tnode2')
         self._add_test('tnode3')
-        new_index = bench.submit.submit(self.prefix, not_tested=True)
+        new_index = bench.submit.submit(self.prefix, error_nodes=True)
         self.assertEqual(new_index, 0)
         self.assertEqual(len(popen.call_args_list), 0)
 
