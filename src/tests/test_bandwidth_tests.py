@@ -11,7 +11,7 @@ class TestBandwidthGenerate (unittest.TestCase):
         self.prefix = tempfile.mkdtemp()
 
     def test_one (self):
-        result = bench.tests.bandwidth.generate(['tnode1'], {'tsw1': set(['tnode1'])}, self.prefix)
+        result = bench.tests.bandwidth.generate(['tnode1'], self.prefix, {'tsw1': set(['tnode1'])})
         self.assertEqual(os.listdir(self.prefix), [])
 
 

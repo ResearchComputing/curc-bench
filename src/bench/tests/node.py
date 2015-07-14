@@ -22,7 +22,9 @@ STREAM_TRIAD_P = re.compile(STREAM_P_T.format('Triad'), flags=re.MULTILINE)
 logger = logging.getLogger(__name__)
 
 
-def generate(nodes, prefix):
+def generate(nodes, prefix, topology=None):
+    if not topology:
+        topology = {}
     for node in nodes:
         test_dir = os.path.join(prefix, node)
         bench.util.mkdir_p(test_dir)

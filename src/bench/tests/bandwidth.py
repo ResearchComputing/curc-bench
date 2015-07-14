@@ -16,7 +16,9 @@ TEMPLATE = jinja2.Template(
 logger = logging.getLogger(__name__)
 
 
-def generate(nodes, topology, prefix):
+def generate(nodes, prefix, topology=None):
+    if not topology:
+        topology = {}
     node_pairs = bench.infiniband.get_switch_node_pairs(nodes, topology)
     for pair_name, node_pair in node_pairs.iteritems():
         test_dir = os.path.join(prefix, pair_name)

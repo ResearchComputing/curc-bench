@@ -14,7 +14,9 @@ TEMPLATE = jinja2.Template(
 )
 
 
-def generate_alltoall_rack(nodes, prefix):
+def generate_alltoall_rack(nodes, prefix, topology=None):
+    if not topology:
+        topology = {}
     rack_nodes = bench.infiniband.get_rack_nodes(nodes)
     for rack_name, rack_nodes_ in rack_nodes.iteritems():
         if rack_nodes_:
@@ -23,7 +25,9 @@ def generate_alltoall_rack(nodes, prefix):
     logger.info('alltoall-rack: add: {0}'.format(len(rack_nodes)))
 
 
-def generate_alltoall_switch(nodes, topology, prefix):
+def generate_alltoall_switch(nodes, prefix, topology=None):
+    if not topology:
+        topology = {}
     switch_nodes = bench.infiniband.get_switch_nodes(nodes, topology)
     for switch_name, switch_nodes_ in switch_nodes.iteritems():
         if switch_nodes_:
@@ -32,7 +36,9 @@ def generate_alltoall_switch(nodes, topology, prefix):
     logger.info('alltoall-switch: add: {0}'.format(len(switch_nodes)))
 
 
-def generate_alltoall_pair(nodes, topology, prefix):
+def generate_alltoall_pair(nodes, prefix, topology=None):
+    if not topology:
+        topology = {}
     node_pairs = bench.infiniband.get_switch_node_pairs(nodes, topology)
     for pair_name, name_list in node_pairs.iteritems():
         if name_list:
