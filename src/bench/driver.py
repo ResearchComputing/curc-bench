@@ -16,8 +16,8 @@ import sys
 logger = logging.getLogger(__name__)
 
 
-def parser():
-    parser = argparse.ArgumentParser()
+def parser(*args, **kwargs):
+    parser = argparse.ArgumentParser(*args, **kwargs)
     parser.add_argument('-v', '--verbose', action='store_true')
     parser.add_argument('-P', '--directory-prefix', dest='prefix')
     parser.add_argument('-d', '--directory', help='directory')
@@ -132,10 +132,10 @@ def get_directory(prefix, new=False):
         return directory
 
 
-def driver():
+def driver(argv):
     bench.log.configure_package_logger()
 
-    args = parser().parse_args()
+    args = parser(prog=argv[0]).parse_args(args=argv[1:])
 
     if args.verbose:
         bench.log.configure_stderr_logging(level=logging.INFO)
