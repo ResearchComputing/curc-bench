@@ -50,7 +50,7 @@ def process(nodes, prefix):
             with open(stream_out_path) as fp:
                 stream_output = fp.read()
         except IOError as ex:
-            logger.info('{0}: not tested (unable to read {1})'.format(test, stream_out_path))
+            logger.warn('{0}: not tested (unable to read {1})'.format(test, stream_out_path))
             logger.debug(ex, exc_info=True)
             continue
         try:
@@ -66,7 +66,7 @@ def process(nodes, prefix):
             with open(linpack_out_path) as fp:
                 linpack_output = fp.read()
         except IOError as ex:
-            logger.info('{0}: not tested (unable to read {1})'.format(test, linpack_out_path))
+            logger.warn('{0}: not tested (unable to read {1})'.format(test, linpack_out_path))
             logger.debug(ex, exc_info=True)
             continue
         try:
