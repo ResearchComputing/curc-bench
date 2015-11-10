@@ -58,32 +58,32 @@ def process_tests (prefix, key):
         return
     node_list = bench.util.read_node_list(os.path.join(prefix, key, 'node_list'))
     results = PROCESSORS[key](node_list, prefix_)
-    logger.info('{0}: bad nodes: {1} / {2}'.format(
-        key, len(results['bad_nodes']), len(node_list)))
-    logger.info('{0}: good nodes: {1} / {2}'.format(
-        key, len(results['good_nodes']), len(node_list)))
-    logger.info('{0}: not tested: {1} / {2}'.format(
-        key, len(results['not_tested']), len(node_list)))
+    logger.info('{0}: fail nodes: {1} / {2}'.format(
+        key, len(results['fail_nodes']), len(node_list)))
+    logger.info('{0}: pass nodes: {1} / {2}'.format(
+        key, len(results['pass_nodes']), len(node_list)))
+    logger.info('{0}: error nodes: {1} / {2}'.format(
+        key, len(results['error_nodes']), len(node_list)))
     write_result_files(
         os.path.join(prefix, key),
-        results['good_nodes'],
-        results['bad_nodes'],
-        results['not_tested'],
+        results['pass_nodes'],
+        results['fail_nodes'],
+        results['error_nodes'],
     )
 
 
-def write_result_files(prefix, good_nodes, bad_nodes, not_tested):
+def write_result_files(prefix, pass_nodes, fail_nodes, error_nodes):
     bench.util.write_node_list(
-        os.path.join(prefix, 'good_nodes'),
-        good_nodes,
+        os.path.join(prefix, 'pass_nodes'),
+        pass_nodes,
     )
 
     bench.util.write_node_list(
-        os.path.join(prefix, 'bad_nodes'),
-        bad_nodes,
+        os.path.join(prefix, 'fail_nodes'),
+        fail_nodes,
     )
 
     bench.util.write_node_list(
-        os.path.join(prefix, 'not_tested'),
-        not_tested,
+        os.path.join(prefix, 'error_nodes'),
+        error_nodes,
     )

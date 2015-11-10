@@ -14,7 +14,9 @@ TEMPLATE = jinja2.Template(
 )
 
 
-def generate_alltoall_rack(nodes, prefix):
+def generate_alltoall_rack(nodes, prefix, topology=None):
+    if not topology:
+        topology = {}
     rack_nodes = bench.infiniband.get_rack_nodes(nodes)
     for rack_name, rack_nodes_ in rack_nodes.iteritems():
         if rack_nodes_:
@@ -23,7 +25,9 @@ def generate_alltoall_rack(nodes, prefix):
     logger.info('alltoall-rack: add: {0}'.format(len(rack_nodes)))
 
 
-def generate_alltoall_switch(nodes, topology, prefix):
+def generate_alltoall_switch(nodes, prefix, topology=None):
+    if not topology:
+        topology = {}
     switch_nodes = bench.infiniband.get_switch_nodes(nodes, topology)
     for switch_name, switch_nodes_ in switch_nodes.iteritems():
         if switch_nodes_:
@@ -32,7 +36,9 @@ def generate_alltoall_switch(nodes, topology, prefix):
     logger.info('alltoall-switch: add: {0}'.format(len(switch_nodes)))
 
 
-def generate_alltoall_pair(nodes, topology, prefix):
+def generate_alltoall_pair(nodes, prefix, topology=None):
+    if not topology:
+        topology = {}
     node_pairs = bench.infiniband.get_switch_node_pairs(nodes, topology)
     for pair_name, name_list in node_pairs.iteritems():
         if name_list:
@@ -55,8 +61,8 @@ def render(prefix, nodes, node_list_name):
 
 
 def process(nodes, prefix):
-    bad_nodes = set()
-    good_nodes = set()
+    fail_nodes = set()
+    pass_nodes = set()
     for test in os.listdir(prefix):
         test_dir = os.path.join(prefix, test)
         test_nodes = set(bench.util.read_node_list(os.path.join(test_dir, 'node_list')))
@@ -68,29 +74,29 @@ def process(nodes, prefix):
                 except ValueError as ex:
                     logger.info('{0}: fail (malformed osu_alltoall)'.format(test))
                     logger.debug(ex, exc_info=True)
-                    bad_nodes |= test_nodes
+                    fail_nodes |= test_nodes
                     continue
         except IOError as ex:
-            logger.warn('{0}: not tested (unable to read {1})'.format(test, osu_alltoall_out_path))
+            logger.warn('{0}: error nodes (unable to read {1})'.format(test, osu_alltoall_out_path))
             logger.debug(ex, exc_info=True)
             continue
         if not data:
             logger.info('{0}: fail (empty osu_alltoall)'.format(test))
-            bad_nodes |= test_nodes
+            fail_nodes |= test_nodes
         elif evaluate_osu_alltoall(data, len(test_nodes), test=test):
             logger.info('{0}: pass'.format(test))
-            good_nodes |= test_nodes
+            pass_nodes |= test_nodes
         else:
             logger.info('{0}: fail (osu_alltoall)'.format(test))
-            bad_nodes |= test_nodes
+            fail_nodes |= test_nodes
 
-    tested = good_nodes | bad_nodes
-    not_tested = set(nodes) - tested
+    tested = pass_nodes | fail_nodes
+    error_nodes = set(nodes) - tested
 
     return {
-        'not_tested': not_tested,
-        'bad_nodes': bad_nodes,
-        'good_nodes': good_nodes,
+        'error_nodes': error_nodes,
+        'fail_nodes': fail_nodes,
+        'pass_nodes': pass_nodes,
     }
 
 

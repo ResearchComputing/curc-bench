@@ -153,8 +153,8 @@ class TestAddExecute (unittest.TestCase):
     @mock.patch('bench.create.bench.util.pyslurm.node',
                 return_value=fake_node(dict((node, {}) for node in NODES)))
     def test_include_file (self, _):
-        good_nodes = os.path.join(self.directory, 'good_nodes')
-        with open(good_nodes, 'w') as fp:
+        pass_nodes = os.path.join(self.directory, 'pass_nodes')
+        with open(pass_nodes, 'w') as fp:
             for node in ['tnode0101', 'tnode0102', 'nonode0101']:
                 fp.write('{0}\n'.format(node))
 
@@ -162,7 +162,7 @@ class TestAddExecute (unittest.TestCase):
             self.directory,
             topology_file=TOPOLOGY_FILE,
             node_tests=True,
-            include_files=[good_nodes],
+            include_files=[pass_nodes],
         )
 
         tests_dir = os.path.join(self.directory, 'node', 'tests')
@@ -184,8 +184,8 @@ class TestAddExecute (unittest.TestCase):
     @mock.patch('bench.create.bench.util.pyslurm.node',
                 return_value=fake_node(dict((node, {}) for node in NODES)))
     def test_exclude_file (self, _):
-        bad_nodes = os.path.join(self.directory, 'bad_nodes')
-        with open(bad_nodes, 'w') as fp:
+        fail_nodes = os.path.join(self.directory, 'fail_nodes')
+        with open(fail_nodes, 'w') as fp:
             for node in ['tnode0101', 'tnode0102', 'tnode0208', 'nonode0101']:
                 fp.write('{0}\n'.format(node))
 
@@ -193,7 +193,7 @@ class TestAddExecute (unittest.TestCase):
             self.directory,
             topology_file=TOPOLOGY_FILE,
             node_tests=True,
-            exclude_files=[bad_nodes],
+            exclude_files=[fail_nodes],
         )
 
         tests_dir = os.path.join(self.directory, 'node', 'tests')

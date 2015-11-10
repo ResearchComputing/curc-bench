@@ -48,35 +48,35 @@ def execute(
 
 
 def submit(prefix, index=0, pause=None,
-           good_nodes=None, bad_nodes=None, not_tested=None,
+           pass_nodes=None, fail_nodes=None, error_nodes=None,
            **kwargs
 ):
     tests_dir = os.path.join(prefix, 'tests')
     if not os.path.exists(tests_dir):
         return index
 
-    if good_nodes or bad_nodes or not_tested:
+    if pass_nodes or fail_nodes or error_nodes:
         nodes = set()
-        if good_nodes:
-            good_nodes_file = os.path.join(prefix, 'good_nodes')
+        if pass_nodes:
+            pass_nodes_file = os.path.join(prefix, 'pass_nodes')
             try:
-                nodes |= set(bench.util.read_node_list(good_nodes_file))
+                nodes |= set(bench.util.read_node_list(pass_nodes_file))
             except IOError as ex:
-                logger.warn('unable to read {0}'.format(good_nodes_file))
+                logger.warn('unable to read {0}'.format(pass_nodes_file))
                 logger.debug(ex, exc_info=True)
-        if bad_nodes:
-            bad_nodes_file = os.path.join(prefix, 'bad_nodes')
+        if fail_nodes:
+            fail_nodes_file = os.path.join(prefix, 'fail_nodes')
             try:
-                nodes |= set(bench.util.read_node_list(bad_nodes_file))
+                nodes |= set(bench.util.read_node_list(fail_nodes_file))
             except IOError as ex:
-                logger.warn('unable to read {0}'.format(bad_nodes_file))
+                logger.warn('unable to read {0}'.format(fail_nodes_file))
                 logger.debug(ex, exc_info=True)
-        if not_tested:
-            not_tested_file = os.path.join(prefix, 'not_tested')
+        if error_nodes:
+            error_nodes_file = os.path.join(prefix, 'error_nodes')
             try:
-                nodes |= set(bench.util.read_node_list(not_tested_file))
+                nodes |= set(bench.util.read_node_list(error_nodes_file))
             except IOError as ex:
-                logger.warn('unable to read {0}'.format(not_tested_file))
+                logger.warn('unable to read {0}'.format(error_nodes_file))
                 logger.debug(ex, exc_info=True)
     else:
         nodes = None

@@ -16,8 +16,8 @@ import sys
 logger = logging.getLogger(__name__)
 
 
-def parser():
-    parser = argparse.ArgumentParser()
+def parser(*args, **kwargs):
+    parser = argparse.ArgumentParser(*args, **kwargs)
     parser.add_argument('-v', '--verbose', action='store_true')
     parser.add_argument('-P', '--directory-prefix', dest='prefix')
     parser.add_argument('-d', '--directory', help='directory')
@@ -42,9 +42,9 @@ def parser():
     submit.add_argument('--reservation', help='reservation to run jobs in')
     submit.add_argument('-q', '--qos', help='qos to associate with the jobs')
     submit.add_argument('-a', '--account', help='account to use with the jobs')
-    submit.add_argument('--not-tested', action="store_true")
-    submit.add_argument('--bad-nodes', action="store_true")
-    submit.add_argument('--good-nodes', action="store_true")
+    submit.add_argument('--error-nodes', action="store_true")
+    submit.add_argument('--fail-nodes', action="store_true")
+    submit.add_argument('--pass-nodes', action="store_true")
     submit.set_defaults(pause=0)
 
     process = subparsers.add_parser(
@@ -54,16 +54,16 @@ def parser():
     reserve = subparsers.add_parser(
         'reserve', help='Reserve nodes based on processed results')
     parser_add_test_arguments(reserve)
-    reserve.add_argument('--bad-nodes', action='store_true')
-    reserve.add_argument('--not-tested', action='store_true')
+    reserve.add_argument('--fail-nodes', action='store_true')
+    reserve.add_argument('--error-nodes', action='store_true')
 
     update_nodes = subparsers.add_parser(
         'update-nodes', help='Mark nodes down based on processed results')
     update_nodes.add_argument('--down',
                               help='set nodes down (default: drain)', action='store_true')
     parser_add_test_arguments(update_nodes)
-    update_nodes.add_argument('--bad-nodes', action='store_true')
-    update_nodes.add_argument('--not-tested', action='store_true')
+    update_nodes.add_argument('--fail-nodes', action='store_true')
+    update_nodes.add_argument('--error-nodes', action='store_true')
     update_nodes.set_defaults(down=False)
 
     return parser
@@ -132,10 +132,10 @@ def get_directory(prefix, new=False):
         return directory
 
 
-def driver():
+def driver(argv):
     bench.log.configure_package_logger()
 
-    args = parser().parse_args()
+    args = parser(prog=argv[0]).parse_args(args=argv[1:])
 
     if args.verbose:
         bench.log.configure_stderr_logging(level=logging.INFO)
@@ -178,8 +178,12 @@ def driver():
         )
 
     elif args.command == 'add':
+        if args.topology_file:
+            topology_file = args.topology_file
+        else:
+            topology_file = os.environ.get('CURC_TOPOLOGY')
         bench.add.execute(
-            directory, args.topology_file,
+            directory, topology_file,
             alltoall_rack_tests = args.alltoall_rack_tests,
             alltoall_switch_tests = args.alltoall_switch_tests,
             alltoall_pair_tests = args.alltoall_pair_tests,
@@ -196,6 +200,10 @@ def driver():
         )
 
     elif args.command == 'submit':
+        if args.reservation:
+            res = args.reservation
+        else:
+            res = os.environ.get('CURC_RESERVATION')
         bench.submit.execute(
             directory,
             alltoall_rack_tests = args.alltoall_rack_tests,
@@ -204,12 +212,12 @@ def driver():
             node_tests = args.node_tests,
             bandwidth_tests = args.bandwidth_tests,
             pause = args.pause,
-            reservation = args.reservation,
+            reservation = res,
             qos = args.qos,
             account = args.account,
-            good_nodes = args.good_nodes,
-            bad_nodes = args.bad_nodes,
-            not_tested = args.not_tested,
+            pass_nodes = args.pass_nodes,
+            fail_nodes = args.fail_nodes,
+            error_nodes = args.error_nodes,
         )
 
     elif args.command == 'process':
@@ -230,8 +238,8 @@ def driver():
             alltoall_pair_tests = args.alltoall_pair_tests,
             node_tests = args.node_tests,
             bandwidth_tests = args.bandwidth_tests,
-            bad_nodes = args.bad_nodes,
-            not_tested = args.not_tested,
+            fail_nodes = args.fail_nodes,
+            error_nodes = args.error_nodes,
         )
 
     elif args.command == 'update-nodes':
@@ -242,7 +250,7 @@ def driver():
             alltoall_pair_tests = args.alltoall_pair_tests,
             node_tests = args.node_tests,
             bandwidth_tests = args.bandwidth_tests,
-            bad_nodes = args.bad_nodes,
-            not_tested = args.not_tested,
+            fail_nodes = args.fail_nodes,
+            error_nodes = args.error_nodes,
             down = args.down,
         )

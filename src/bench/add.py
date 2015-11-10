@@ -71,10 +71,7 @@ def add_tests (node_list, prefix, key, topology=None):
     tests_prefix = os.path.join(prefix, key, 'tests')
     logger.info('adding {0} tests to {1}'.format(key, tests_prefix))
     bench.util.mkdir_p(tests_prefix)
-    if key in ('bandwidth', 'alltoall-switch', 'alltoall-pair'):
-        GENERATORS[key](node_list, topology, tests_prefix)
-    else:
-        GENERATORS[key](node_list, tests_prefix)
+    GENERATORS[key](node_list, tests_prefix, topology)
     bench.util.write_node_list(
         os.path.join(prefix, key, 'node_list'),
         node_list)

@@ -42,33 +42,33 @@ def update_nodes (
             update_nodes_from_tests(prefix, 'alltoall-rack', **kwargs)
 
 
-def update_nodes_from_tests (prefix, test_type, bad_nodes=None,
-                             not_tested=None, down=False):
-    bad_nodes_path = os.path.join(prefix, test_type, 'bad_nodes')
+def update_nodes_from_tests (prefix, test_type, fail_nodes=None,
+                             error_nodes=None, down=False):
+    fail_nodes_path = os.path.join(prefix, test_type, 'fail_nodes')
     try:
-        bad_nodes_ = set(bench.util.read_node_list(bad_nodes_path))
+        fail_nodes_ = set(bench.util.read_node_list(fail_nodes_path))
     except IOError as ex:
-        logger.info('unable to read {0}'.format(bad_nodes_path))
+        logger.info('unable to read {0}'.format(fail_nodes_path))
         logger.debug(ex, exc_info=True)
-        bad_nodes_ = set()
+        fail_nodes_ = set()
 
-    not_tested_path = os.path.join(prefix, test_type, 'not_tested')
+    error_nodes_path = os.path.join(prefix, test_type, 'error_nodes')
     try:
-        not_tested_ = set(bench.util.read_node_list(not_tested_path))
+        error_nodes_ = set(bench.util.read_node_list(error_nodes_path))
     except IOError as ex:
-        logger.info('unable to read {0}'.format(not_tested_path))
+        logger.info('unable to read {0}'.format(error_nodes_path))
         logger.debug(ex, exc_info=True)
-        not_tested_ = set()
+        error_nodes_ = set()
 
-    # by default, reserve bad_nodes and not_tested
-    if not (bad_nodes or not_tested):
-        nodes_to_update = bad_nodes_ | not_tested_
+    # by default, reserve fail_nodes and error_nodes
+    if not (fail_nodes or error_nodes):
+        nodes_to_update = fail_nodes_ | error_nodes_
     else:
         nodes_to_update = set()
-        if bad_nodes:
-            nodes_to_update |= bad_nodes_
-        if not_tested:
-            nodes_to_update |= not_tested_
+        if fail_nodes:
+            nodes_to_update |= fail_nodes_
+        if error_nodes:
+            nodes_to_update |= error_nodes_
 
     if down:
         node_state = pyslurm.NODE_STATE_DOWN
