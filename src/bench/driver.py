@@ -201,9 +201,9 @@ def driver(argv):
 
     elif args.command == 'submit':
         if args.reservation:
-            res = args.reservation
+            reservation = args.reservation
         else:
-            res = os.environ.get('CURC_RESERVATION')
+            reservation = os.environ.get('CURC_RESERVATION')
         bench.submit.execute(
             directory,
             alltoall_rack_tests = args.alltoall_rack_tests,
@@ -212,7 +212,7 @@ def driver(argv):
             node_tests = args.node_tests,
             bandwidth_tests = args.bandwidth_tests,
             pause = args.pause,
-            reservation = res,
+            reservation = reservation,
             qos = args.qos,
             account = args.account,
             pass_nodes = args.pass_nodes,
