@@ -216,7 +216,7 @@ def driver(argv):
             pause = args.pause,
             reservation = reservation,
             qos = args.qos,
-            account = args.account,
+            account = args.account or os.environ.get('BENCH_ACCOUNT'),
             pass_nodes = args.pass_nodes,
             fail_nodes = args.fail_nodes,
             error_nodes = args.error_nodes,
@@ -243,7 +243,7 @@ def driver(argv):
             fail_nodes = args.fail_nodes,
             error_nodes = args.error_nodes,
             reservation_name = args.reservation_name,
-            account = args.account,
+            account = args.account or os.environ.get('BENCH_ACCOUNT'),
         )
 
     elif args.command == 'update-nodes':
