@@ -170,8 +170,9 @@ def evaluate_osu_alltoall (
             test, num_nodes, average_latency))
         return False
     elif average_latency > (fudge_factor * expected_latencies[num_nodes]):
-        logger.debug('alltoall: {0}: {1}: average {2}, expected {3}'.format(
-            test, num_nodes, average_latency, expected_latencies[num_nodes]))
+        logger.debug('alltoall: {0}: {1}: expected {2}, found {3} ({4:.0%})'.format(
+            test, num_nodes, expected_latencies[num_nodes], average_latency,
+            average_latency / expected_latencies[num_nodes]))
         return False
     else:
         return True

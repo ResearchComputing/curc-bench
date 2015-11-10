@@ -99,7 +99,8 @@ def evaluate_osu_bw(
                 test, size, expected_bandwidths[size]))
             return False
         if data[size] < expected_bandwidths[size]:
-            logger.debug('bandwidth: {0}: {1}: expected {2}, found {3}'.format(
-                test, size, expected_bandwidths[size], data[size]))
+            logger.debug('bandwidth: {0}: {1}: expected {2}, found {3} ({4:.0%})'.format(
+                test, size, expected_bandwidths[size], data[size],
+                data[size] / expected_bandwidths[size]))
             return False
     return True

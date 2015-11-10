@@ -166,20 +166,20 @@ def evaluate_stream(
     copy, scale, add, triad = data
 
     if copy < expected_copy:
-        logger.debug('stream: copy: expected {0}, found {1}'.format(
-            expected_copy, copy))
+        logger.debug('stream: copy: expected {0}, found {1} ({2:.0%})'.format(
+            expected_copy, copy, copy / expected_copy))
         return False
     elif scale < expected_scale:
-        logger.debug('stream: scale: expected {0}, found {1}'.format(
-            expected_scale, scale))
+        logger.debug('stream: scale: expected {0}, found {1} ({2:.0%})'.format(
+            expected_scale, scale, scale / expected_scale))
         return False
     elif add < expected_add:
-        logger.debug('stream: add: expected {0}, found {1}'.format(
-            expected_add, add))
+        logger.debug('stream: add: expected {0}, found {1} ({2:.0%})'.format(
+            expected_add, add, add / expected_add))
         return False
     elif triad < expected_triad:
-        logger.debug('stream: triad: expected {0}, found {1}'.format(
-            expected_triad, triad))
+        logger.debug('stream: triad: expected {0}, found {1} ({2:.0%})'.format(
+            expected_triad, triad, triad / expected_triad))
         return False
     else:
         return True
@@ -201,8 +201,8 @@ def evaluate_linpack(
                 test, key, expected_average))
             return False
         if data[key] < expected_average:
-            logger.debug('linpack: {0}: {1}: expected {2}, found {3}'.format(
-                test, key, expected_average, data[key]))
+            logger.debug('linpack: {0}: {1}: expected {2}, found {3} ({4:.0%})'.format(
+                test, key, expected_average, data[key], data[key] / expected_average))
             return False
     else:
         return True
