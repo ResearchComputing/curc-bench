@@ -57,6 +57,7 @@ def parser(*args, **kwargs):
     reserve.add_argument('--reservation-name')
     reserve.add_argument('--fail-nodes', action='store_true')
     reserve.add_argument('--error-nodes', action='store_true')
+    reserve.add_argument('-a', '--account', help='account to own the reservation')
 
     update_nodes = subparsers.add_parser(
         'update-nodes', help='Mark nodes down based on processed results')
@@ -242,6 +243,7 @@ def driver(argv):
             fail_nodes = args.fail_nodes,
             error_nodes = args.error_nodes,
             reservation_name = args.reservation_name,
+            account = args.account,
         )
 
     elif args.command == 'update-nodes':
