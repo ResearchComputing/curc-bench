@@ -181,11 +181,8 @@ def driver(argv):
 
     elif args.command == 'add':
         if args.topology_file:
-            topology_file = args.topology_file
-        else:
-            topology_file = os.environ.get('CURC_TOPOLOGY')
         bench.add.execute(
-            directory, topology_file,
+            directory, args.topology_file or os.environ.get('BENCH_TOPOLOGY'),
             alltoall_rack_tests = args.alltoall_rack_tests,
             alltoall_switch_tests = args.alltoall_switch_tests,
             alltoall_pair_tests = args.alltoall_pair_tests,
@@ -202,10 +199,6 @@ def driver(argv):
         )
 
     elif args.command == 'submit':
-        if args.reservation:
-            reservation = args.reservation
-        else:
-            reservation = os.environ.get('CURC_RESERVATION')
         bench.submit.execute(
             directory,
             alltoall_rack_tests = args.alltoall_rack_tests,
@@ -214,7 +207,7 @@ def driver(argv):
             node_tests = args.node_tests,
             bandwidth_tests = args.bandwidth_tests,
             pause = args.pause,
-            reservation = reservation,
+            reservation = args.reservation or os.environ.get('BENCH_RESERVATION'),
             qos = args.qos,
             account = args.account or os.environ.get('BENCH_ACCOUNT'),
             pass_nodes = args.pass_nodes,
