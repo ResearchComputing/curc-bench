@@ -44,7 +44,7 @@ def execute(prefix,
             reserve_nodes(prefix, 'node', **kwargs)
 
 
-def reserve_nodes (prefix, key, fail_nodes=None, error_nodes=None):
+def reserve_nodes (prefix, key, fail_nodes=None, error_nodes=None, reservation_name=None):
     fail_nodes_path = os.path.join(prefix, key, 'fail_nodes')
     try:
         fail_nodes_ = set(bench.util.read_node_list(fail_nodes_path))
@@ -72,11 +72,14 @@ def reserve_nodes (prefix, key, fail_nodes=None, error_nodes=None):
             reserve_nodes_ |= error_nodes_
 
     if reserve_nodes_:
-        reservation_name = 'bench-{0}'.format(key)
+        if reservation_name:
+            reservation_name_ = reservation_name
+        else:
+            reservation_name_ = 'bench-{0}'.format(key)
         try:
             bench.slurm.scontrol(
                 'create',
-                reservation=reservation_name,
+                reservation=reservation_name_,
                 accounts = 'crcbenchmark',
                 flags='overlap',
                 starttime='now',

@@ -54,6 +54,7 @@ def parser(*args, **kwargs):
     reserve = subparsers.add_parser(
         'reserve', help='Reserve nodes based on processed results')
     parser_add_test_arguments(reserve)
+    reserve.add_argument('--reservation-name')
     reserve.add_argument('--fail-nodes', action='store_true')
     reserve.add_argument('--error-nodes', action='store_true')
 
@@ -240,6 +241,7 @@ def driver(argv):
             bandwidth_tests = args.bandwidth_tests,
             fail_nodes = args.fail_nodes,
             error_nodes = args.error_nodes,
+            reservation_name = args.reservation_name,
         )
 
     elif args.command == 'update-nodes':
