@@ -180,7 +180,6 @@ def driver(argv):
         )
 
     elif args.command == 'add':
-        if args.topology_file:
         bench.add.execute(
             directory, args.topology_file or os.environ.get('BENCH_TOPOLOGY'),
             alltoall_rack_tests = args.alltoall_rack_tests,
