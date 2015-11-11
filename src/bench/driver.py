@@ -134,7 +134,10 @@ def get_directory(prefix, new=False):
         return directory
 
 
-def driver(argv):
+def driver(argv=None):
+    if argv is None:
+        argv = sys.argv
+
     bench.log.configure_package_logger()
 
     args = parser(prog=argv[0]).parse_args(args=argv[1:])
