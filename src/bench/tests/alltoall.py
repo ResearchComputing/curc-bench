@@ -16,7 +16,7 @@ TEMPLATE = jinja2.Template(
 
 def generate_alltoall_rack(nodes, prefix, topology=None):
     if topology:
-        logger.info('alltoall-rack: ignoring {0}'.format(topology))
+        logger.info('alltoall-rack: ignoring topology (not used)')
     rack_nodes = bench.infiniband.get_rack_nodes(nodes)
     for rack_name, rack_nodes_ in rack_nodes.iteritems():
         if rack_nodes_:

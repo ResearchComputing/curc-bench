@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 def generate(nodes, prefix, topology=None):
     if topology:
-        logger.info('node: ignoring {0}'.format(topology))
+        logger.info('node: ignoring topology (not used)')
     for node in nodes:
         test_dir = os.path.join(prefix, node)
         bench.util.mkdir_p(test_dir)
