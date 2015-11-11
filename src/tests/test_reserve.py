@@ -36,7 +36,6 @@ class TestReserveExecute (unittest.TestCase):
         bench.reserve.execute(self.directory)
         popen.assert_called_once_with(['scontrol', 'create',
                                        'reservation=bench-node',
-                                       'accounts=crcbenchmark',
                                        'flags=overlap',
                                        'starttime=now',
                                        'duration=UNLIMITED',
@@ -50,7 +49,6 @@ class TestReserveExecute (unittest.TestCase):
         bench.reserve.execute(self.directory, fail_nodes=True)
         popen.assert_called_once_with(['scontrol', 'create',
                                        'reservation=bench-node',
-                                       'accounts=crcbenchmark',
                                        'flags=overlap',
                                        'starttime=now',
                                        'duration=UNLIMITED',
@@ -64,7 +62,6 @@ class TestReserveExecute (unittest.TestCase):
         bench.reserve.execute(self.directory, error_nodes=True)
         popen.assert_called_once_with(['scontrol', 'create',
                                        'reservation=bench-node',
-                                       'accounts=crcbenchmark',
                                        'flags=overlap',
                                        'starttime=now',
                                        'duration=UNLIMITED',
@@ -79,7 +76,6 @@ class TestReserveExecute (unittest.TestCase):
         bench.reserve.execute(self.directory, fail_nodes=True, error_nodes=True)
         popen.assert_called_once_with(['scontrol', 'create',
                                        'reservation=bench-node',
-                                       'accounts=crcbenchmark',
                                        'flags=overlap',
                                        'starttime=now',
                                        'duration=UNLIMITED',
