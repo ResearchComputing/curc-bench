@@ -100,7 +100,7 @@ def submit(prefix, index=0, pause=None,
         try:
             result = bench.slurm.sbatch(script, workdir=test_dir, **kwargs)
         except bench.exc.SlurmError as ex:
-            logger.error('failed to submit job {0}'.format(script))
+            logger.error('failed to submit job {0} ({1})'.format(script, ex))
             logger.debug(ex, exc_info=True)
         else:
             logger.info(': '.join(result.splitlines()))

@@ -1,4 +1,5 @@
 import bench.exc
+import os
 import subprocess
 
 
@@ -36,9 +37,13 @@ def scontrol (subcommand, reservation=None, accounts=None, flags=None,
 
 
 def _run_command (command):
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    stdout, stderr = process.communicate()
+    try:
+        process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    except OSError, ex:
+        message = 'slurm: {0}: {1}'.format(os.path.basename(command[0]), ex.strerror)
+        raise bench.exc.SlurmError(message)
 
+    stdout, stderr = process.communicate()
     if process.returncode != 0:
         stderr_message = stderr.strip().replace('\n', ':')
         raise bench.exc.SlurmError(stderr_message)
