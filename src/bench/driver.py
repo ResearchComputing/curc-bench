@@ -18,90 +18,100 @@ logger = logging.getLogger(__name__)
 
 def parser(*args, **kwargs):
     parser = argparse.ArgumentParser(*args, **kwargs)
-    parser.add_argument('-v', '--verbose', action='store_true')
-    parser.add_argument('-P', '--directory-prefix', dest='prefix')
-    parser.add_argument('-d', '--directory', help='directory')
-    parser.set_defaults(prefix='.', verbose=False)
+    parser.add_argument('-v', '--verbose', action='store_true', help='INFO logging')
+    parser.add_argument('-P', '--directory-prefix', help='test directory prefix')
+    parser.add_argument('-d', '--directory', help='test directory')
+    parser.set_defaults(directory_prefix='.', verbose=False)
 
     subparsers = parser.add_subparsers(dest='command')
 
     create = subparsers.add_parser(
-        'create', help='Create the benchmark test scripts')
+        'create', help='create test directory')
     parser_add_filter_arguments(create)
 
-    add = subparsers.add_parser('add', help='Add a benchmark test')
+    add = subparsers.add_parser('add', help='add tests for submission')
     parser_add_test_arguments(add)
     add.add_argument('-t', '--topology-file',
-                     help = 'slurm topology.conf')
+                     help='slurm topology.conf')
     parser_add_filter_arguments(add)
 
-    submit = subparsers.add_parser(
-        'submit', help='Submit all the jobs from create to the scheduler.')
+    submit = subparsers.add_parser('submit', help='submit jobs for scheduling')
     parser_add_test_arguments(submit)
-    submit.add_argument('--pause', type=int, help='number of jobs submitted before pause')
-    submit.add_argument('--reservation', help='reservation to run jobs in')
-    submit.add_argument('-q', '--qos', help='qos to associate with the jobs')
-    submit.add_argument('-a', '--account', help='account to use with the jobs')
-    submit.add_argument('--error-nodes', action="store_true")
-    submit.add_argument('--fail-nodes', action="store_true")
-    submit.add_argument('--pass-nodes', action="store_true")
+    submit.add_argument('--pause', type=int, metavar='N',
+                        help='pause between N job submissions')
+    submit.add_argument('--reservation', help='submission reservation')
+    submit.add_argument('-q', '--qos', help='submission qos')
+    submit.add_argument('-a', '--account', help='submission account')
+    submit.add_argument('--error-nodes', action='store_true',
+                        help='submit jobs for nodes with previous errors')
+    submit.add_argument('--fail-nodes', action='store_true',
+                        help='submit jobs for nodes with previous failures')
+    submit.add_argument('--pass-nodes', action='store_true',
+                        help='submit jobs for nodes with previous passes')
     submit.set_defaults(pause=0)
 
     process = subparsers.add_parser(
-        'process', help='Process the test results')
+        'process', help='process test output')
     parser_add_test_arguments(process)
 
     reserve = subparsers.add_parser(
-        'reserve', help='Reserve nodes based on processed results')
+        'reserve', help='reserve nodes based on process results')
     parser_add_test_arguments(reserve)
-    reserve.add_argument('--reservation-name')
-    reserve.add_argument('--fail-nodes', action='store_true')
-    reserve.add_argument('--error-nodes', action='store_true')
-    reserve.add_argument('-a', '--account', help='account to own the reservation')
+    reserve.add_argument('--reservation-name', help='name of the created reservation')
+    reserve.add_argument('--fail-nodes', action='store_true',
+                         help='reserve nodes with failures')
+    reserve.add_argument('--error-nodes', action='store_true',
+                         help='reserve nodes with errors')
+    reserve.add_argument('-a', '--account', help='reservation account')
 
     update_nodes = subparsers.add_parser(
-        'update-nodes', help='Mark nodes down based on processed results')
+        'update-nodes', help='configure nodes down based on process results')
     update_nodes.add_argument('--down',
                               help='set nodes down (default: drain)', action='store_true')
     parser_add_test_arguments(update_nodes)
-    update_nodes.add_argument('--fail-nodes', action='store_true')
-    update_nodes.add_argument('--error-nodes', action='store_true')
+    update_nodes.add_argument('--fail-nodes', action='store_true',
+                              help='configure nodes with failures')
+    update_nodes.add_argument('--error-nodes', action='store_true',
+                              help='configure nodes with errors')
     update_nodes.set_defaults(down=False)
 
     return parser
 
 
 def parser_add_test_arguments (parser):
-    parser.add_argument('-r', '--alltoall-rack-tests',
-                     help = 'alltoall rack level tests',
-                     action = 'store_true')
-    parser.add_argument('-s', '--alltoall-switch-tests',
-                     help = 'alltoall switch level tests',
-                     action = 'store_true')
-    parser.add_argument('-p', '--alltoall-pair-tests',
-                     help = 'alltoall pair level tests',
-                     action = 'store_true')
-    parser.add_argument('-n', '--node-tests',
-                     help = 'individual node tests',
-                     action = 'store_true')
-    parser.add_argument('-b', '--bandwidth-tests',
-                     help = 'bandwidth tests',
-                     action = 'store_true')
+    parser.add_argument('-r', '--alltoall-rack-tests', action='store_true',
+                        help='test osu_alltoall on a rack of nodes')
+    parser.add_argument('-s', '--alltoall-switch-tests', action='store_true',
+                        help='test osu_alltoall on nodes connected to a switch')
+    parser.add_argument('-p', '--alltoall-pair-tests', action='store_true',
+                        help='test osu_alltoall on node pairs')
+    parser.add_argument('-n', '--node-tests', action='store_true',
+                        help='test linpack and stream on individual nodes')
+    parser.add_argument('-b', '--bandwidth-tests', action='store_true',
+                        help='test osu_bibw on node pairs')
 
 
 def parser_add_filter_arguments (parser):
     parser.add_argument('--include-nodes', action='append',
-                        help = 'explicit list of nodes to test')
+                        help='include specific nodes')
     parser.add_argument('--exclude-nodes', action='append',
-                        help = 'explicit list of nodes to exclude from testing')
+                        help='exclude specific nodes')
     parser.add_argument('--include-reservation', action='append', dest='include_reservations',
-                        help = 'test a set of reserved nodes')
+                        help='include nodes from an existing reservation')
     parser.add_argument('--exclude-reservation', action='append', dest='exclude_reservations',
-                        help = 'exclude nodes in a reservation from testing')
-    parser.add_argument('--include-state', action='append', dest='include_states')
-    parser.add_argument('--exclude-state', action='append', dest='exclude_states')
-    parser.add_argument('--include-file', action='append', dest='include_files')
-    parser.add_argument('--exclude-file', action='append', dest='exclude_files')
+                        help='exclude nodes in an existing reservation')
+    parser.add_argument('--include-state', metavar='STATE',
+                        action='append', dest='include_states',
+                        help='include nodes with the given STATE')
+    parser.add_argument('--exclude-state', metavar='STATE',
+                        action='append', dest='exclude_states',
+                        help='exclude nodes with the given STATE')
+    parser.add_argument('--include-file', metavar='FILE',
+                        action='append', dest='include_files',
+                        help='include nodes from a given FILE')
+    parser.add_argument('--exclude-file', metavar='FILE',
+                        action='append', dest='exclude_files',
+                        help='exclude nodes in a given FILE')
 
 
 def get_directory(prefix, new=False):
@@ -151,13 +161,13 @@ def driver(argv=None):
     if directory is None:
         if args.command == 'create':
             try:
-                directory = get_directory(args.prefix, new=True)
+                directory = get_directory(args.directory_prefix, new=True)
             except (OSError, IOError) as ex:
                 logger.error('unable to create session directory')
                 logger.debug(ex, exc_info=True)
                 sys.exit(-1)
         else:
-            directory = get_directory(args.prefix, new=False)
+            directory = get_directory(args.directory_prefix, new=False)
     else:
         if args.command == 'create':
             try:
