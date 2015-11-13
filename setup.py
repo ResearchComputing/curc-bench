@@ -16,7 +16,7 @@ def read(fname):
 
 
 def git_describe():
-    git_describe = subprocess.Popen(['git', 'describe'], stdout=subprocess.PIPE)
+    git_describe = subprocess.Popen(['git', 'describe', '--tags'], stdout=subprocess.PIPE)
     stdout, _ = git_describe.communicate()
     return stdout.strip()
 
