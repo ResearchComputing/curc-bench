@@ -101,11 +101,11 @@ def get_nodes(include_states=None, exclude_states=None):
     nodes = pyslurm.node().get().itervalues()
     if include_states:
         nodes = (node for node in nodes
-                 if node['node_state'].rstrip('*').lower()
+                 if node['state'].rstrip('*').lower()
                  in include_states)
     if exclude_states:
         nodes = (node for node in nodes
-                 if node['node_state'].rstrip('*').lower()
+                 if node['state'].rstrip('*').lower()
                  not in exclude_states)
 
         # Maintenance reservations shadow node state with MAINT*,
