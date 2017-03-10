@@ -1,10 +1,11 @@
 import bench.tests.node
 import os
 
-class Add:
+class Add(object):
 
-    def __init__(self, logger):
+    def __init__(self, logger, generate):
         self.logger = logger
+        self.generate = generate
         self.prefix = None
         self.include_states = None
         self.exclude_states = None
@@ -47,10 +48,11 @@ class Add:
 
 
     def add_tests(self, node_list, prefix, key, topology=None):
-      tests_prefix = os.path.join(prefix, key, 'tests')
-      self.logger.info('adding {0} tests to {1}'.format(key, tests_prefix))
-      bench.util.mkdir_p(tests_prefix)
-      self.GENERATOR(node_list, tests_prefix, topology)
-      bench.util.write_node_list(
-          os.path.join(prefix, key, 'node_list'),
-          node_list)
+        tests_prefix = os.path.join(prefix, key, 'tests')
+        self.logger.info('adding {0} tests to {1}'.format(key, tests_prefix))
+        bench.util.mkdir_p(tests_prefix)
+        # self.GENERATOR(node_list, tests_prefix, topology)
+        self.generate(node_list, tests_prefix, topology)
+        bench.util.write_node_list(
+            os.path.join(prefix, key, 'node_list'),
+            node_list)
