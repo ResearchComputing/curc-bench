@@ -1,16 +1,16 @@
-
+import bench.framework_add
+import logging
 
 class TestFramework:
 
-    def __init__(self, test_name=None, topology_file=None):
+    def __init__(self, test_name=None):
         # Todo: Make a configuration file and get topology_file from there
+        # Todo: move topology file into individual tests so that different topologies may be specified
         self.test_name = test_name
-        self.topology_file = topology_file
-        if self.topology_file is None:
-            topology_file
+        self.logger = logging.getLogger(__name__)
 
         #Classes for adding, submitting, processing, and reserving.
-        self.Add = None
+        self.Add = bench.framework_add.Add(self.logger)
         self.Submit = None
         self.Process = None
         self.Reserve = None
