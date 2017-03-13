@@ -3,7 +3,7 @@ import bench.add
 import bench.create
 import bench.framework
 import bench.framework_add
-import bench.tests.NodeTest
+import bench.tests.node_test
 import bench.log
 import bench.process
 import bench.reserve
@@ -221,7 +221,7 @@ def driver(argv=None):
     elif args.command == 'add2':
         # Todo: dynamically instantiate class from command line input
         # (possibly combined with input from config file)
-        tc = bench.tests.NodeTest.NodeTest()
+        tc = bench.tests.node_test.NodeTest()
         tc.Add.execute(
             directory, args.topology_file or os.environ.get('BENCH_TOPOLOGY'),
             alltoall_rack_tests = args.alltoall_rack_tests,
