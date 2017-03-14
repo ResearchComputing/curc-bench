@@ -15,7 +15,6 @@ NODE_HOSTNAME_P = re.compile(r'^(.*)node([0-9][0-9])([0-9]+)$')
 def parse_topology_conf (topology_file):
     with open(topology_file) as fp:
         for line in fp:
-            print("LINE = ", line)
             line = line.rstrip()
             rack_match = RACK_NAME_P.search(line)
             switch_match = SWITCH_NAME_P.search(line)
