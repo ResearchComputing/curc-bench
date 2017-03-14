@@ -27,7 +27,7 @@ class NodeTest(bench.framework.TestFramework):
         self.STREAM_TRIAD_P = re.compile(self.STREAM_P_T.format('Triad'), flags=re.MULTILINE)
 
 
-    def generate(self, nodes, prefix, topology=None):
+    def generate(self, nodes, prefix, topology=None, test_name=None):
         if topology:
             logger.info('node: ignoring topology (not used)')
         for node in nodes:

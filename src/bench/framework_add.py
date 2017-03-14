@@ -52,7 +52,7 @@ class Add(object):
         self.logger.info('adding {0} tests to {1}'.format(key, tests_prefix))
         bench.util.mkdir_p(tests_prefix)
         # self.GENERATOR(node_list, tests_prefix, topology)
-        self.generate(node_list, tests_prefix, topology)
+        self.generate(node_list, tests_prefix, topology, key)
         bench.util.write_node_list(
             os.path.join(prefix, key, 'node_list'),
             node_list)
