@@ -7,6 +7,7 @@ import re
 
 
 SWITCH_NAME_P = re.compile(r'SwitchName=([^ ]+)')
+RACK_NAME_P = re.compile(r'RackName=([^ ]+)')
 NODES_P = re.compile(r'Nodes=([^ ]+)')
 NODE_HOSTNAME_P = re.compile(r'^(.*)node([0-9][0-9])([0-9]+)$')
 
@@ -14,32 +15,36 @@ NODE_HOSTNAME_P = re.compile(r'^(.*)node([0-9][0-9])([0-9]+)$')
 def parse_topology_conf (topology_file):
     with open(topology_file) as fp:
         for line in fp:
+            print("LINE = ", line)
             line = line.rstrip()
+            rack_match = RACK_NAME_P.search(line)
             switch_match = SWITCH_NAME_P.search(line)
-            if not switch_match:
+            if not (switch_match or rack_match):
                 continue
             nodes_match = NODES_P.search(line)
             if not nodes_match:
                 continue
-            switch_name = switch_match.group(1)
+
             nodes = set(hostlist.expand_hostlist(nodes_match.group(1)))
-            yield switch_name, nodes
+
+            if rack_match:
+                rack_name = rack_match.group(1)
+                yield rack_name, nodes
+
+            elif switch_match:
+                switch_name = switch_match.group(1)
+                yield switch_name, nodes
 
 
 def get_topology (topology_file):
     return dict(parse_topology_conf(topology_file))
 
-
-def get_rack_nodes(nodes):
+def get_rack_nodes(nodes, topology):
+    nodes = set(nodes)
     rack_nodes = collections.defaultdict(set)
-    for node in nodes:
-        match = NODE_HOSTNAME_P.match(node)
-        if match:
-            rack_num = match.group(2)
-            rack_name = 'rack_{0}'.format(rack_num)
-            rack_nodes[rack_name].add(node)
+    for rack_name, all_rack_nodes in topology.iteritems():
+        rack_nodes[rack_name] |= all_rack_nodes & nodes
     return rack_nodes
-
 
 def get_switch_nodes(nodes, topology):
     nodes = set(nodes)
