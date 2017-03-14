@@ -1,6 +1,7 @@
 import bench.framework
 import bench.exc
 import bench.util
+import bench.configuration as bc
 import jinja2
 import logging
 import os
@@ -32,6 +33,7 @@ class BandwidthTest(bench.framework.TestFramework):
                 fp.write(self.TEMPLATE.render(
                     job_name = 'bench-bandwidth-{0}'.format(pair_name),
                     nodes = node_pair,
+                    osu_bw_path = bc.config['bandwidth']['osu'],
                 ))
             bench.util.write_node_list(os.path.join(test_dir, 'node_list'), node_pair)
         self.logger.info('bandwidth: add: {0}'.format(len(node_pairs)))

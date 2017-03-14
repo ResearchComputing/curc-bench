@@ -1,6 +1,7 @@
 import bench.framework
 import bench.exc
 import bench.util
+import bench.configuration as bc
 import jinja2
 import logging
 import os
@@ -29,7 +30,7 @@ class NodeTest(bench.framework.TestFramework):
 
     def generate(self, nodes, prefix, topology=None, test_name=None):
         if topology:
-            logger.info('node: ignoring topology (not used)')
+            self.logger.info('node: ignoring topology (not used)')
         for node in nodes:
             test_dir = os.path.join(prefix, node)
             bench.util.mkdir_p(test_dir)
@@ -39,6 +40,8 @@ class NodeTest(bench.framework.TestFramework):
                 fp.write(self.TEMPLATE.render(
                     job_name = 'bench-node-{0}'.format(node),
                     node_name = node,
+                    linpack_path = bc.config['node']['linpack'],
+                    stream_path = bc.config['node']['stream'],
                 ))
 
             node_list_file = os.path.join(test_dir, 'node_list')

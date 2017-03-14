@@ -1,6 +1,7 @@
 import bench.framework
 import bench.exc
 import bench.util
+import bench.configuration as bc
 import jinja2
 import logging
 import os
@@ -46,6 +47,7 @@ class AllToAllTest(bench.framework.TestFramework):
             fp.write(self.TEMPLATE.render(
                 job_name = 'bench-alltoall-{0}'.format(node_list_name),
                 nodes = list(sorted(nodes)),
+                osu_alltoall_path = bc.config['alltoall']['osu'],
             ))
 
         node_list_file = os.path.join(prefix, 'node_list')

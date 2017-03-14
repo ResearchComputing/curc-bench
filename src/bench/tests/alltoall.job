@@ -5,7 +5,7 @@
 #SBATCH --ntasks-per-node=12
 
 
-OSU_ALLTOALL=/curc/admin/benchmarks/software/mpi/osu_alltoall
+OSU_ALLTOALL={{osu_alltoall_path}}
 
 
 function main
