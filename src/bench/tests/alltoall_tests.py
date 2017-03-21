@@ -11,32 +11,36 @@ import re
 
 class AllToAllTest(bench.framework.TestFramework):
 
-    def __init__(self):
-        bench.framework.TestFramework.__init__(self)
+    def __init__(self, test_name):
+        bench.framework.TestFramework.__init__(self, test_name)
 
-        self.Add = bench.framework_add.Add(self.logger, self.generate)
+        self.Add = bench.framework_add.Add(self.logger, self.generate, test_name)
 
         self.TEMPLATE = jinja2.Template(
             pkg_resources.resource_string(__name__, 'alltoall.job'),
             keep_trailing_newline=True,
         )
 
-    def generate(self, nodes, prefix, topology=None, alltoall_type=None):
+    def generate(self, nodes, prefix, topology=None):
+        
         if not topology:
             topology = {}
         test_nodes = None
-        if alltoall_type == 'alltoall-rack':
+
+        if self.test_name == 'alltoall-rack':
             test_nodes = bench.infiniband.get_rack_nodes(nodes, topology)
-        elif alltoall_type == 'alltoall-switch':
+        elif self.test_name == 'alltoall-switch':
             test_nodes = bench.infiniband.get_switch_nodes(nodes, topology)
-        elif alltoall_type == 'alltoall-pair':
+        elif self.test_name == 'alltoall-pair':
             test_nodes = bench.infiniband.get_switch_node_pairs(nodes, topology)
+
+        # Write job scripts for each test
         for test_name, test_nodes_ in test_nodes.iteritems():
             if test_nodes_:
                 test_dir = os.path.join(prefix, test_name)
                 self.render(test_dir, test_nodes_, test_name)
         self.logger.info('{ttype}: add: {num_tests}'.format(
-                                            ttype=alltoall_type,
+                                            ttype=self.test_name,
                                             num_tests=len(test_nodes)))
 
 

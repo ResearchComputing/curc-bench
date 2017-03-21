@@ -3,13 +3,13 @@ import os
 
 class Add(object):
 
-    def __init__(self, logger, generate):
+    def __init__(self, logger, generate, test_name):
         self.logger = logger
-        self.generate = generate
+        self.add_tests = generate
+        self.test_name = test_name
         self.prefix = None
         self.include_states = None
         self.exclude_states = None
-        self.GENERATOR = bench.tests.node.generate
 
     def execute(self, prefix, topology_file,
               alltoall_rack_tests=None,
@@ -35,24 +35,11 @@ class Add(object):
         else:
             topology = {}
 
-        if alltoall_rack_tests:
-            self.add_tests(node_list, prefix, 'alltoall-rack', topology)
-        if alltoall_switch_tests:
-            self.add_tests(node_list, prefix, 'alltoall-switch', topology)
-        if alltoall_pair_tests:
-            self.add_tests(node_list, prefix, 'alltoall-pair', topology)
-        if bandwidth_tests:
-            self.add_tests(node_list, prefix, 'bandwidth', topology)
-        if node_tests:
-            self.add_tests(node_list, prefix, 'node', topology)
-
-
-    def add_tests(self, node_list, prefix, key, topology=None):
-        tests_prefix = os.path.join(prefix, key, 'tests')
-        self.logger.info('adding {0} tests to {1}'.format(key, tests_prefix))
-        bench.util.mkdir_p(tests_prefix)
-        # self.GENERATOR(node_list, tests_prefix, topology)
-        self.generate(node_list, tests_prefix, topology, key)
+        #make the test directory and write the node list to it
+        self.test_prefix = os.path.join(prefix, self.test_name)
+        bench.util.mkdir_p(os.path.join(self.test_prefix))
         bench.util.write_node_list(
-            os.path.join(prefix, key, 'node_list'),
+            os.path.join(self.test_prefix, 'node_list'),
             node_list)
+
+        self.add_tests(node_list, self.test_prefix, topology)

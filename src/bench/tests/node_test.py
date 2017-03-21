@@ -11,10 +11,10 @@ import re
 
 class NodeTest(bench.framework.TestFramework):
 
-    def __init__(self):
-        bench.framework.TestFramework.__init__(self)
+    def __init__(self, test_name):
+        bench.framework.TestFramework.__init__(self, test_name)
 
-        self.Add = bench.framework_add.Add(self.logger, self.generate)
+        self.Add = bench.framework_add.Add(self.logger, self.generate, test_name)
 
         self.TEMPLATE = jinja2.Template(
             pkg_resources.resource_string(__name__, 'node.job'),
@@ -29,6 +29,7 @@ class NodeTest(bench.framework.TestFramework):
 
 
     def generate(self, nodes, prefix, topology=None, test_name=None):
+
         if topology:
             self.logger.info('node: ignoring topology (not used)')
         for node in nodes:
