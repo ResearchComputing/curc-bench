@@ -18,6 +18,7 @@ config['alltoall'] = {}
 config['alltoall']['osu'] = "/curc/admin/benchmarks/software/mpi/osu_alltoall"
 
 # Alltoall rack test
+config['alltoall']['Rack'] = {}
 config['alltoall']['Rack']['Rack1'] = "shas01[01-60]"
 config['alltoall']['Rack']['Rack2'] = "shas02[01-60]"
 config['alltoall']['Rack']['Rack3'] = "shas03[01-60]"
@@ -27,6 +28,7 @@ config['alltoall']['Rack']['Rack6'] = "shas06[01-60]"
 config['alltoall']['Rack']['Rack7'] = "shas07[01-16]"
 
 # Alltoall switch test
+config['alltoall']['Switch'] = {}
 config['alltoall']['Switch']['OPAEDGE1'] = "shas050[1-9],shas05[10-28]"
 config['alltoall']['Switch']['OPAEDGE2'] = "shas06[33-64]"
 config['alltoall']['Switch']['OPAEDGE3'] = "shas010[1-9],shas01[10-28]"
