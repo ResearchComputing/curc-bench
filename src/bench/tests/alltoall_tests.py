@@ -6,7 +6,9 @@ import jinja2
 import logging
 import os
 import pkg_resources
-import re
+import hostlist
+import collections
+import random
 
 
 class AllToAllTest(bench.framework.TestFramework):
@@ -21,18 +23,19 @@ class AllToAllTest(bench.framework.TestFramework):
             keep_trailing_newline=True,
         )
 
+
     def generate(self, nodes, prefix, topology=None):
-        
+
         if not topology:
             topology = {}
         test_nodes = None
 
         if self.test_name == 'alltoall-rack':
-            test_nodes = bench.infiniband.get_rack_nodes(nodes, topology)
+            test_nodes = self.get_alltoall_nodes(nodes, 'Rack')
         elif self.test_name == 'alltoall-switch':
-            test_nodes = bench.infiniband.get_switch_nodes(nodes, topology)
+            test_nodes = self.get_alltoall_nodes(nodes, 'Switch')
         elif self.test_name == 'alltoall-pair':
-            test_nodes = bench.infiniband.get_switch_node_pairs(nodes, topology)
+            test_nodes = self.get_alltoall_nodes(nodes, 'Pair')
 
         # Write job scripts for each test
         for test_name, test_nodes_ in test_nodes.iteritems():
@@ -56,3 +59,34 @@ class AllToAllTest(bench.framework.TestFramework):
 
         node_list_file = os.path.join(prefix, 'node_list')
         bench.util.write_node_list(node_list_file, nodes)
+
+
+    def get_alltoall_nodes(self, nodes, alltoall_type):
+        '''nodes = testable node list, alltoall_type = a string: 'Rack', 'Switch', 'Pair'
+        Returns: dictionary consisting of hardware name as key and set of testable nodes as value'''
+
+        if alltoall_type == 'Rack' or alltoall_type == 'Switch':
+            node_set = collections.defaultdict(set)
+            for hardware_name in bc.config['alltoall'][alltoall_type]:
+                node_set[hardware_name] = set(hostlist.expand_hostlist(bc.config['alltoall'][alltoall_type][hardware_name]))
+                node_set[hardware_name] &= set(nodes)  #Don't include error/excluded nodes
+            return node_set
+        elif alltoall_type == 'Pair':
+            node_set = collections.defaultdict(set)
+            for switch_name, switch_nodes in bc.config['alltoall']['Switch'].iteritems():
+                switch_nodes = set(hostlist.expand_hostlist(switch_nodes))
+                switch_nodes &= set(nodes)  #Don't include error/excluded nodes
+                if len(switch_nodes) < 2:
+                    continue
+                for node_pair in self.get_node_pairs(switch_nodes):
+                    key = ','.join(sorted(node_pair))
+                    node_set[key] = node_pair
+            return node_set
+
+
+    def get_node_pairs(self, nodes):
+        for node_pair in bench.util.chunks(sorted(nodes), 2):
+            node_pair = set(node_pair)
+            if len(node_pair) == 1:
+                node_pair.add(random.choice(list(set(nodes) - set(node_pair))))
+            yield node_pair
