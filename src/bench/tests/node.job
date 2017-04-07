@@ -1,6 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name={{job_name}}
 #SBATCH --nodes=1
+#SBATCH --ntasks-per-node=24
 #SBATCH --nodelist={{node_name}}
 #SBATCH --time=0:45:00
 
@@ -12,8 +13,8 @@ LINPACK_INPUT="\
 Sample Intel(R) Optimized LINPACK Benchmark data file (lininput_xeon64)
 Intel(R) Optimized LINPACK Benchmark data
 6                     # number of tests
-1000 2000 5000 10000 20000 25000# problem sizes
-1000 2000 5000 10000 20000 25000 # leading dimensions
+1000 5000 10000 20000 25000 150000# problem sizes
+1000 5000 10000 20000 25000 150000# leading dimensions
 2 2 2 1 1 1  # times to run a test
 4 4 4 4 4 4  # alignment values (in KBytes)"
 

@@ -10,7 +10,8 @@ OSU_ALLTOALL={{osu_alltoall_path}}
 
 function main
 {
-    module load openmpi/openmpi-1.6.4_intel-13.0.0_torque-4.1.4_ib
+    ml intel/16.0.3
+    ml impi/5.1.3.210
 
     mpirun $OSU_ALLTOALL -f >osu_alltoall.out
 }

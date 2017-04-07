@@ -7,15 +7,15 @@ config = {}
 # Node tests (linpack + stream)
 config['node'] = {}
 config['node']['linpack'] = "/curc/sw/intel/16.0.3/compilers_and_libraries_2016.3.210/linux/mkl/benchmarks/linpack/xlinpack_xeon64"
-config['node']['stream'] = "/projects/holtat/cb_dev/stream/stream"
+config['node']['stream'] = "/projects/rcops/CurcBenchBenchmarks/stream/stream.o"
 
 # Bandwidth tests (osu_bw)
 config['bandwidth'] = {}
-config['bandwidth']['osu'] = "/projects/molu8455/redhat_6/software/bandwidth/osu_bw"
+config['bandwidth']['osu'] = "/projects/rcops/CurcBenchBenchmarks/osu5.3.2/libexec/osu-micro-benchmarks/mpi/pt2pt/osu_bw"
 
 # Alltoall tests (osu_alltoall)
 config['alltoall'] = {}
-config['alltoall']['osu'] = "/curc/admin/benchmarks/software/mpi/osu_alltoall"
+config['alltoall']['osu'] = "/projects/rcops/CurcBenchBenchmarks/osu5.3.2/libexec/osu-micro-benchmarks/mpi/collective/osu_alltoall"
 
 # Alltoall rack test
 config['alltoall']['Rack'] = {}
