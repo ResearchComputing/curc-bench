@@ -2,7 +2,9 @@ import errno
 import hostlist
 import os
 import pyslurm
-
+import bench.configuration as bc
+import collections
+import random
 
 def mkdir_p (path):
     try:
@@ -116,3 +118,33 @@ def get_nodes(include_states=None, exclude_states=None):
             nodes = (node for node in nodes
                      if not node.get('reason'))
     return set(node['name'] for node in nodes)
+
+def get_test_nodes(nodes, test_type):
+    '''nodes = testable node list, test_type = a string: 'Rack', 'Switch', 'Pair'
+    Returns: dictionary consisting of hardware name as key and set of testable nodes as value'''
+
+    if test_type == 'Rack' or test_type == 'Switch':
+        node_set = collections.defaultdict(set)
+        for hardware_name in bc.config[test_type]:
+            node_set[hardware_name] = set(hostlist.expand_hostlist(bc.config[test_type][hardware_name]))
+            node_set[hardware_name] &= set(nodes)  #Don't include error/excluded nodes
+        return node_set
+    elif test_type == 'Pair':
+        node_set = collections.defaultdict(set)
+        for switch_name, switch_nodes in bc.config['Switch'].iteritems():
+            switch_nodes = set(hostlist.expand_hostlist(switch_nodes))
+            switch_nodes &= set(nodes)  #Don't include error/excluded nodes
+            if len(switch_nodes) < 2:
+                continue
+            for node_pair in get_node_pairs(switch_nodes):
+                key = ','.join(sorted(node_pair))
+                node_set[key] = node_pair
+        return node_set
+
+
+def get_node_pairs(nodes):
+    for node_pair in chunks(sorted(nodes), 2):
+        node_pair = set(node_pair)
+        if len(node_pair) == 1:
+            node_pair.add(random.choice(list(set(nodes) - set(node_pair))))
+        yield node_pair

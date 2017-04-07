@@ -25,10 +25,10 @@ class BandwidthTest(bench.framework.TestFramework):
 
         if not topology:
             topology = {}
-        node_pairs = bench.infiniband.get_switch_node_pairs(nodes, topology)
+        node_pairs = bench.util.get_test_nodes(nodes, 'Pair')
 
         for pair_name, node_pair in node_pairs.iteritems():
-            test_dir = os.path.join(prefix, pair_name)
+            test_dir = os.path.join(prefix, "tests", pair_name)
             bench.util.mkdir_p(test_dir)
             script = os.path.join(test_dir, '{0}.job'.format(pair_name))
             with open(script, 'w') as fp:

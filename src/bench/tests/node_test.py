@@ -7,6 +7,8 @@ import logging
 import os
 import pkg_resources
 import re
+import collections
+import hostlist
 
 
 class NodeTest(bench.framework.TestFramework):
@@ -32,8 +34,13 @@ class NodeTest(bench.framework.TestFramework):
 
         if topology:
             self.logger.info('node: ignoring topology (not used)')
-        for node in nodes:
-            test_dir = os.path.join(prefix, node)
+
+        node_set = collections.defaultdict(set)
+        node_set = set(hostlist.expand_hostlist(bc.config['node']['nodes']))
+        node_set &= set(nodes) #Don't include error/excluded nodes
+
+        for node in node_set:
+            test_dir = os.path.join(prefix, "tests", node)
             bench.util.mkdir_p(test_dir)
 
             script_file = os.path.join(test_dir, '{0}.job'.format(node))
