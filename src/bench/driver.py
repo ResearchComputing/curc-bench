@@ -4,6 +4,8 @@ import bench.create
 import bench.framework
 import bench.framework_add
 import bench.tests.node_test
+import bench.tests.bandwidth_test
+import bench.tests.alltoall_tests
 import bench.log
 import bench.process
 import bench.reserve
@@ -39,8 +41,6 @@ def parser(*args, **kwargs):
 
     add2 = subparsers.add_parser('add2', help='add tests for submission')
     parser_add_test_arguments(add2)
-    add2.add_argument('-t', '--topology-file',
-                     help='slurm topology.conf')
     parser_add_filter_arguments(add2)
 
     submit = subparsers.add_parser('submit', help='submit jobs for scheduling')
@@ -87,16 +87,19 @@ def parser(*args, **kwargs):
 
 
 def parser_add_test_arguments (parser):
-    parser.add_argument('-r', '--alltoall-rack-tests', action='store_true',
-                        help='test osu_alltoall on a rack of nodes')
-    parser.add_argument('-s', '--alltoall-switch-tests', action='store_true',
-                        help='test osu_alltoall on nodes connected to a switch')
-    parser.add_argument('-p', '--alltoall-pair-tests', action='store_true',
-                        help='test osu_alltoall on node pairs')
-    parser.add_argument('-n', '--node-tests', action='store_true',
-                        help='test linpack and stream on individual nodes')
-    parser.add_argument('-b', '--bandwidth-tests', action='store_true',
-                        help='test osu_bibw on node pairs')
+    parser.add_argument('--test', required=True, action='store', dest='test',
+                            choices=['alltoall-rack',
+                                     'alltoall-switch',
+                                     'alltoall-pair',
+                                     'bandwidth',
+                                     'node'],
+                            help='''alltoall-rack = test osu_alltoall on a rack of nodes,
+                                    alltoall-switch = test osu_alltoall on nodes connected to a switch
+                                    alltoall-pair = test osu_alltoall on node pairs
+                                    bandwidth = test osu_bibw on node pairs
+                                    node = test linpack and stream on individual nodes''')
+
+
 
 
 def parser_add_filter_arguments (parser):
@@ -187,6 +190,14 @@ def driver(argv=None):
 
     bench.log.configure_file_logging(directory)
 
+    #Dictionary of possible commands
+    commandDictionary = {}
+    commandDictionary['node'] = bench.tests.node_test.NodeTest("node")
+    commandDictionary['bandwidth'] = bench.tests.bandwidth_test.BandwidthTest("bandwidth")
+    commandDictionary['alltoall-pair'] = bench.tests.alltoall_tests.AllToAllTest("alltoall-pair")
+    commandDictionary['alltoall-switch'] = bench.tests.alltoall_tests.AllToAllTest("alltoall-switch")
+    commandDictionary['alltoall-rack'] = bench.tests.alltoall_tests.AllToAllTest("alltoall-rack")
+
     if args.command == 'create':
         bench.create.execute(
             directory,
@@ -219,16 +230,9 @@ def driver(argv=None):
         )
 
     elif args.command == 'add2':
-        # Todo: dynamically instantiate class from command line input
-        # (possibly combined with input from config file)
-        tc = bench.tests.node_test.NodeTest()
-        tc.Add.execute(
-            directory, args.topology_file or os.environ.get('BENCH_TOPOLOGY'),
-            alltoall_rack_tests = args.alltoall_rack_tests,
-            alltoall_switch_tests = args.alltoall_switch_tests,
-            alltoall_pair_tests = args.alltoall_pair_tests,
-            bandwidth_tests = args.bandwidth_tests,
-            node_tests = args.node_tests,
+        currentTest = commandDictionary[args.test]
+        currentTest.Add.execute(
+            directory,
             include_nodes = args.include_nodes,
             exclude_nodes = args.exclude_nodes,
             include_reservations = args.include_reservations,

@@ -11,7 +11,7 @@ class Add(object):
         self.include_states = None
         self.exclude_states = None
 
-    def execute(self, prefix, topology_file,
+    def execute(self, prefix, topology_file=None,
               alltoall_rack_tests=None,
               alltoall_switch_tests=None,
               alltoall_pair_tests=None,
