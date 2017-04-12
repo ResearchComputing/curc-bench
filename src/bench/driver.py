@@ -1,5 +1,4 @@
 import argparse
-import bench.add
 import bench.create
 import bench.framework
 import bench.framework_add
@@ -35,13 +34,7 @@ def parser(*args, **kwargs):
 
     add = subparsers.add_parser('add', help='add tests for submission')
     parser_add_test_arguments(add)
-    add.add_argument('-t', '--topology-file',
-                     help='slurm topology.conf')
     parser_add_filter_arguments(add)
-
-    add2 = subparsers.add_parser('add2', help='add tests for submission')
-    parser_add_test_arguments(add2)
-    parser_add_filter_arguments(add2)
 
     submit = subparsers.add_parser('submit', help='submit jobs for scheduling')
     parser_add_test_arguments(submit)
@@ -212,24 +205,6 @@ def driver(argv=None):
         )
 
     elif args.command == 'add':
-        bench.add.execute(
-            directory, args.topology_file or os.environ.get('BENCH_TOPOLOGY'),
-            alltoall_rack_tests = args.alltoall_rack_tests,
-            alltoall_switch_tests = args.alltoall_switch_tests,
-            alltoall_pair_tests = args.alltoall_pair_tests,
-            bandwidth_tests = args.bandwidth_tests,
-            node_tests = args.node_tests,
-            include_nodes = args.include_nodes,
-            exclude_nodes = args.exclude_nodes,
-            include_reservations = args.include_reservations,
-            exclude_reservations = args.exclude_reservations,
-            include_states = args.include_states,
-            exclude_states = args.exclude_states,
-            include_files = args.include_files,
-            exclude_files = args.exclude_files,
-        )
-
-    elif args.command == 'add2':
         currentTest = commandDictionary[args.test]
         currentTest.Add.execute(
             directory,
