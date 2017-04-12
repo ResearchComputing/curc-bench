@@ -2,13 +2,13 @@ import argparse
 import bench.create
 import bench.framework
 import bench.framework_add
+import bench.framework_submit
 import bench.tests.node_test
 import bench.tests.bandwidth_test
 import bench.tests.alltoall_tests
 import bench.log
 import bench.process
 import bench.reserve
-import bench.submit
 import bench.update_nodes
 import datetime
 import glob
@@ -219,13 +219,9 @@ def driver(argv=None):
         )
 
     elif args.command == 'submit':
-        bench.submit.execute(
+        currentTest = commandDictionary[args.test]
+        currentTest.Submit.execute(
             directory,
-            alltoall_rack_tests = args.alltoall_rack_tests,
-            alltoall_switch_tests = args.alltoall_switch_tests,
-            alltoall_pair_tests = args.alltoall_pair_tests,
-            node_tests = args.node_tests,
-            bandwidth_tests = args.bandwidth_tests,
             pause = args.pause,
             reservation = args.reservation or os.environ.get('BENCH_RESERVATION'),
             qos = args.qos or os.environ.get('BENCH_QOS'),
