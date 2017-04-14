@@ -17,6 +17,7 @@ class NodeTest(bench.framework.TestFramework):
         bench.framework.TestFramework.__init__(self, test_name)
 
         self.Add = bench.framework_add.Add(self.logger, self.generate, test_name)
+        self.Submit = bench.framework_submit.Submit(self.logger, test_name)
 
         self.TEMPLATE = jinja2.Template(
             pkg_resources.resource_string(__name__, 'node.job'),

@@ -1,4 +1,4 @@
-import bench.tests.node
+import bench
 import os
 
 class Add(object):
