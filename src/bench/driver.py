@@ -3,6 +3,7 @@ import bench.create
 import bench.framework
 import bench.framework_add
 import bench.framework_submit
+import bench.framework_process
 import bench.tests.node_test
 import bench.tests.bandwidth_test
 import bench.tests.alltoall_tests
@@ -232,6 +233,12 @@ def driver(argv=None):
         )
 
     elif args.command == 'process':
+        currentTest = commandDictionary[args.test]
+        currentTest.Process.execute(
+            directory,
+        )
+
+    elif args.command == 'process2':
         bench.process.execute(
             directory,
             alltoall_rack_tests = args.alltoall_rack_tests,
