@@ -91,7 +91,7 @@ class Process(object):
             self.logger.warn('{0}: error (unable to parse {1})'.format(test, path))
             self.logger.debug(ex, exc_info=True)
             return
-        passed = self.evaluate_data(data, subtest)
+        passed = self.evaluate_data(data, subtest, test_nodes)
 
         if passed:
             self.logger.info('{0}: pass'.format(test))

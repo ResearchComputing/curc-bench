@@ -115,7 +115,7 @@ class NodeTest(bench.framework.TestFramework):
             return data
 
 
-    def evaluate_data(self, data, subtest):
+    def evaluate_data(self, data, subtest, *args):
         if subtest == 'stream':
             expected_copy = 23850.0
             expected_scale = 36000.0
