@@ -4,6 +4,7 @@ import bench.framework
 import bench.framework_add
 import bench.framework_submit
 import bench.framework_process
+import bench.framework_reserve
 import bench.tests.node_test
 import bench.tests.bandwidth_test
 import bench.tests.alltoall_tests
@@ -249,6 +250,12 @@ def driver(argv=None):
         )
 
     elif args.command == 'reserve':
+        currentTest = commandDictionary[args.test]
+        currentTest.Reserve.execute(
+            directory,
+        )
+
+    elif args.command == 'reserve2':
         bench.reserve.execute(
             directory,
             alltoall_rack_tests = args.alltoall_rack_tests,
