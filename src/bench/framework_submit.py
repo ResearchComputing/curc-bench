@@ -17,7 +17,7 @@ class Submit(object):
 
     def execute(self, directory, pause=None, **kwargs):
         prefix = os.path.join(directory, self.test_name)
-        self.submit(prefix=prefix)
+        self.submit(prefix=prefix, **kwargs)
         self.logger.info('submitted {0} jobs'.format(self.test_name))
 
     def submit(self, prefix, index=0, pause=None,
