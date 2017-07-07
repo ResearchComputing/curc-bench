@@ -20,6 +20,7 @@ class AllToAllTest(bench.framework.TestFramework):
 
         self.Submit = bench.framework_submit.Submit(self.logger, test_name)
         self.Process = bench.framework_process.Process(self.logger, self.parse_data, self.evaluate_data, test_name, self.subtests)
+        self.Reserve = bench.framework_reserve.Reserve(self.logger, test_name)
 
         self.TEMPLATE = jinja2.Template(
             pkg_resources.resource_string(__name__, 'alltoall.job'),
