@@ -9,8 +9,6 @@ import bench.tests.node_test
 import bench.tests.bandwidth_test
 import bench.tests.alltoall_tests
 import bench.log
-import bench.process
-import bench.reserve
 import bench.update_nodes
 import datetime
 import glob
@@ -239,34 +237,10 @@ def driver(argv=None):
             directory,
         )
 
-    elif args.command == 'process2':
-        bench.process.execute(
-            directory,
-            alltoall_rack_tests = args.alltoall_rack_tests,
-            alltoall_switch_tests = args.alltoall_switch_tests,
-            alltoall_pair_tests = args.alltoall_pair_tests,
-            node_tests = args.node_tests,
-            bandwidth_tests = args.bandwidth_tests,
-        )
-
     elif args.command == 'reserve':
         currentTest = commandDictionary[args.test]
         currentTest.Reserve.execute(
             directory,
-        )
-
-    elif args.command == 'reserve2':
-        bench.reserve.execute(
-            directory,
-            alltoall_rack_tests = args.alltoall_rack_tests,
-            alltoall_switch_tests = args.alltoall_switch_tests,
-            alltoall_pair_tests = args.alltoall_pair_tests,
-            node_tests = args.node_tests,
-            bandwidth_tests = args.bandwidth_tests,
-            fail_nodes = args.fail_nodes,
-            error_nodes = args.error_nodes,
-            reservation_name = args.reservation_name,
-            account = args.account or os.environ.get('BENCH_ACCOUNT'),
         )
 
     elif args.command == 'update-nodes':
