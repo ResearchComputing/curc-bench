@@ -1,14 +1,14 @@
-import bench.driver
+import bench.cli
 import argparse
 import mock
 import unittest
 from bench.tests.node_test import NodeTest
 from bench.framework_submit import Submit
 
-class TestDriver(unittest.TestCase):
+class TestCli(unittest.TestCase):
 
     def setUp(self):
-        self.parser = bench.driver.parser()
+        self.parser = bench.cli.parser()
 
     @mock.patch('bench.log.configure_stderr_logging',
         return_value=None)
@@ -21,7 +21,7 @@ class TestDriver(unittest.TestCase):
         self.assertEqual(parsed.verbose, True)
         self.assertEqual(parsed.directory, 'fake_dir')
 
-    @mock.patch('bench.driver.get_directory',
+    @mock.patch('bench.cli.get_directory',
         return_value='fake_dir')
     @mock.patch('bench.log.configure_stderr_logging',
         return_value=None)
@@ -34,7 +34,7 @@ class TestDriver(unittest.TestCase):
     def test_call_bench_submit_execute_1(self, *arg):
         '''Test that bench.tests.node_test.NodeTest Submit.execute is being called correctly WITH
         a specified reservation'''
-        bench.driver.driver(argv=['bench', 'submit', '--test', 'node',
+        bench.cli.main(argv=['bench', 'submit', '--test', 'node',
             '--reservation', 'fake_reservation'])
         print("Submit args", Submit.execute.call_args)
         assert Submit.execute.called

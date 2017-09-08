@@ -43,7 +43,7 @@ def main ():
         ],
         entry_points={
             'console_scripts': [
-                'bench = bench.driver:driver',
+                'bench = bench.cli:main',
             ],
         },
         package_data={

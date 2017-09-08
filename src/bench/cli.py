@@ -1,10 +1,5 @@
 import argparse
 import bench.create
-import bench.framework
-import bench.framework_add
-import bench.framework_submit
-import bench.framework_process
-import bench.framework_reserve
 import bench.tests.node_test
 import bench.tests.bandwidth_test
 import bench.tests.alltoall_tests
@@ -148,7 +143,7 @@ def get_directory(prefix, new=False):
         return directory
 
 
-def driver(argv=None):
+def main(argv=None):
     if argv is None:
         argv = sys.argv
 
