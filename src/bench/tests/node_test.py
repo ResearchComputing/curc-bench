@@ -118,10 +118,10 @@ class NodeTest(bench.framework.TestFramework):
 
     def evaluate_data(self, data, subtest, *args):
         if subtest == 'stream':
-            expected_copy = 23850.0
-            expected_scale = 36000.0
-            expected_add = 37350.0
-            expected_triad = 37800.0
+            expected_copy = 92000.0
+            expected_scale = 93000.0
+            expected_add = 95000.0
+            expected_triad = 96000.0
             copy, scale, add, triad = data
 
             if copy < expected_copy:
@@ -145,10 +145,10 @@ class NodeTest(bench.framework.TestFramework):
 
         elif subtest == 'linpack':
             expected_averages = {
-                (5000, 5000, 4): 94.5,
-                (10000, 10000, 4): 102.6,
-                (20000, 20000, 4): 108.9,
-                (25000, 25000, 4): 109.8,
+                (5000, 5000, 4): 450.0,
+                (10000, 10000, 4): 610.0,
+                (20000, 20000, 4): 700.0,
+                (25000, 25000, 4): 670.0,
             }
 
             for key, expected_average in expected_averages.iteritems():
