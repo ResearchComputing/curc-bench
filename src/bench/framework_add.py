@@ -1,5 +1,7 @@
 import bench
+import bench.configuration as bc
 import os
+import hostlist
 
 class Add(object):
 
@@ -19,8 +21,8 @@ class Add(object):
         if not (include_states or exclude_states):
           exclude_states = ['down', 'draining', 'drained']
 
-        global_node_list = set(bench.util.read_node_list(os.path.join(prefix, 'node_list')))
-        node_list = bench.util.filter_node_list(global_node_list,
+        test_node_list = set(hostlist.expand_hostlist(bc.config[self.test_name]["nodes"]))
+        node_list = bench.util.filter_node_list(test_node_list,
                                               include_states=include_states,
                                               exclude_states=exclude_states,
                                               **kwargs)
