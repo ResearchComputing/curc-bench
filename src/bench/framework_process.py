@@ -36,6 +36,7 @@ class Process(object):
             error_nodes,
         )
 
+
     def process_tests (self, prefix):
         prefix_ = os.path.join(prefix, 'tests')
         print("Prefix_, prefix = ", prefix_, prefix)
@@ -48,7 +49,6 @@ class Process(object):
         pass_nodes = set()
 
         for test in os.listdir(prefix_):
-            # print("prefix, test = ", prefix, test)
             test_dir = os.path.join(prefix_, test)
             test_nodes = set(bench.util.read_node_list(os.path.join(test_dir, 'node_list')))
 
@@ -95,8 +95,10 @@ class Process(object):
 
         if passed:
             self.logger.info('{0}: pass'.format(test))
-            pass_nodes |= test_nodes
+            if not test in fail_nodes:
+                pass_nodes |= test_nodes
         else:
+            pass_nodes.discard(test)
             fail_nodes |= test_nodes
             self.logger.info('{test}: fail {subtest}'.format(test=test,
                                                             subtest=subtest))
