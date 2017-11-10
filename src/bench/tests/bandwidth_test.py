@@ -60,10 +60,10 @@ class BandwidthTest(bench.framework.TestFramework):
 
     def evaluate_data(self, data, subtest, *args):
         expected_bandwidths = {
-            4194304: 12000.0,
-            1048576: 12000.0,
-            262144: 12000.0,
-            65536: 12000.0,
+            4194304: 10000.0,
+            1048576: 10000.0,
+            262144: 10000.0,
+            65536: 6000.0,
         }
 
         for size, bandwidth in expected_bandwidths.iteritems():
