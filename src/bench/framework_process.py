@@ -36,6 +36,20 @@ class Process(object):
             error_nodes,
         )
 
+    def remove_previous_results(self, prefix):
+        '''Remove old fail and error results files so that rerun tests
+        with results that are now passing will be placed into the
+        pass_nodes file'''
+
+        try:
+            os.remove(os.path.join(prefix, "fail_nodes"))
+        except OSError:
+            pass
+        try:
+            os.remove(os.path.join(prefix, "error_nodes"))
+        except OSError:
+            pass
+
 
     def process_tests (self, prefix):
         prefix_ = os.path.join(prefix, 'tests')
@@ -43,6 +57,8 @@ class Process(object):
         if not os.path.exists(prefix_):
             self.logger.warn('{0}: not found'.format(prefix))
             return
+
+        self.remove_previous_results(prefix)
 
         node_list = bench.util.read_node_list(os.path.join(prefix, 'node_list'))
         fail_nodes = set()
