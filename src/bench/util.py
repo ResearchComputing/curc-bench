@@ -126,12 +126,19 @@ def get_test_nodes(nodes, test_type):
     if test_type == 'Rack' or test_type == 'Switch':
         node_set = collections.defaultdict(set)
         for hardware_name in bc.config[test_type]:
+            # 'nodes' contains all possible nodes for a given test
+            if hardware_name == 'nodes':
+                continue
+            print("HW=", hardware_name)
             node_set[hardware_name] = set(hostlist.expand_hostlist(bc.config[test_type][hardware_name]))
             node_set[hardware_name] &= set(nodes)  #Don't include error/excluded nodes
         return node_set
     elif test_type == 'Pair':
         node_set = collections.defaultdict(set)
         for switch_name, switch_nodes in bc.config['Switch'].iteritems():
+            # 'nodes' contains all possible nodes for a given test
+            if switch_name == "nodes":
+                continue
             switch_nodes = set(hostlist.expand_hostlist(switch_nodes))
             switch_nodes &= set(nodes)  #Don't include error/excluded nodes
             if len(switch_nodes) < 2:
