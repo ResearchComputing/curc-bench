@@ -125,6 +125,8 @@ class AllToAllTest(bench.framework.TestFramework):
     def evaluate_data (self, data, subtest, test_nodes):
         data = list(data)
         num_nodes = len(test_nodes)
+        if len(data) <= 0:
+            return False
         average_latency = 1.0 * sum(datum[1] for datum in data) / len(data)
         if num_nodes not in self.expected_latencies:
             self.logger.debug('alltoall: {0}: {1}: average {2}, not defined'.format(
