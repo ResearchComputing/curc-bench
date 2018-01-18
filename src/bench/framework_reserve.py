@@ -51,15 +51,15 @@ class Reserve(object):
                 nodes=','.join(sorted(reserve_nodes_))
                 print("RESERVATION NAME ", self.reservation_name)
                 print("NODES = ", nodes)
-                # bench.slurm.scontrol(
-                #     'create',
-                #     reservation=self.reservation_name,
-                #     accounts = account,
-                #     flags='overlap',
-                #     starttime='now',
-                #     duration='UNLIMITED',
-                #     nodes=','.join(sorted(reserve_nodes_)),
-                # )
+                bench.slurm.scontrol(
+                    'create',
+                    reservation=self.reservation_name,
+                    accounts = account,
+                    flags='overlap',
+                    starttime='now',
+                    duration='UNLIMITED',
+                    nodes=','.join(sorted(reserve_nodes_)),
+                )
             except bench.exc.SlurmError as ex:
                 self.logger.error(ex)
                 self.logger.debug(ex, exc_info=True)
