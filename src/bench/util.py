@@ -5,6 +5,7 @@ import pyslurm
 import bench.configuration as bc
 import collections
 import random
+import bench
 
 def mkdir_p (path):
     try:
@@ -91,8 +92,14 @@ def filter_node_list (nodes,
 
 
 def get_reserved_nodes(reservation_name):
-    reservation = pyslurm.reservation().get()[reservation_name]
-    return set(hostlist.expand_hostlist(reservation['node_list']))
+    try:
+        reservation = pyslurm.reservation().get()[reservation_name]
+        return set(hostlist.expand_hostlist(reservation['node_list']))
+    except KeyError as ex:
+        message = '\nSlurm reservation \'{res}\' doesn\'t exist.\n'.format(res=reservation_name)
+        print(message)
+        return set()
+    return set()
 
 
 def get_nodes(include_states=None, exclude_states=None):
