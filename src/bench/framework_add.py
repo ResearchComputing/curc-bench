@@ -22,6 +22,26 @@ class Add(object):
           exclude_states = ['down', 'draining', 'drained']
 
         test_node_list = set(hostlist.expand_hostlist(bc.config[self.test_name]["nodes"]))
+
+        #Exclude curc-bench made reservations (not including current test)
+        curcb_res = []
+        curcb_res_nodes = set()
+        all_res_data = bench.slurm.scontrol('show', 'res')
+        all_res_data = all_res_data.split('\n\n')
+
+        for res in all_res_data:
+            if 'test_name' in res:
+                continue
+            if 'bench-' in res :
+                curcb_res.append(res.split(' ')[0].split('=')[1]) # Add reservation name to list
+
+        for res in curcb_res:
+            curcb_res_nodes |= bench.util.get_reserved_nodes(res)
+
+        test_node_list -= curcb_res_nodes
+
+        # Manual, command line filtering
+        # Includes/excludes here override curc-bench reservation excludes
         node_list = bench.util.filter_node_list(test_node_list,
                                               include_states=include_states,
                                               exclude_states=exclude_states,
