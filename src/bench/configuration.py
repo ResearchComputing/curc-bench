@@ -10,6 +10,9 @@ config['node']['linpack'] = "/curc/sw/intel/16.0.3/compilers_and_libraries_2016.
 config['node']['stream'] = "/projects/rcops/CurcBenchBenchmarks/stream/stream.o"
 config['node']['nodes'] = "shas[01-06][01-60],shas07[01-16],shas06[60-64],shas08[01-60],shas09[01-28]"
 
+config['ior'] = {}
+config['ior']['ior'] = "/projects/rcops/holtat/src/IOR/src/C/IOR"
+
 # Bandwidth tests (osu_bw)
 config['bandwidth'] = {}
 config['bandwidth']['osu'] = "/projects/rcops/CurcBenchBenchmarks/osu5.3.2/libexec/osu-micro-benchmarks/mpi/pt2pt/osu_bw"
