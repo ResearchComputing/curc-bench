@@ -8,7 +8,7 @@ import os
 
 class Process(object):
 
-    def __init__(self, logger, parse_data, evaluate_data, test_name, subtests):
+    def __init__(self, logger, parse_data, evaluate_data, test_name, subtests=None):
         self.logger = logger
         self.test_name = test_name
         self.parse_data = parse_data
