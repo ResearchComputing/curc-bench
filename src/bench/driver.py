@@ -8,6 +8,7 @@ import bench.framework_reserve
 import bench.tests.node_test
 import bench.tests.bandwidth_test
 import bench.tests.alltoall_tests
+import bench.tests.ior
 import bench.log
 import bench.update_nodes
 import datetime
@@ -85,12 +86,14 @@ def parser_add_test_arguments (parser):
                                      'alltoall-switch',
                                      'alltoall-pair',
                                      'bandwidth',
-                                     'node'],
+                                     'node',
+                                     'ior'],
                             help='''alltoall-rack = test osu_alltoall on a rack of nodes,
                                     alltoall-switch = test osu_alltoall on nodes connected to a switch
                                     alltoall-pair = test osu_alltoall on node pairs
                                     bandwidth = test osu_bibw on node pairs
-                                    node = test linpack and stream on individual nodes''')
+                                    node = test linpack and stream on individual nodes
+                                    ior = test scratch filesystem''')
 
 
 
@@ -190,6 +193,7 @@ def driver(argv=None):
     commandDictionary['alltoall-pair'] = bench.tests.alltoall_tests.AllToAllTest("alltoall-pair")
     commandDictionary['alltoall-switch'] = bench.tests.alltoall_tests.AllToAllTest("alltoall-switch")
     commandDictionary['alltoall-rack'] = bench.tests.alltoall_tests.AllToAllTest("alltoall-rack")
+    commandDictionary['ior'] = bench.tests.ior.IorTest("ior")
 
     if args.command == 'create':
         bench.create.execute(
