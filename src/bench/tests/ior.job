@@ -32,8 +32,8 @@ XFERS="1048576 262144 32768 4096 1024"
 XFERS="262144"
 for xfer in `echo $XFERS`
 do
-       let "n=8"
-until [ "$n" -gt 8 ]
+       let "n=24"
+until [ "$n" -gt 24 ]
 do
 
     let "m=$n/4"
