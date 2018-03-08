@@ -53,7 +53,6 @@ class Process(object):
 
     def process_tests (self, prefix):
         prefix_ = os.path.join(prefix, 'tests')
-        print("Prefix_, prefix = ", prefix_, prefix)
         if not os.path.exists(prefix_):
             self.logger.warn('{0}: not found'.format(prefix))
             return

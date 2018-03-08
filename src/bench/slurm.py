@@ -19,7 +19,11 @@ def sbatch (script, workdir=None, reservation=None, qos=None, account=None, outp
 
 def scontrol (subcommand, sub_args=None, reservation=None, accounts=None, flags=None,
               starttime=None, duration=None, nodes=None):
-    command = ['scontrol', subcommand, sub_args]
+    command = []
+    if sub_args is not None:
+        command = ['scontrol', subcommand, sub_args]
+    else:
+        command = ['scontrol', subcommand]
     if reservation is not None:
         command.append('reservation={0}'.format(reservation))
     if accounts is not None:
