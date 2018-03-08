@@ -10,17 +10,18 @@ class Add(object):
         self.add_tests = generate
         self.test_name = test_name
         self.prefix = None
-        self.include_states = None
-        self.exclude_states = None
 
     def execute(self, prefix,
               include_states=None,
               exclude_states=None,
+              nodelist=None,
               **kwargs
     ):
+        '''nodelist=string of nodes in hostlist format, only nodes in nodelist can be tested
+                error nodes and other reserved nodes will still be filtered out'''
+
         if not (include_states or exclude_states):
           exclude_states = ['down', 'draining', 'drained']
-
 
         node_list = set()
 
@@ -35,14 +36,14 @@ class Add(object):
             all_res_data = all_res_data.split('\n\n')
 
             for res in all_res_data:
-                if 'test_name' in res:
+                if self.test_name in res:
                     continue
-                if 'bench-' in res :
+                elif 'bench-' in res :
                     curcb_res.append(res.split(' ')[0].split('=')[1]) # Add reservation name to list
 
             for res in curcb_res:
                 curcb_res_nodes |= bench.util.get_reserved_nodes(res)
-
+    
             test_node_list -= curcb_res_nodes
 
             # Manual, command line filtering
@@ -50,7 +51,9 @@ class Add(object):
             node_list = bench.util.filter_node_list(test_node_list,
                                                   include_states=include_states,
                                                   exclude_states=exclude_states,
+                                                  nodelist=hostlist.expand_hostlist(nodelist),
                                                   **kwargs)
+
         except KeyError:
             pass                          
 
