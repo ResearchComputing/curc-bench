@@ -212,9 +212,16 @@ def driver(argv=None):
 
     elif args.command == 'add':
         currentTest = commandDictionary[args.test]
+        
+        if args.nodelist:
+            args.nodelist = args.nodelist[0]
+        else:
+            args.nodelist = None
+
+        
         currentTest.Add.execute(
             directory,
-            nodelist = args.nodelist[0],
+            nodelist = args.nodelist,
             include_nodes = args.include_nodes,
             exclude_nodes = args.exclude_nodes,
             include_reservations = args.include_reservations,
