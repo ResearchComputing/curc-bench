@@ -41,7 +41,7 @@ def write_node_list (path, nodes):
             fp.write('{0}\n'.format(node))
 
 
-def filter_node_list (nodes,
+def filter_node_list(nodes,
                       nodelist=None,
                       include_nodes=None,
                       exclude_nodes=None,
