@@ -1,4 +1,3 @@
-import bench.framework_add
 import logging
 
 class TestFramework(object):
