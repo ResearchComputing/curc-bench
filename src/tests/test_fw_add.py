@@ -38,6 +38,22 @@ NODELIST_P = re.compile(r'(--nodelist|-w) *(|=) *([^ =]+) *\n')
 NODES = set('tnode01{0:02}'.format(i) for i in xrange(1, 81))
 
 
+
+@mock.patch.dict(bench.configuration.config, {'node': {'nodes' : 'tnode01[01-03]',
+                                                'linpack' : '/fake/linpack.so',
+                                                'stream' : '/fake/stream.so'}})
+@mock.patch.dict(bench.configuration.config, {'bandwidth': {'nodes' : 'tnode01[01-08,11-18]',
+                                                'osu' : '/fake/osu_bw.so'}})
+@mock.patch.dict(bench.configuration.config, {'alltoall-pair': {'nodes' : 'tnode01[01-08,11-18]'}})
+@mock.patch.dict(bench.configuration.config, {'alltoall' : {'osu' : '/fake/osu_alltoall.so'}})
+@mock.patch.dict(bench.configuration.config, {'Switch': {'switch1' : 'tnode01[01-04]',
+                                                'switch2' : 'tnode01[05-08]',
+                                                'switch3' : 'tnode01[11-14]',
+                                                'switch4' : 'tnode01[15-18]'}})
+@mock.patch.dict(bench.configuration.config, {'Rack': {'rack1' : 'tnode01[01-08]',
+                                                'rack2' : 'tnode01[11-18]'}})
+@mock.patch('bench.create.bench.util.pyslurm.node',
+            return_value=fake_node(dict((node, {'state': 'fake_state', 'name' : node}) for node in NODES)))
 class TestAdd(unittest.TestCase):
 
     def assertIsFile (self, path):
@@ -54,13 +70,7 @@ class TestAdd(unittest.TestCase):
         shutil.rmtree(self.directory)
 
 
-    @mock.patch.dict(bench.configuration.config, {'node': {'nodes' : 'tnode01[01-03]',
-                                                    'linpack' : '/fake/linpack.so',
-                                                    'stream' : '/fake/stream.so'}})
-    @mock.patch('bench.create.bench.util.pyslurm.node',
-                return_value=fake_node(dict((node, {'state': 'fake_state', 'name' : node}) for node in NODES)))
     def test_node_tests (self, _):
-
         node_test = bench.tests.node_test.NodeTest("node")
         node_test.Add.execute(self.directory)
 
@@ -75,21 +85,14 @@ class TestAdd(unittest.TestCase):
         self.assertIn('#!/bin/bash', script)
 
 
-    @mock.patch.dict(bench.configuration.config, {'bandwidth': {'nodes' : 'tnode01[01-08]',
-                                                    'osu' : '/fake/osu_bw.so'}})
-    @mock.patch.dict(bench.configuration.config, {'Switch': {'switch1' : 'tnode01[01-04]',
-                                                    'switch2' : 'tnode01[05-08]'}})
-    @mock.patch('bench.create.bench.util.pyslurm.node',
-                return_value=fake_node(dict((node, {'state': 'fake_state', 'name' : node}) for node in NODES)))
     def test_bw_tests (self, _):
-
         bw_test = bench.tests.bandwidth_test.BandwidthTest("bandwidth")
         bw_test.Add.execute(self.directory)
         #Test that correct nodelist is written out for node test
         bw_nodes = ''
-        for ii in range(1,9):
-            bw_nodes += 'tnode01{0:02}\n'.format(ii)
-        #print("BW NODES = ", bw_nodes)
+        for jj in range(0,2):
+            for ii in range(1,9):
+                bw_nodes += 'tnode01{jj}{ii}\n'.format(ii=ii, jj=jj)
         self.assertEqual(open(os.path.join(self.directory, 'bandwidth', 'node_list')).read(), bw_nodes)
 
         #Test for test executables and directives in job script
@@ -98,6 +101,45 @@ class TestAdd(unittest.TestCase):
         self.assertIn('/fake/osu_bw.so', script)
         self.assertIn('#SBATCH --nodelist=tnode0101,tnode0102', script)
         self.assertIn('#!/bin/bash', script)
+
+
+    def test_pair_tests (self, _):
+        pair_test = bench.tests.alltoall_tests.AllToAllTest("alltoall-pair")
+        pair_test.Add.execute(self.directory)
+        #Test that correct nodelist is written out for node test
+        a2a_nodes = ''
+        for jj in range(0,2):
+            for ii in range(1,9):
+                a2a_nodes += 'tnode01{jj}{ii}\n'.format(ii=ii, jj=jj)
+        self.assertEqual(open(os.path.join(self.directory, 'alltoall-pair', 'node_list')).read(), a2a_nodes)
+
+        #Test for test executables and directives in job script
+        script = open(os.path.join(self.directory, 'alltoall-pair', 'tests',
+                            'tnode0111,tnode0112', 'tnode0111,tnode0112.job')).read()
+        self.assertIn('/fake/osu_alltoall.so', script)
+        self.assertIn('#SBATCH --nodelist=tnode0111,tnode0112', script)
+        self.assertIn('#!/bin/bash', script)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     #
     # @mock.patch('bench.create.bench.util.pyslurm.node',
