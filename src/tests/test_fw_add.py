@@ -37,15 +37,15 @@ def fake_reservation (reservation_dict):
 NODELIST_P = re.compile(r'(--nodelist|-w) *(|=) *([^ =]+) *\n')
 NODES = set('tnode01{0:02}'.format(i) for i in xrange(1, 81))
 
-
-
 @mock.patch.dict(bench.configuration.config, {'node': {'nodes' : 'tnode01[01-03]',
                                                 'linpack' : '/fake/linpack.so',
                                                 'stream' : '/fake/stream.so'}})
 @mock.patch.dict(bench.configuration.config, {'bandwidth': {'nodes' : 'tnode01[01-08,11-18]',
                                                 'osu' : '/fake/osu_bw.so'}})
-@mock.patch.dict(bench.configuration.config, {'alltoall-pair': {'nodes' : 'tnode01[01-08,11-18]'}})
 @mock.patch.dict(bench.configuration.config, {'alltoall' : {'osu' : '/fake/osu_alltoall.so'}})
+@mock.patch.dict(bench.configuration.config, {'alltoall-pair': {'nodes' : 'tnode01[01-08,11-18]'}})
+@mock.patch.dict(bench.configuration.config, {'alltoall-switch': {'nodes' : 'tnode01[01-08,11-18]'}})
+@mock.patch.dict(bench.configuration.config, {'alltoall-rack': {'nodes' : 'tnode01[01-08,11-18]'}})
 @mock.patch.dict(bench.configuration.config, {'Switch': {'switch1' : 'tnode01[01-04]',
                                                 'switch2' : 'tnode01[05-08]',
                                                 'switch3' : 'tnode01[11-14]',
@@ -104,21 +104,39 @@ class TestAdd(unittest.TestCase):
 
 
     def test_pair_tests (self, _):
-        pair_test = bench.tests.alltoall_tests.AllToAllTest("alltoall-pair")
-        pair_test.Add.execute(self.directory)
-        #Test that correct nodelist is written out for node test
         a2a_nodes = ''
+        a2a_rack2 = []
+        for ii in range(1,9):
+            a2a_rack2.append('tnode011{ii}'.format(ii=ii))
+        a2a_rack = ','.join(a2a_rack2)
+
         for jj in range(0,2):
             for ii in range(1,9):
                 a2a_nodes += 'tnode01{jj}{ii}\n'.format(ii=ii, jj=jj)
-        self.assertEqual(open(os.path.join(self.directory, 'alltoall-pair', 'node_list')).read(), a2a_nodes)
 
-        #Test for test executables and directives in job script
-        script = open(os.path.join(self.directory, 'alltoall-pair', 'tests',
-                            'tnode0111,tnode0112', 'tnode0111,tnode0112.job')).read()
-        self.assertIn('/fake/osu_alltoall.so', script)
-        self.assertIn('#SBATCH --nodelist=tnode0111,tnode0112', script)
-        self.assertIn('#!/bin/bash', script)
+        test_scripts = {}
+        test_scripts['pair'] = os.path.join('tnode0111,tnode0112', 'tnode0111,tnode0112.job')
+        test_scripts['switch'] = os.path.join('switch1', 'switch1.job')
+        test_scripts['rack'] = os.path.join('rack2', 'rack2.job')
+
+        test_nodelists = {}
+        test_nodelists['pair'] = '#SBATCH --nodelist=tnode0111,tnode0112'
+        test_nodelists['switch'] = '#SBATCH --nodelist=tnode0101,tnode0102,tnode0103,tnode0104'
+        test_nodelists['rack'] = a2a_rack
+
+        for testname in ['pair', 'switch', 'rack']:
+            test = bench.tests.alltoall_tests.AllToAllTest("alltoall-{test}".format(test=testname))
+            test.Add.execute(self.directory)
+
+            #Test that correct nodelist is written out for node test
+            self.assertEqual(open(os.path.join(self.directory, "alltoall-{test}".format(test=testname), 'node_list')).read(), a2a_nodes)
+
+            #Test for test executables and directives in job script
+            script = open(os.path.join(self.directory, "alltoall-{test}".format(test=testname),
+                                'tests', test_scripts[testname])).read()
+            self.assertIn('/fake/osu_alltoall.so', script)
+            self.assertIn(test_nodelists[testname], script)
+            self.assertIn('#!/bin/bash', script)
 
 
 
