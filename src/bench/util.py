@@ -58,13 +58,11 @@ def filter_node_list(nodes,
                error/reserved/other filtered nodes won't be tested
        '''
     nodes = set(nodes)
-
     if include_states or exclude_states:
         nodes &= set(get_nodes(
             include_states=include_states,
             exclude_states=exclude_states,
         ))
-
     if include_nodes or include_reservations or include_files:
         include_nodes_ = set()
         if include_nodes:
@@ -77,7 +75,6 @@ def filter_node_list(nodes,
             for include_file in include_files:
                 include_nodes_ |= set(read_node_list(include_file))
         nodes &= include_nodes_
-
     if exclude_nodes or exclude_reservations or exclude_files:
         exclude_nodes_ = set()
         if exclude_nodes:
@@ -90,7 +87,6 @@ def filter_node_list(nodes,
             for exclude_file in exclude_files:
                 exclude_nodes_ |= set(read_node_list(exclude_file))
         nodes -= exclude_nodes_
-
     #Include only explicit nodelist
     if nodelist:
         nodes &= set(nodelist)
@@ -114,13 +110,13 @@ def get_nodes(include_states=None, exclude_states=None):
         include_states = set(state.lower() for state in include_states)
     if exclude_states:
         exclude_states = set(state.lower() for state in exclude_states)
-    nodes = pyslurm.node().get().itervalues()
+    nodes = list(pyslurm.node().get().itervalues())
     if include_states:
-        nodes = (node for node in nodes
+        nodes = list(node for node in nodes
                  if node['state'].rstrip('*').lower()
                  in include_states)
     if exclude_states:
-        nodes = (node for node in nodes
+        nodes = list(node for node in nodes
                  if node['state'].rstrip('*').lower()
                  not in exclude_states)
 
@@ -129,7 +125,7 @@ def get_nodes(include_states=None, exclude_states=None):
         # that have a "reason" as though they are down for purposes of
         # exclusion.
         if 'down' in exclude_states:
-            nodes = (node for node in nodes
+            nodes = list(node for node in nodes
                      if not node.get('reason'))
     return set(node['name'] for node in nodes)
 
