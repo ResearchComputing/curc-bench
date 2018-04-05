@@ -28,7 +28,6 @@ class Add(object):
         # Try/except for tests with an explicit node list vs tests without
         try:
             test_node_list = set(hostlist.expand_hostlist(bc.config[self.test_name]["nodes"]))
-
             #Exclude curc-bench made reservations (not including current test)
             curcb_res = []
             curcb_res_nodes = set()

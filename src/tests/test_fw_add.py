@@ -64,16 +64,40 @@ class TestAdd(unittest.TestCase):
         node_test = bench.tests.node_test.NodeTest("node")
         node_test.Add.execute(self.directory)
 
-        #print(sorted([node for node in NODES]))
-        #print(open(self.bench_node_list).read())
-
-        #self.assertEqual(open(self.bench_node_list).read(), 'tnode0101\ntnode0102\ntnode0103\n')
-
-        print(open(os.path.join(self.directory, 'node', 'node_list')).read())
+        #Test that correct nodelist is written out for node test
         self.assertEqual(open(os.path.join(self.directory, 'node', 'node_list')).read(), 'tnode0101\ntnode0102\ntnode0103\n')
 
+        #Test for test executables and directives in job script
+        script = open(os.path.join(self.directory, 'node', 'tests', 'tnode0101', 'tnode0101.job')).read()
+        self.assertIn('/fake/linpack.so', script)
+        self.assertIn('/fake/stream.so', script)
+        self.assertIn('#SBATCH --nodes=1', script)
+        self.assertIn('#!/bin/bash', script)
 
 
+    @mock.patch.dict(bench.configuration.config, {'bandwidth': {'nodes' : 'tnode01[01-08]',
+                                                    'osu' : '/fake/osu_bw.so'}})
+    @mock.patch.dict(bench.configuration.config, {'Switch': {'switch1' : 'tnode01[01-04]',
+                                                    'switch2' : 'tnode01[05-08]'}})
+    @mock.patch('bench.create.bench.util.pyslurm.node',
+                return_value=fake_node(dict((node, {'state': 'fake_state', 'name' : node}) for node in NODES)))
+    def test_bw_tests (self, _):
+
+        bw_test = bench.tests.bandwidth_test.BandwidthTest("bandwidth")
+        bw_test.Add.execute(self.directory)
+        #Test that correct nodelist is written out for node test
+        bw_nodes = ''
+        for ii in range(1,9):
+            bw_nodes += 'tnode01{0:02}\n'.format(ii)
+        #print("BW NODES = ", bw_nodes)
+        self.assertEqual(open(os.path.join(self.directory, 'bandwidth', 'node_list')).read(), bw_nodes)
+
+        #Test for test executables and directives in job script
+        script = open(os.path.join(self.directory, 'bandwidth', 'tests',
+                            'tnode0101,tnode0102', 'tnode0101,tnode0102.job')).read()
+        self.assertIn('/fake/osu_bw.so', script)
+        self.assertIn('#SBATCH --nodelist=tnode0101,tnode0102', script)
+        self.assertIn('#!/bin/bash', script)
 
     #
     # @mock.patch('bench.create.bench.util.pyslurm.node',
