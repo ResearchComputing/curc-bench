@@ -14,9 +14,6 @@ import tempfile
 import unittest
 
 
-TOPOLOGY_FILE = pkg_resources.resource_filename(__name__, 'topology.conf')
-
-
 def fake_node (node_dict):
     node = mock.Mock()
     for node_name, node_ in node_dict.iteritems():
@@ -103,7 +100,7 @@ class TestAdd(unittest.TestCase):
         self.assertIn('#!/bin/bash', script)
 
 
-    def test_pair_tests (self, _):
+    def test_alltoall_tests (self, _):
         a2a_nodes = ''
         a2a_rack2 = []
         for ii in range(1,9):
