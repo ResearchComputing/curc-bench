@@ -94,7 +94,8 @@ class TestSubmit(unittest.TestCase):
         shutil.rmtree(self.directory)
 
 
-    def test_submit_jobs(self, arg1):
+    def test_submit_jobs_1(self, arg1):
+        '''Test submit of node jobs with no extra arguments'''
         node_test = bench.tests.node_test.NodeTest("node")
         node_test.Submit.execute(self.directory)#, reservation="fake_res")
 
@@ -107,7 +108,22 @@ class TestSubmit(unittest.TestCase):
             self.assertEqual(args[0], script_dir + '/' + self.nodes[ii] + '.job')
             self.assertFalse('reservation' in kwargs)
 
+    def test_submit_jobs_2(self, arg1):
+        '''Test submit of node jobs with an account, qos, and reservation'''
+        node_test = bench.tests.node_test.NodeTest("node")
+        node_test.Submit.execute(self.directory, reservation='fake_res',
+                    account='fake_account', qos='fake_qos')
 
+        self.assertTrue(bench.slurm.sbatch.called)
+
+        for ii, call in enumerate(arg1.call_args_list):
+            script_dir = os.path.join(self.node_test_dir, self.nodes[ii])
+            args, kwargs = call #call object is two things: args=tuple, kwargs=dict
+            self.assertEqual(kwargs['workdir'], script_dir)
+            self.assertEqual(kwargs['reservation'], 'fake_res')
+            self.assertEqual(kwargs['account'], 'fake_account')
+            self.assertEqual(kwargs['qos'], 'fake_qos')
+            self.assertEqual(args[0], script_dir + '/' + self.nodes[ii] + '.job')
 
 
 
