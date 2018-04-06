@@ -33,15 +33,18 @@ class TestCreateExecute (unittest.TestCase):
         shutil.rmtree(self.directory)
 
     @mock.patch('bench.create.bench.util.pyslurm.node',
-                return_value=fake_node({'tnode0101': {}, 'tnode0102': {}}))
+                return_value=fake_node({'tnode0101': {'state': 'fake_state'},
+                        'tnode0102': {'state': 'fake_state'}}))
     def test_execute (self, _):
         bench.create.execute(self.directory)
         node_list = os.path.join(self.directory, 'node_list')
+        #print("nodelist", open(node_list).read())
         self.assertTrue(os.path.exists(node_list), node_list)
         self.assertEqual(open(node_list).read(), 'tnode0101\ntnode0102\n')
 
     @mock.patch('bench.create.bench.util.pyslurm.node',
-                return_value=fake_node({'tnode0101': {}, 'tnode0102': {}}))
+                return_value=fake_node({'tnode0101': {'state': 'fake_state'},
+                        'tnode0102': {'state': 'fake_state'}}))
     def test_include_nodes (self, _):
         bench.create.execute(self.directory, include_nodes=['tnode0101'])
         node_list = os.path.join(self.directory, 'node_list')
@@ -49,7 +52,8 @@ class TestCreateExecute (unittest.TestCase):
         self.assertEqual(open(node_list).read(), 'tnode0101\n')
 
     @mock.patch('bench.create.bench.util.pyslurm.node',
-                return_value=fake_node({'tnode0101': {}, 'tnode0102': {}, 'tnode0103': {}}))
+                return_value=fake_node({'tnode0101': {'state': 'fake_state'},
+                        'tnode0102': {'state': 'fake_state'}, 'tnode0103': {'state': 'fake_state'}}))
     def test_include_nodes_pattern (self, _):
         bench.create.execute(self.directory, include_nodes=['tnode01[02-03]'])
         node_list = os.path.join(self.directory, 'node_list')
@@ -57,7 +61,8 @@ class TestCreateExecute (unittest.TestCase):
         self.assertEqual(open(node_list).read(), 'tnode0102\ntnode0103\n')
 
     @mock.patch('bench.create.bench.util.pyslurm.node',
-                return_value=fake_node({'tnode0101': {}, 'tnode0102': {}}))
+                return_value=fake_node({'tnode0101': {'state': 'fake_state'},
+                        'tnode0102': {'state': 'fake_state'}}))
     def test_exclude_nodes (self, _):
         bench.create.execute(self.directory, exclude_nodes=['tnode0101'])
         node_list = os.path.join(self.directory, 'node_list')
@@ -65,7 +70,8 @@ class TestCreateExecute (unittest.TestCase):
         self.assertEqual(open(node_list).read(), 'tnode0102\n')
 
     @mock.patch('bench.create.bench.util.pyslurm.node',
-                return_value=fake_node({'tnode0101': {}, 'tnode0102': {}, 'tnode0103': {}}))
+                return_value=fake_node({'tnode0101': {'state': 'fake_state'},
+                        'tnode0102': {'state': 'fake_state'}, 'tnode0103': {'state': 'fake_state'}}))
     def test_exclude_nodes_pattern (self, _):
         bench.create.execute(self.directory, exclude_nodes=['tnode01[01-02]'])
         node_list = os.path.join(self.directory, 'node_list')
@@ -73,7 +79,8 @@ class TestCreateExecute (unittest.TestCase):
         self.assertEqual(open(node_list).read(), 'tnode0103\n')
 
     @mock.patch('bench.create.bench.util.pyslurm.node',
-                return_value=fake_node({'tnode0101': {}, 'tnode0102': {}, 'tnode0103': {}}))
+                return_value=fake_node({'tnode0101': {'state': 'fake_state'},
+                        'tnode0102': {'state': 'fake_state'}, 'tnode0103': {'state': 'fake_state'}}))
     def test_include_exclude_nodes (self, _):
         bench.create.execute(self.directory,
                              include_nodes=['tnode01[01-02]'],
@@ -83,7 +90,8 @@ class TestCreateExecute (unittest.TestCase):
         self.assertEqual(open(node_list).read(), 'tnode0102\n')
 
     @mock.patch('bench.create.bench.util.pyslurm.node',
-                return_value=fake_node({'tnode0101': {}, 'tnode0102': {}, 'tnode0103': {}}))
+                return_value=fake_node({'tnode0101': {'state': 'fake_state'},
+                        'tnode0102': {'state': 'fake_state'}, 'tnode0103': {'state': 'fake_state'}}))
     @mock.patch('bench.create.bench.util.pyslurm.reservation',
                 return_value=fake_reservation({'res1': {'node_list': 'tnode0101,tnode0103'}}))
     def test_include_reservation (self, _n, _r):
@@ -94,7 +102,8 @@ class TestCreateExecute (unittest.TestCase):
         self.assertEqual(open(node_list).read(), 'tnode0101\ntnode0103\n')
 
     @mock.patch('bench.create.bench.util.pyslurm.node',
-                return_value=fake_node({'tnode0101': {}, 'tnode0102': {}, 'tnode0103': {}}))
+                return_value=fake_node({'tnode0101': {'state': 'fake_state'},
+                        'tnode0102': {'state': 'fake_state'}, 'tnode0103': {'state': 'fake_state'}}))
     @mock.patch('bench.create.bench.util.pyslurm.reservation',
                 return_value=fake_reservation({'res1': {'node_list': 'tnode0101,tnode0103'}}))
     def test_include_reservation_include_nodes (self, _n, _r):
@@ -106,7 +115,8 @@ class TestCreateExecute (unittest.TestCase):
         self.assertEqual(open(node_list).read(), 'tnode0101\ntnode0102\ntnode0103\n')
 
     @mock.patch('bench.create.bench.util.pyslurm.node',
-                return_value=fake_node({'tnode0101': {}, 'tnode0102': {}, 'tnode0103': {}}))
+                return_value=fake_node({'tnode0101': {'state': 'fake_state'},
+                        'tnode0102': {'state': 'fake_state'}, 'tnode0103': {'state': 'fake_state'}}))
     @mock.patch('bench.create.bench.util.pyslurm.reservation',
                 return_value=fake_reservation({'res1': {'node_list': 'tnode0101,tnode0103'}}))
     def test_include_reservation_exclude_nodes (self, _n, _r):
@@ -118,7 +128,8 @@ class TestCreateExecute (unittest.TestCase):
         self.assertEqual(open(node_list).read(), 'tnode0103\n')
 
     @mock.patch('bench.create.bench.util.pyslurm.node',
-                return_value=fake_node({'tnode0101': {}, 'tnode0102': {}, 'tnode0103': {}}))
+                return_value=fake_node({'tnode0101': {'state': 'fake_state'},
+                        'tnode0102': {'state': 'fake_state'}, 'tnode0103': {'state': 'fake_state'}}))
     @mock.patch('bench.create.bench.util.pyslurm.reservation',
                 return_value=fake_reservation({'res1': {'node_list': 'tnode0101,tnode0103'}}))
     def test_exclude_reservation (self, _n, _r):
@@ -129,7 +140,8 @@ class TestCreateExecute (unittest.TestCase):
         self.assertEqual(open(node_list).read(), 'tnode0102\n')
 
     @mock.patch('bench.create.bench.util.pyslurm.node',
-                return_value=fake_node({'tnode0101': {}, 'tnode0102': {}, 'tnode0103': {}}))
+                return_value=fake_node({'tnode0101': {'state': 'fake_state'},
+                        'tnode0102': {'state': 'fake_state'}, 'tnode0103': {'state': 'fake_state'}}))
     @mock.patch('bench.create.bench.util.pyslurm.reservation',
                 return_value=fake_reservation({'res1': {'node_list': 'tnode0101,tnode0103'}}))
     def test_exclude_reservation_include_nodes (self, _n, _r):
@@ -141,7 +153,7 @@ class TestCreateExecute (unittest.TestCase):
         self.assertEqual(open(node_list).read(), '')
 
     @mock.patch('bench.create.bench.util.pyslurm.node',
-                return_value=fake_node({'tnode0101': {}, 'tnode0102': {}, 'tnode0103': {}}))
+                return_value=fake_node({'tnode0101': {'state': 'fake_state'}, 'tnode0102': {'state': 'fake_state'}, 'tnode0103': {'state': 'fake_state'}}))
     @mock.patch('bench.create.bench.util.pyslurm.reservation',
                 return_value=fake_reservation({'res1': {'node_list': 'tnode0101,tnode0103'}}))
     def test_exclude_reservation_exclude_nodes (self, _n, _r):

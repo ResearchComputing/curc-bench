@@ -3,6 +3,7 @@ import argparse
 import mock
 import unittest
 from bench.tests.node_test import NodeTest
+from bench.framework_add import Add
 from bench.framework_submit import Submit
 
 class TestDriver(unittest.TestCase):
@@ -21,6 +22,44 @@ class TestDriver(unittest.TestCase):
         self.assertEqual(parsed.verbose, True)
         self.assertEqual(parsed.directory, 'fake_dir')
 
+
+    @mock.patch('bench.driver.get_directory',
+        return_value='fake_dir')
+    @mock.patch('bench.log.configure_stderr_logging',
+        return_value=None)
+    @mock.patch('bench.log.configure_file_logging',
+        return_value=None)
+    @mock.patch('bench.framework_add.Add.execute',
+        return_value=None)
+    def test_call_bench_add_execute_1(self, *arg):
+        '''Test that bench.tests.node_test.NodeTest Add.execute is being called'''
+        bench.driver.driver(argv=['bench', 'add', '--test', 'node'])
+        assert Add.execute.called
+        assert 'fake_dir' in Add.execute.call_args[0]
+        self.assertEqual(Add.execute.call_args[1]['nodelist'],
+             None)
+
+
+    @mock.patch('bench.driver.get_directory',
+        return_value='fake_dir')
+    @mock.patch('bench.log.configure_stderr_logging',
+        return_value=None)
+    @mock.patch('bench.log.configure_file_logging',
+        return_value=None)
+    @mock.patch('bench.framework_add.Add.execute',
+        return_value=None)
+    def test_call_bench_add_execute_2(self, *arg):
+        '''Test that bench.tests.node_test.NodeTest Add.execute is passed
+            an explicit nodelist'''
+        bench.driver.driver(argv=['bench', 'add', '--test', 'node',
+                '--nodelist', 'node01[01-20]'])
+        #print("Add args", Add.execute.call_args)
+        assert Add.execute.called
+        assert 'fake_dir' in Add.execute.call_args[0]
+        self.assertEqual(Add.execute.call_args[1]['nodelist'],
+             'node01[01-20]')
+
+
     @mock.patch('bench.driver.get_directory',
         return_value='fake_dir')
     @mock.patch('bench.log.configure_stderr_logging',
@@ -32,13 +71,32 @@ class TestDriver(unittest.TestCase):
     # @mock.patch('bench.tests.node_test.NodeTest',
     #     return_value=None)
     def test_call_bench_submit_execute_1(self, *arg):
-        '''Test that bench.tests.node_test.NodeTest Submit.execute is being called correctly WITH
+        '''Test that bench.tests.node_test.NodeTest Submit.execute is being called correctly with
         a specified reservation'''
         bench.driver.driver(argv=['bench', 'submit', '--test', 'node',
             '--reservation', 'fake_reservation'])
-        print("Submit args", Submit.execute.call_args)
+        #print("Submit args", Submit.execute.call_args)
         assert Submit.execute.called
         assert 'fake_dir' in Submit.execute.call_args[0]
-        # assert Submit.execute.call_args[1]['--test']
         self.assertEqual(Submit.execute.call_args[1]['reservation'],
              'fake_reservation')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#

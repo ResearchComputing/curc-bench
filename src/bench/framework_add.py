@@ -28,7 +28,6 @@ class Add(object):
         # Try/except for tests with an explicit node list vs tests without
         try:
             test_node_list = set(hostlist.expand_hostlist(bc.config[self.test_name]["nodes"]))
-
             #Exclude curc-bench made reservations (not including current test)
             curcb_res = []
             curcb_res_nodes = set()
@@ -43,11 +42,13 @@ class Add(object):
 
             for res in curcb_res:
                 curcb_res_nodes |= bench.util.get_reserved_nodes(res)
-    
+
             test_node_list -= curcb_res_nodes
 
             # Manual, command line filtering
             # Includes/excludes here override curc-bench reservation excludes
+            if not nodelist:
+                nodelist = ''
             node_list = bench.util.filter_node_list(test_node_list,
                                                   include_states=include_states,
                                                   exclude_states=exclude_states,
@@ -55,7 +56,7 @@ class Add(object):
                                                   **kwargs)
 
         except KeyError:
-            pass                          
+            pass
 
         #make the test directory and write the node list to it
         self.test_prefix = os.path.join(prefix, self.test_name)

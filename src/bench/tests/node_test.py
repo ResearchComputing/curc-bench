@@ -1,4 +1,8 @@
 import bench.framework
+import bench.framework_add
+import bench.framework_submit
+import bench.framework_process
+import bench.framework_reserve
 import bench.exc
 import bench.util
 import bench.configuration as bc
@@ -145,7 +149,7 @@ class NodeTest(bench.framework.TestFramework):
 
         elif subtest == 'linpack':
             expected_averages = {
-                (5000, 5000, 4): 420.0,
+                (5000, 5000, 4): 380.0,
                 (10000, 10000, 4): 580.0,
                 (20000, 20000, 4): 670.0,
                 (25000, 25000, 4): 640.0,
