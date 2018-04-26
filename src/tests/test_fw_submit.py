@@ -14,7 +14,7 @@ import tempfile
 import unittest
 import jinja2
 
-num_nodes = 11
+
 
 job_script = '''#!/bin/bash
 #SBATCH --job-name={{job_name}}
@@ -51,7 +51,7 @@ function main
 main'''
 
 @mock.patch('bench.slurm.sbatch', return_value="Submitted batch job")
-class TestSubmit(unittest.TestCase):
+class TestSubmitNode(unittest.TestCase):
 
     def assertIsFile (self, path):
         assert os.path.isfile(path), '{0} does not exist'.format(path)
@@ -60,11 +60,12 @@ class TestSubmit(unittest.TestCase):
         self.directory = tempfile.mkdtemp()
         self.node_dir = os.path.join(self.directory, 'node')
         self.node_test_dir = os.path.join(self.node_dir, 'tests')
+        self.num_nodes = 11
 
         os.mkdir(self.node_dir)
         os.mkdir(self.node_test_dir)
 
-        self.nodes = ['tnode01{0:02}'.format(i) for i in range(1, num_nodes)]
+        self.nodes = ['tnode01{0:02}'.format(i) for i in range(1, self.num_nodes)]
         self.bench_node_list = os.path.join(self.directory, 'node_list')
         bench.util.write_node_list(os.path.join(self.directory, 'node_list'),
                                    self.nodes)
@@ -77,7 +78,7 @@ class TestSubmit(unittest.TestCase):
         self.TEMPLATE = jinja2.Template(job_script,
             keep_trailing_newline=True)
 
-        for ii in range(0, num_nodes - 1):
+        for ii in range(0, self.num_nodes - 1):
             script_dir = os.path.join(self.node_test_dir, self.nodes[ii])
             os.makedirs(script_dir)
 
@@ -89,6 +90,9 @@ class TestSubmit(unittest.TestCase):
                     linpack_path = self.linpack_path,
                     stream_path = self.stream_path,
                 ))
+            bench.util.write_node_list(os.path.join(self.node_test_dir, self.nodes[ii],
+                            'node_list'), [self.nodes[ii]])
+
 
     def tearDown (self):
         shutil.rmtree(self.directory)
@@ -125,7 +129,21 @@ class TestSubmit(unittest.TestCase):
             self.assertEqual(kwargs['qos'], 'fake_qos')
             self.assertEqual(args[0], script_dir + '/' + self.nodes[ii] + '.job')
 
+    def test_submit_jobs_3(self, arg1):
+        '''Test that submit doesn't submit jobs with nodes in --nodelist'''
+        node_test = bench.tests.node_test.NodeTest("node")
+        node_test.Submit.execute(self.directory, nodelist='tnode01[01-06]')
 
+        self.assertTrue(bench.slurm.sbatch.called)
+
+        for ii, call in enumerate(arg1.call_args_list):
+            script_dir = os.path.join(self.node_test_dir, self.nodes[ii])
+            args, kwargs = call #call object is two things: args=tuple, kwargs=dict
+            self.assertEqual(kwargs['workdir'], script_dir)
+            self.assertEqual(args[0], script_dir + '/' + self.nodes[ii] + '.job')
+            # Check that --nodelist nodes not submitted
+            for node in hostlist.expand_hostlist('tnode01[07-10]'):
+                self.assertNotIn(node, kwargs['workdir'])
 
 
 

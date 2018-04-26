@@ -36,6 +36,7 @@ def read_node_list(node_list_path):
 
 
 def write_node_list (path, nodes):
+    '''nodes - list of string nodenames'''
     with open(path, 'w') as fp:
         for node in sorted(nodes):
             fp.write('{0}\n'.format(node))
