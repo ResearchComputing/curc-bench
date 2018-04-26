@@ -54,7 +54,7 @@ class Reserve(object):
                 bench.slurm.scontrol(
                     'create',
                     reservation=self.reservation_name,
-                    accounts = account,
+                    accounts = self.account,
                     flags='overlap',
                     starttime='now',
                     duration='UNLIMITED',

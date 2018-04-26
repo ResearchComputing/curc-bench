@@ -14,11 +14,8 @@ class Add(object):
     def execute(self, prefix,
               include_states=None,
               exclude_states=None,
-              nodelist=None,
               **kwargs
     ):
-        '''nodelist=string of nodes in hostlist format, only nodes in nodelist can be tested
-                error nodes and other reserved nodes will still be filtered out'''
 
         if not (include_states or exclude_states):
           exclude_states = ['down', 'draining', 'drained']
@@ -47,12 +44,9 @@ class Add(object):
 
             # Manual, command line filtering
             # Includes/excludes here override curc-bench reservation excludes
-            if not nodelist:
-                nodelist = ''
             node_list = bench.util.filter_node_list(test_node_list,
                                                   include_states=include_states,
                                                   exclude_states=exclude_states,
-                                                  nodelist=hostlist.expand_hostlist(nodelist),
                                                   **kwargs)
 
         except KeyError:

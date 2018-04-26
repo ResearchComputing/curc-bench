@@ -36,13 +36,13 @@ def read_node_list(node_list_path):
 
 
 def write_node_list (path, nodes):
+    '''nodes - list of string nodenames'''
     with open(path, 'w') as fp:
         for node in sorted(nodes):
             fp.write('{0}\n'.format(node))
 
 
 def filter_node_list(nodes,
-                      nodelist=None,
                       include_nodes=None,
                       exclude_nodes=None,
                       include_reservations=None,
@@ -54,8 +54,6 @@ def filter_node_list(nodes,
 ):
     '''
     nodes=possible nodes to test based on nodes in configuration file
-    nodelist = explicit nodelist passed into driver, only nodes in nodelist will be tested
-               error/reserved/other filtered nodes won't be tested
        '''
     nodes = set(nodes)
     if include_states or exclude_states:
@@ -87,9 +85,6 @@ def filter_node_list(nodes,
             for exclude_file in exclude_files:
                 exclude_nodes_ |= set(read_node_list(exclude_file))
         nodes -= exclude_nodes_
-    #Include only explicit nodelist
-    if nodelist:
-        nodes &= set(nodelist)
 
     return nodes
 

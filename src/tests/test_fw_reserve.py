@@ -53,10 +53,11 @@ class TestReserve(unittest.TestCase):
         shutil.rmtree(self.directory)
 
     def test_reserve(self, arg1):
+        '''Test that fail and error nodes are reserved, and that
+        pass nodes are not reserved'''
         node_test = bench.tests.node_test.NodeTest("node")
         node_test.Reserve.execute(self.directory)
 
-        print(arg1.call_args_list[0])
         args, kwargs = arg1.call_args_list[0]
 
         self.assertEqual(args[0], 'create')

@@ -36,28 +36,6 @@ class TestDriver(unittest.TestCase):
         bench.driver.driver(argv=['bench', 'add', '--test', 'node'])
         assert Add.execute.called
         assert 'fake_dir' in Add.execute.call_args[0]
-        self.assertEqual(Add.execute.call_args[1]['nodelist'],
-             None)
-
-
-    @mock.patch('bench.driver.get_directory',
-        return_value='fake_dir')
-    @mock.patch('bench.log.configure_stderr_logging',
-        return_value=None)
-    @mock.patch('bench.log.configure_file_logging',
-        return_value=None)
-    @mock.patch('bench.framework_add.Add.execute',
-        return_value=None)
-    def test_call_bench_add_execute_2(self, *arg):
-        '''Test that bench.tests.node_test.NodeTest Add.execute is passed
-            an explicit nodelist'''
-        bench.driver.driver(argv=['bench', 'add', '--test', 'node',
-                '--nodelist', 'node01[01-20]'])
-        #print("Add args", Add.execute.call_args)
-        assert Add.execute.called
-        assert 'fake_dir' in Add.execute.call_args[0]
-        self.assertEqual(Add.execute.call_args[1]['nodelist'],
-             'node01[01-20]')
 
 
     @mock.patch('bench.driver.get_directory',
