@@ -99,8 +99,6 @@ def parser_add_test_arguments (parser):
 
 
 def parser_add_filter_arguments (parser):
-    parser.add_argument('--nodelist', action='append',
-                        help='only test nodes in given nodelist, reservations and error nodes still excluded')
     parser.add_argument('--include-nodes', action='append',
                         help='include specific nodes')
     parser.add_argument('--exclude-nodes', action='append',
@@ -212,16 +210,9 @@ def driver(argv=None):
 
     elif args.command == 'add':
         currentTest = commandDictionary[args.test]
-        
-        if args.nodelist:
-            args.nodelist = args.nodelist[0]
-        else:
-            args.nodelist = None
 
-        
         currentTest.Add.execute(
             directory,
-            nodelist = args.nodelist,
             include_nodes = args.include_nodes,
             exclude_nodes = args.exclude_nodes,
             include_reservations = args.include_reservations,
