@@ -237,7 +237,7 @@ class TestSubmitSwitch(unittest.TestCase):
     def test_submit_jobs_1(self, arg1):
         '''Test submit of alltoall-switch jobs with no extra arguments'''
         switch_test = bench.tests.node_test.NodeTest("alltoall-switch")
-        switch_test.Submit.execute(self.directory)#, reservation="fake_res")
+        switch_test.Submit.execute(self.directory)
 
         self.assertTrue(bench.slurm.sbatch.called)
 
@@ -249,41 +249,42 @@ class TestSubmitSwitch(unittest.TestCase):
             self.assertEqual(args[0], script_dir + '/' + switch_name + '.job')
             self.assertFalse('reservation' in kwargs)
 
-    # def test_submit_jobs_2(self, arg1):
-    #     '''Test submit of node jobs with an account, qos, and reservation'''
-    #     node_test = bench.tests.node_test.NodeTest("node")
-    #     node_test.Submit.execute(self.directory, reservation='fake_res',
-    #                 account='fake_account', qos='fake_qos')
-    #
-    #     self.assertTrue(bench.slurm.sbatch.called)
-    #
-    #     for ii, call in enumerate(arg1.call_args_list):
-    #         script_dir = os.path.join(self.node_test_dir, self.nodes[ii])
-    #         args, kwargs = call #call object is two things: args=tuple, kwargs=dict
-    #         self.assertEqual(kwargs['workdir'], script_dir)
-    #         self.assertEqual(kwargs['reservation'], 'fake_res')
-    #         self.assertEqual(kwargs['account'], 'fake_account')
-    #         self.assertEqual(kwargs['qos'], 'fake_qos')
-    #         self.assertEqual(args[0], script_dir + '/' + self.nodes[ii] + '.job')
-    #
-    # def test_submit_jobs_3(self, arg1):
-    #     '''Test that submit doesn't submit jobs with nodes in --nodelist'''
-    #     node_test = bench.tests.node_test.NodeTest("node")
-    #     node_test.Submit.execute(self.directory, nodelist='tnode01[01-06]')
-    #
-    #     self.assertTrue(bench.slurm.sbatch.called)
-    #
-    #     for ii, call in enumerate(arg1.call_args_list):
-    #         script_dir = os.path.join(self.node_test_dir, self.nodes[ii])
-    #         args, kwargs = call #call object is two things: args=tuple, kwargs=dict
-    #         self.assertEqual(kwargs['workdir'], script_dir)
-    #         self.assertEqual(args[0], script_dir + '/' + self.nodes[ii] + '.job')
-    #         # Check that --nodelist nodes not submitted
-    #         for node in hostlist.expand_hostlist('tnode01[07-10]'):
-    #             self.assertNotIn(node, kwargs['workdir'])
 
+    def test_submit_jobs_2(self, arg1):
+        '''Test submit of alltoall-switch jobs with an account, qos, and reservation'''
+        switch_test = bench.tests.node_test.NodeTest("alltoall-switch")
+        switch_test.Submit.execute(self.directory, reservation='fake_res',
+                         account='fake_account', qos='fake_qos')
 
+        self.assertTrue(bench.slurm.sbatch.called)
 
+        for ii, call in enumerate(arg1.call_args_list):
+            switch_name = self.get_switch_name(ii)
+            script_dir = os.path.join(self.switch_test_dir, switch_name)
+            args, kwargs = call #call object is two things: args=tuple, kwargs=dict
+            self.assertEqual(kwargs['workdir'], script_dir)
+            self.assertEqual(args[0], script_dir + '/' + switch_name + '.job')
+            self.assertEqual(kwargs['reservation'], 'fake_res')
+            self.assertEqual(kwargs['account'], 'fake_account')
+            self.assertEqual(kwargs['qos'], 'fake_qos')
+
+    def test_submit_jobs_3(self, arg1):
+        '''Test submit of alltoall-switch jobs with nodes in --nodelist
+        Only tests will ALL nodes in --nodelist should be submitted'''
+        switch_test = bench.tests.node_test.NodeTest("alltoall-switch")
+        switch_test.Submit.execute(self.directory, nodelist='tnode01[01-12]')
+
+        self.assertTrue(bench.slurm.sbatch.called)
+
+        for ii, call in enumerate(arg1.call_args_list):
+            switch_name = self.get_switch_name(ii)
+            script_dir = os.path.join(self.switch_test_dir, switch_name)
+            args, kwargs = call #call object is two things: args=tuple, kwargs=dict
+            self.assertEqual(kwargs['workdir'], script_dir)
+            self.assertEqual(args[0], script_dir + '/' + switch_name + '.job')
+            # Check that --nodelist nodes not submitted
+            for switch in ['switch_3', 'switch_4']:
+                self.assertNotIn(switch, kwargs['workdir'])
 
 
 
