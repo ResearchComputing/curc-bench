@@ -1,11 +1,13 @@
 import bench
 import os
+import hostlist
 
 class Submit(object):
 
     def __init__(self, logger, test_name):
         self.logger = logger
         self.test_name = test_name
+        self.nodelist = None
         self.prefix = None
         self.pause = None
         self.reservation = None
@@ -15,7 +17,10 @@ class Submit(object):
         self.fail_nodes = None
         self.error_nodes = None
 
-    def execute(self, directory, pause=None, **kwargs):
+
+    def execute(self, directory, pause=None, nodelist=None, **kwargs):
+        if nodelist:
+            self.nodelist = hostlist.expand_hostlist(nodelist)
         prefix = os.path.join(directory, self.test_name)
         self.submit(prefix=prefix, **kwargs)
         self.logger.info('submitted {0} jobs'.format(self.test_name))
@@ -69,6 +74,12 @@ class Submit(object):
                 if index % pause == 0:
                     self.logger.info('pausing 10 seconds between {0} submissions'.format(pause))
                     time.sleep(10)
+
+            # Only submit jobs where all nodes are in --nodelist
+            if self.nodelist:
+                test_nodes = set(bench.util.read_node_list(os.path.join(test_dir, 'node_list')))
+                if not test_nodes.issubset(self.nodelist):
+                    continue
 
             try:
                 result = bench.slurm.sbatch(script, workdir=test_dir, **kwargs)
