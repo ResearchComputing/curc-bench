@@ -47,14 +47,30 @@ class Reserve(object):
                 reserve_nodes_ |= error_nodes_
 
         if reserve_nodes_:
+
+
+            # Check for existing reservation, create new one by default
+            subcommand = 'create'
+            try:
+                output = bench.slurm.scontrol(subcommand='show', reservation=self.reservation_name)
+
+                # If reservation found, update old reservation
+                if "ReservationName=" in output:
+                    subcommand = 'update'
+
+            except bench.exc.SlurmError as ex:
+                self.logger.error(ex)
+                self.logger.debug(ex, exc_info=True)
+
             try:
                 nodes=','.join(sorted(reserve_nodes_))
-                print("RESERVATION NAME ", self.reservation_name)
-                print("NODES = ", nodes)
+                #print("RESERVATION NAME ", self.reservation_name)
+                #print("NODES = ", nodes)
                 bench.slurm.scontrol(
-                    'create',
+                    subcommand=subcommand,
                     reservation=self.reservation_name,
-                    accounts = self.account,
+                    accounts = 'admin',
+                    #accounts = self.account,
                     flags='overlap',
                     starttime='now',
                     duration='UNLIMITED',
