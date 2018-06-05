@@ -17,8 +17,16 @@ import jinja2
 num_nodes = 11
 
 
-@mock.patch('bench.slurm.scontrol', return_value="Submitted reservation")
 class TestReserve(unittest.TestCase):
+
+    scontrol_show_return_1=['''ReservationName=bench-node StartTime=2018-05-02T16:35:14 EndTime=2019-05-02T16:35:14 Duration=365-00:00:00
+     Nodes=node[0325-0328] NodeCnt=4 CoreCnt=96 Features=(null) PartitionName=(null) Flags=OVERLAP,SPEC_NODES
+     TRES=cpu=96
+     Users=asdf1,asdf2,asdf3 Accounts=(null)
+     Licenses=(null) State=ACTIVE BurstBuffer=(null) Watts=n/a''',
+     'Scontrol create called']
+
+    scontrol_show_return_2=['Reservation bench-node not found', 'Scontrol create called']
 
     def assertIsFile (self, path):
         assert os.path.isfile(path), '{0} does not exist'.format(path)
@@ -54,6 +62,7 @@ class TestReserve(unittest.TestCase):
         bench.util.write_node_list(os.path.join(self.directory, 'node_list'), self.nodes)
         bench.util.write_node_list(os.path.join(self.node_dir, 'node_list'), self.nodes)
 
+
     def setUp (self):
         self.directory = tempfile.mkdtemp()
         self.node_dir = os.path.join(self.directory, 'node')
@@ -66,6 +75,7 @@ class TestReserve(unittest.TestCase):
     def tearDown (self):
         shutil.rmtree(self.directory)
 
+    @mock.patch('bench.slurm.scontrol', return_value="Scontrol called")
     def test_reserve(self, arg1):
         '''Test that fail and error nodes are reserved, and that
         pass nodes are not reserved'''
@@ -75,18 +85,23 @@ class TestReserve(unittest.TestCase):
         node_test = bench.tests.node_test.NodeTest("node")
         node_test.Reserve.execute(self.directory)
 
-        args, kwargs = arg1.call_args_list[0]
+        #scontrol show ReservationName= checks for existing
+        args_0, kwargs_0 = arg1.call_args_list[0]
+        #scontrol create makes a reservation
+        args_1, kwargs_1 = arg1.call_args_list[1]
 
-        self.assertEqual(args[0], 'create')
+        self.assertEqual(kwargs_0['subcommand'], 'show')
+        self.assertEqual(kwargs_1['subcommand'], 'create')
 
         for node in self.pass_nodes:
-            self.assertNotIn(node, kwargs['nodes'])
+            self.assertNotIn(node, kwargs_1['nodes'])
         for node in self.fail_nodes:
-            self.assertIn(node, kwargs['nodes'])
+            self.assertIn(node, kwargs_1['nodes'])
         for node in self.error_nodes:
-            self.assertIn(node, kwargs['nodes'])
+            self.assertIn(node, kwargs_1['nodes'])
 
 
+    @mock.patch('bench.slurm.scontrol', return_value="Scontrol called")
     def test_reserve_empty(self, arg1):
         '''Test that an empty reservation isn't created when
         no fail or error nodes exist'''
@@ -99,10 +114,32 @@ class TestReserve(unittest.TestCase):
         assert not bench.slurm.scontrol.called
 
 
+    @mock.patch('bench.slurm.scontrol', side_effect=scontrol_show_return_1)
+    # @mock.patch('bench.slurm.scontrol', return_value="Scontrol called")
+    def test_reserve_already_exists(self, arg1):
+        '''Test that a reservation is recreated/updated if
+        reserve is called again'''
 
+        self.write_files(11, [1,5], [6, 9], [10, 11])
 
+        node_test = bench.tests.node_test.NodeTest("node")
+        node_test.Reserve.execute(self.directory)
 
+        #scontrol show ReservationName= checks for existing
+        args_0, kwargs_0 = arg1.call_args_list[0]
+        #scontrol create makes a reservation
+        args_1, kwargs_1 = arg1.call_args_list[1]
 
+        assert bench.slurm.scontrol.called
+        self.assertEqual(kwargs_0['subcommand'], 'show')
+        self.assertEqual(kwargs_1['subcommand'], 'update')
+
+        for node in self.pass_nodes:
+            self.assertNotIn(node, kwargs_1['nodes'])
+        for node in self.fail_nodes:
+            self.assertIn(node, kwargs_1['nodes'])
+        for node in self.error_nodes:
+            self.assertIn(node, kwargs_1['nodes'])
 
 
 
