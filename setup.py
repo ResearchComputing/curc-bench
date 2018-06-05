@@ -34,7 +34,7 @@ def main ():
         package_dir = {'': 'src'},
         packages=['bench'],
         install_requires=['argparse', 'jinja2', 'python-hostlist', 'pyslurm'],
-        dependency_links=['http://github.com/PySlurm/pyslurm/tarball/16.05.5#egg=pyslurm'],
+        dependency_links=['http://github.com/PySlurm/pyslurm/tarball/17.11.0#egg=pyslurm'],
         tests_require=['nose', 'importlib', 'mock'],
         test_suite = 'nose.collector',
         long_description=read('README.mdwn'),
