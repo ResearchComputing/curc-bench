@@ -1,7 +1,5 @@
+import bench.log
 import bench.util
-import bench.tests.node_test
-# import bench.tests.bandwidth
-# import bench.tests.alltoall
 import hostlist
 import logging
 import os
@@ -14,6 +12,15 @@ class Process(object):
         self.parse_data = parse_data
         self.evaluate_data = evaluate_data
         self.subtests = subtests
+
+        self.results = {}
+        self.results['pass_nodes'] = set()
+        self.results['fail_nodes'] = set()
+        self.results['error_nodes'] = set()
+        self.results['fail'] = {}
+        self.results['error'] = {}
+        self.results['error']['not_found'] = set()
+        self.results['error']['not_parsable'] = set()
 
 
     def execute(self, prefix):
@@ -87,6 +94,16 @@ class Process(object):
             error_nodes,
         )
 
+        print(hostlist.collect_hostlist(self.results['pass_nodes']),
+                'passing nodes: {passed} / {total}'.format(passed=len(pass_nodes), total=len(node_list)))
+
+        for key, result in self.results['fail'].items():
+            print(key, 'Test={test}: found {failing}, expected {expected},  {perc:.3f}%'.format(
+                test=result[0], failing=result[1], expected=result[2], perc=result[3]))
+
+        for key, result in self.results['error'].items():
+            print(key, result)
+
     def process(self, path, test, subtest, fail_nodes, pass_nodes, test_nodes):
         ''' Inputs
         test - directory containing test results, ex: node001, rack4
@@ -97,26 +114,33 @@ class Process(object):
         try:
             with open(path) as fp:
                 output = fp.read()
-            data = self.parse_data(output, subtest)
+            parsed_data = self.parse_data(output, subtest)
         except IOError as ex:
-            self.logger.warn('{0}: error (unable to read {1})'.format(test, path))
+            #self.logger.warn('{0}: error (unable to read {1})'.format(test, path))
             self.logger.debug(ex, exc_info=True)
+            self.results['error']['not_found'].add(test)
+            self.results['error_nodes'].add(test)
             return
         except bench.exc.ParseError as ex:
-            self.logger.warn('{0}: error (unable to parse {1})'.format(test, path))
+            #self.logger.warn('{0}: error (unable to parse {1})'.format(test, path))
             self.logger.debug(ex, exc_info=True)
+            self.results['error']['not_parsable'].add(test)
+            self.results['error_nodes'].add(test)
             return
-        passed = self.evaluate_data(data, subtest, test_nodes)
+        passed, data = self.evaluate_data(parsed_data, subtest, test_nodes)
 
         if passed:
-            self.logger.info('{0}: pass'.format(test))
+            # self.logger.info('{0}: pass'.format(test))
             if not test in fail_nodes:
                 pass_nodes |= test_nodes
+            self.results['pass_nodes'].add(test)
         else:
             pass_nodes.discard(test)
             fail_nodes |= test_nodes
-            self.logger.info('{test}: fail {subtest}'.format(test=test,
-                                                            subtest=subtest))
+            # self.logger.info('{test}: fail {subtest}'.format(test=test,
+                                                            # subtest=subtest))
+            self.results['fail'][test] = data
+            self.results['fail_nodes'].add(test)
         return
 
 
