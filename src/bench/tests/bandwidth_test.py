@@ -70,10 +70,11 @@ class BandwidthTest(bench.framework.TestFramework):
             if size not in data:
                 self.logger.debug('bandwidth: {0}: {1}: expected {2}, not found'.format(
                     subtest, size, expected_bandwidths[size]))
-                return False
+                return False, []
             if data[size] < expected_bandwidths[size]:
                 self.logger.debug('bandwidth: {0}: {1}: expected {2}, found {3} ({4:.0%})'.format(
                     subtest, size, expected_bandwidths[size], data[size],
                     data[size] / expected_bandwidths[size]))
-                return False
-        return True
+                return False, [[subtest, size], data[size], expected_bandwidths[size],
+                    data[size] / expected_bandwidths[size]]
+        return True, []

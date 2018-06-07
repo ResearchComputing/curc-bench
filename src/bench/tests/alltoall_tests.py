@@ -126,16 +126,17 @@ class AllToAllTest(bench.framework.TestFramework):
         data = list(data)
         num_nodes = len(test_nodes)
         if len(data) <= 0:
-            return False
+            return False, []
         average_latency = 1.0 * sum(datum[1] for datum in data) / len(data)
         if num_nodes not in self.expected_latencies:
             self.logger.debug('alltoall: {0}: {1}: average {2}, not defined'.format(
                 subtest, num_nodes, average_latency))
-            return False
+            return False, []
         elif average_latency > (self.latency_max_percent * self.expected_latencies[num_nodes]):
             self.logger.debug('alltoall: {0}: {1}: expected {2}, found {3} ({4:.0%})'.format(
                 subtest, num_nodes, self.expected_latencies[num_nodes], average_latency,
                 average_latency / self.expected_latencies[num_nodes]))
-            return False
+            return False, [[subtest, num_nodes], average_latency, self.expected_latencies[num_nodes],
+                average_latency / self.expected_latencies[num_nodes]]
         else:
-            return True
+            return True, []
