@@ -26,3 +26,18 @@ def configure_file_logging(directory):
     handler.setLevel(logging.DEBUG)
     handler.setFormatter(formatter)
     package_logger.addHandler(handler)
+
+
+
+def setup_logger(name, directory, log_file, level=logging.INFO):
+    """Function setup as many loggers as you want"""
+
+    log_file = directory + '/' + log_file
+    handler = logging.FileHandler(log_file)
+    # handler.setFormatter(formatter)
+
+    logger = logging.getLogger(name)
+    logger.setLevel(level)
+    logger.addHandler(handler)
+
+    return logger

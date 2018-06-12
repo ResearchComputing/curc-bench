@@ -212,6 +212,7 @@ class TestProcess(unittest.TestCase):
         '''Test that pass, fail, and error nodes are written to files'''
 
         node_test = bench.tests.node_test.NodeTest("node")
+        node_test.Process.results_logger = bench.log.setup_logger('results_logger', self.directory, 'results.log')
         node_test.Process.write_result_files(self.node_dir, self.pass_nodes,
                             self.fail_nodes, self.error_nodes)
 
@@ -234,6 +235,7 @@ class TestProcess(unittest.TestCase):
         correctly.'''
 
         node_test = bench.tests.node_test.NodeTest("node")
+        node_test.Process.results_logger = bench.log.setup_logger('results_logger', self.directory, 'results.log')
         node_test.Process.process_tests(self.node_dir)
 
         for node in self.pass_nodes:

@@ -112,15 +112,20 @@ class NodeTest(bench.framework.TestFramework):
             data = {}
             for line in output[header+1:]:
                 if line:
-                    size, lda, alignment, average, maximal = line.split()
-                    key = (int(size), int(lda), int(alignment))
-                    data[key] = float(average)
+                    try:
+                        size, lda, alignment, average, maximal = line.split()
+                        key = (int(size), int(lda), int(alignment))
+                        data[key] = float(average)
+                    except:
+                        raise bench.exc.ParseError('Unable to parse line')
                 else:
                     break
             return data
 
 
     def evaluate_data(self, data, subtest, *args):
+        passed = True
+        results = []
         if subtest == 'stream':
             expected_copy = 88000.0
             expected_scale = 89000.0
@@ -129,23 +134,25 @@ class NodeTest(bench.framework.TestFramework):
             copy, scale, add, triad = data
 
             if copy < expected_copy:
-                self.logger.debug('stream: copy: expected {0}, found {1} ({2:.0%})'.format(
-                    expected_copy, copy, copy / expected_copy))
-                return False
+                #self.logger.debug('stream: copy: expected {0}, found {1} ({2:.0%})'.format(
+                #    expected_copy, copy, copy / expected_copy))
+                return False, ['copy', copy, expected_copy, copy / expected_copy]
             elif scale < expected_scale:
-                self.logger.debug('stream: scale: expected {0}, found {1} ({2:.0%})'.format(
-                    expected_scale, scale, scale / expected_scale))
-                return False
+                #self.logger.debug('stream: scale: expected {0}, found {1} ({2:.0%})'.format(
+                #    expected_scale, scale, scale / expected_scale))
+                return False, ['scale', scale, expected_scale, scale / expected_scale]
             elif add < expected_add:
-                self.logger.debug('stream: add: expected {0}, found {1} ({2:.0%})'.format(
-                    expected_add, add, add / expected_add))
-                return False
+                #self.logger.debug('stream: add: expected {0}, found {1} ({2:.0%})'.format(
+                #    expected_add, add, add / expected_add))
+                return False, ['add', add, expected_add, add / expected_add]
             elif triad < expected_triad:
-                self.logger.debug('stream: triad: expected {0}, found {1} ({2:.0%})'.format(
-                    expected_triad, triad, triad / expected_triad))
-                return False
+                #self.logger.debug('stream: triad: expected {0}, found {1} ({2:.0%})'.format(
+                #    expected_triad, triad, triad / expected_triad))
+                return False, ['triad', triad, expected_triad, triad / expected_triad]
             else:
-                return True
+                return True, []
+
+            return [passed, results]
 
         elif subtest == 'linpack':
             expected_averages = {
@@ -159,13 +166,13 @@ class NodeTest(bench.framework.TestFramework):
                 if key not in data:
                     self.logger.debug('linpack: {0}: {1}: expected {2}, not found'.format(
                         subtest, key, expected_average))
-                    return False
+                    return False, []
                 if data[key] < expected_average:
                     self.logger.debug('linpack: {0}: {1}: expected {2}, found {3} ({4:.0%})'.format(
                         subtest, key, expected_average, data[key], data[key] / expected_average))
-                    return False
+                    return False, [[subtest, key], data[key], expected_average, data[key]/expected_average]
             else:
-                return True
+                return True, []
 
 
 

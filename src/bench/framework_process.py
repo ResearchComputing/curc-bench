@@ -1,10 +1,10 @@
+import bench.log
 import bench.util
-import bench.tests.node_test
-# import bench.tests.bandwidth
-# import bench.tests.alltoall
+import datetime
 import hostlist
 import logging
 import os
+import tabulate
 
 class Process(object):
 
@@ -14,6 +14,22 @@ class Process(object):
         self.parse_data = parse_data
         self.evaluate_data = evaluate_data
         self.subtests = subtests
+        self.node_list = None
+
+        # Storing pass, fail, and error tests/nodes
+        self.results = {}
+        self.results['p_tests'] = set()
+        self.results['p_nodes'] = set()
+        self.results['f_tests'] = set()
+        self.results['f_nodes'] = set()
+        self.results['e_tests'] = set()
+        self.results['e_nodes'] = set()
+
+        # Additional dicts for displaying data
+        self.results['fail'] = {}
+        self.results['error'] = {}
+        self.results['error']['not_found'] = set()
+        self.results['error']['not_parsable'] = set()
 
 
     def execute(self, prefix):
@@ -58,10 +74,7 @@ class Process(object):
             return
 
         self.remove_previous_results(prefix)
-
-        node_list = bench.util.read_node_list(os.path.join(prefix, 'node_list'))
-        fail_nodes = set()
-        pass_nodes = set()
+        self.node_list = bench.util.read_node_list(os.path.join(prefix, 'node_list'))
 
         for test in os.listdir(prefix_):
             test_dir = os.path.join(prefix_, test)
@@ -69,23 +82,23 @@ class Process(object):
 
             for subtest in self.subtests:
                 path = os.path.join(test_dir, subtest+'.out')
-                self.process(path, test, subtest, fail_nodes, pass_nodes, test_nodes)
+                self.process(path, test, subtest, self.results['f_nodes'], self.results['p_nodes'], test_nodes)
 
-        tested = pass_nodes | fail_nodes
-        error_nodes = set(node_list) - tested
+        tested = self.results['p_nodes'] | self.results['f_nodes']
+        self.results['e_nodes'] = set(self.node_list) - tested
 
-        self.logger.info('{0}: fail nodes: {1} / {2}'.format(
-            prefix, len(fail_nodes), len(node_list)))
-        self.logger.info('{0}: pass nodes: {1} / {2}'.format(
-            prefix, len(pass_nodes), len(node_list)))
-        self.logger.info('{0}: error nodes: {1} / {2}'.format(
-            prefix, len(error_nodes), len(node_list)))
+        #Write summary to file
         self.write_result_files(
             prefix,
-            pass_nodes,
-            fail_nodes,
-            error_nodes,
+            self.results['p_nodes'],
+            self.results['f_nodes'],
+            self.results['e_nodes'],
         )
+
+        #Show user fail and error tables
+        #log results tables, including passing results to file
+        self.display_results()
+
 
     def process(self, path, test, subtest, fail_nodes, pass_nodes, test_nodes):
         ''' Inputs
@@ -97,29 +110,109 @@ class Process(object):
         try:
             with open(path) as fp:
                 output = fp.read()
-            data = self.parse_data(output, subtest)
+            parsed_data = self.parse_data(output, subtest)
         except IOError as ex:
-            self.logger.warn('{0}: error (unable to read {1})'.format(test, path))
             self.logger.debug(ex, exc_info=True)
+            for ii in test.split(','):
+                self.results['error']['not_found'].add(ii)
+            self.update_sets(test, option='add_error', reason='not_found')
             return
         except bench.exc.ParseError as ex:
-            self.logger.warn('{0}: error (unable to parse {1})'.format(test, path))
             self.logger.debug(ex, exc_info=True)
+            for ii in test.split(','):
+                self.results['error']['not_parsable'].add(ii)
+            self.update_sets(test, option='add_error', reason='not_found')
             return
-        passed = self.evaluate_data(data, subtest, test_nodes)
+        passed, data = self.evaluate_data(parsed_data, subtest, test_nodes)
 
         if passed:
-            self.logger.info('{0}: pass'.format(test))
-            if not test in fail_nodes:
-                pass_nodes |= test_nodes
+            self.update_sets(test, option='add_pass')
         else:
-            pass_nodes.discard(test)
-            fail_nodes |= test_nodes
-            self.logger.info('{test}: fail {subtest}'.format(test=test,
-                                                            subtest=subtest))
+            self.update_sets(test, option='add_fail')
+
         return
 
+    def display_results(self):
+        error_table = []
+        fail_table = []
+        for key, result in self.results['fail'].items():
+            if result == []:
+                self.results['fail'].pop(key, None)
+                self.results['f_tests'].remove(key)
+                for ii in key.split(','):
+                    self.results['error']['not_parsable'].add(ii)
+                continue
+            fail_table.append([key] + result)
 
+        for key, result in self.results['error'].items():
+            if result:
+                error_table.append([hostlist.collect_hostlist(result), key])
+
+        self.log_results(fail_table, error_table)
+
+
+        #Summary
+        print("### Summary ###")
+        print('passing nodes: {passed} / {total}'.format(passed=len(self.results['p_nodes']), total=len(self.node_list)))
+        print('failing nodes: {passed} / {total}'.format(passed=len(self.results['f_nodes']), total=len(self.node_list)))
+        print('error nodes: {passed} / {total}'.format(passed=len(self.results['e_nodes']), total=len(self.node_list)))
+
+        if self.results['p_tests']:
+            self.results_logger.info("\n### Passing Tests ###")
+            self.results_logger.info(sorted(list(self.results['p_tests'])))
+
+        if fail_table:
+            print("\n### Failing Tests ###")
+            print(tabulate.tabulate(fail_table, headers=['Hardware', 'Test', 'Result', 'Expected', 'Res/Exp'], floatfmt=".2f"))
+
+        if error_table:
+            print("\n### Missing/Error Tests ###")
+            print(tabulate.tabulate(error_table, headers=['Hardware', 'Reason']))
+
+
+    def log_results(self, fail_table, error_table):
+
+        # Print results to results log
+        self.results_logger.info("\n######## Summary - {test} - {time} ########".format(
+            test=self.test_name, time=datetime.datetime.now().strftime("%d.%b %Y %H:%M:%S")))
+        self.results_logger.info('passing nodes: {passed} / {total}'.format(passed=len(self.results['p_nodes']), total=len(self.node_list)))
+        self.results_logger.info('failing nodes: {passed} / {total}'.format(passed=len(self.results['f_nodes']), total=len(self.node_list)))
+        self.results_logger.info('error nodes: {passed} / {total}'.format(passed=len(self.results['e_nodes']), total=len(self.node_list)))
+
+        self.results_logger.info("\n### Failing Tests ###")
+        self.results_logger.info(tabulate.tabulate(fail_table, headers=['Hardware', 'Test', 'Result', 'Expected', 'Res/Exp'], floatfmt=".2f"))
+
+        self.results_logger.info("\n### Missing/Error Tests ###")
+        self.results_logger.info(tabulate.tabulate(error_table, headers=['Hardware', 'Reason']))
+
+    def update_sets(self, test, option=None, reason=None):
+        '''Updates all sets when a change is needed'''
+
+        if option == 'add_pass':
+            if test not in self.results['f_tests']:
+                for ii in test.split(','):
+                    self.results['p_nodes'].add(ii)
+                    self.results['f_nodes'].discard(ii)
+                    self.results['e_nodes'].discard(ii)
+                self.results['p_tests'].add(test)
+                self.results['f_tests'].discard(test)
+                self.results['e_tests'].discard(test)
+        elif option == 'add_fail':
+            for ii in test.split(','):
+                self.results['f_nodes'].add(ii)
+                self.results['p_nodes'].discard(ii)
+                self.results['e_nodes'].discard(ii)
+            self.results['f_tests'].add(test)
+            self.results['p_tests'].discard(test)
+            self.results['e_tests'].discard(test)
+        elif option == 'add_error':
+            for ii in test.split(','):
+                self.results['e_nodes'].add(ii)
+                self.results['p_nodes'].discard(ii)
+                self.results['f_nodes'].discard(ii)
+            self.results['e_tests'].add(test)
+            self.results['p_tests'].discard(test)
+            self.results['f_tests'].discard(test)
 
 
         #

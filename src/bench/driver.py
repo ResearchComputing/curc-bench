@@ -240,6 +240,7 @@ def driver(argv=None):
 
     elif args.command == 'process':
         currentTest = commandDictionary[args.test]
+        currentTest.Process.results_logger = bench.log.setup_logger('results_logger', directory, 'results.log')
         currentTest.Process.execute(
             directory,
         )
