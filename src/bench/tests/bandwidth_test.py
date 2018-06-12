@@ -75,6 +75,6 @@ class BandwidthTest(bench.framework.TestFramework):
                 self.logger.debug('bandwidth: {0}: {1}: expected {2}, found {3} ({4:.0%})'.format(
                     subtest, size, expected_bandwidths[size], data[size],
                     data[size] / expected_bandwidths[size]))
-                return False, [[subtest, size], data[size], expected_bandwidths[size],
+                return False, [[subtest.split(','), size], data[size], expected_bandwidths[size],
                     data[size] / expected_bandwidths[size]]
         return True, []
