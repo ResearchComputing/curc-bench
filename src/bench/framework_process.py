@@ -113,26 +113,23 @@ class Process(object):
             parsed_data = self.parse_data(output, subtest)
         except IOError as ex:
             self.logger.debug(ex, exc_info=True)
-            self.results['error']['not_found'].add(test)
-            self.results['e_tests'].add(test)
+            for ii in test.split(','):
+                self.results['error']['not_found'].add(ii)
+            self.update_sets(test, option='add_error', reason='not_found')
             return
         except bench.exc.ParseError as ex:
             self.logger.debug(ex, exc_info=True)
             for ii in test.split(','):
                 self.results['error']['not_parsable'].add(ii)
-            self.results['e_tests'].add(test)
+            self.update_sets(test, option='add_error', reason='not_found')
             return
         passed, data = self.evaluate_data(parsed_data, subtest, test_nodes)
 
         if passed:
-            if not test in self.results['f_nodes']:
-                self.results['p_nodes'] |= test_nodes
-            self.results['p_tests'].add(test)
+            self.update_sets(test, option='add_pass')
         else:
-            self.results['p_nodes'].discard(test)
-            self.results['f_nodes'] |= test_nodes
-            self.results['fail'][test] = data
-            self.results['f_tests'].add(test)
+            self.update_sets(test, option='add_fail')
+
         return
 
     def display_results(self):
@@ -153,6 +150,13 @@ class Process(object):
 
         self.log_results(fail_table, error_table)
 
+
+        #Summary
+        print("### Summary ###")
+        print('passing nodes: {passed} / {total}'.format(passed=len(self.results['p_nodes']), total=len(self.node_list)))
+        print('failing nodes: {passed} / {total}'.format(passed=len(self.results['f_nodes']), total=len(self.node_list)))
+        print('error nodes: {passed} / {total}'.format(passed=len(self.results['e_nodes']), total=len(self.node_list)))
+
         if self.results['p_tests']:
             self.results_logger.info("\n### Passing Tests ###")
             self.results_logger.info(sorted(list(self.results['p_tests'])))
@@ -169,7 +173,7 @@ class Process(object):
     def log_results(self, fail_table, error_table):
 
         # Print results to results log
-        self.results_logger.info("\n### Summary - {test} - {time} ###".format(
+        self.results_logger.info("\n######## Summary - {test} - {time} ########".format(
             test=self.test_name, time=datetime.datetime.now().strftime("%d.%b %Y %H:%M:%S")))
         self.results_logger.info('passing nodes: {passed} / {total}'.format(passed=len(self.results['p_nodes']), total=len(self.node_list)))
         self.results_logger.info('failing nodes: {passed} / {total}'.format(passed=len(self.results['f_nodes']), total=len(self.node_list)))
@@ -181,10 +185,34 @@ class Process(object):
         self.results_logger.info("\n### Missing/Error Tests ###")
         self.results_logger.info(tabulate.tabulate(error_table, headers=['Hardware', 'Reason']))
 
+    def update_sets(self, test, option=None, reason=None):
+        '''Updates all sets when a change is needed'''
 
-
-
-
+        if option == 'add_pass':
+            if test not in self.results['f_tests']:
+                for ii in test.split(','):
+                    self.results['p_nodes'].add(ii)
+                    self.results['f_nodes'].discard(ii)
+                    self.results['e_nodes'].discard(ii)
+                self.results['p_tests'].add(test)
+                self.results['f_tests'].discard(test)
+                self.results['e_tests'].discard(test)
+        elif option == 'add_fail':
+            for ii in test.split(','):
+                self.results['f_nodes'].add(ii)
+                self.results['p_nodes'].discard(ii)
+                self.results['e_nodes'].discard(ii)
+            self.results['f_tests'].add(test)
+            self.results['p_tests'].discard(test)
+            self.results['e_tests'].discard(test)
+        elif option == 'add_error':
+            for ii in test.split(','):
+                self.results['e_nodes'].add(ii)
+                self.results['p_nodes'].discard(ii)
+                self.results['f_nodes'].discard(ii)
+            self.results['e_tests'].add(test)
+            self.results['p_tests'].discard(test)
+            self.results['f_tests'].discard(test)
 
 
         #
