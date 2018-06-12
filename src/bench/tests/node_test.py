@@ -112,9 +112,12 @@ class NodeTest(bench.framework.TestFramework):
             data = {}
             for line in output[header+1:]:
                 if line:
-                    size, lda, alignment, average, maximal = line.split()
-                    key = (int(size), int(lda), int(alignment))
-                    data[key] = float(average)
+                    try:
+                        size, lda, alignment, average, maximal = line.split()
+                        key = (int(size), int(lda), int(alignment))
+                        data[key] = float(average)
+                    except:
+                        raise bench.exc.ParseError('Unable to parse line')
                 else:
                     break
             return data
