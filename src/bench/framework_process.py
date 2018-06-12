@@ -1,8 +1,10 @@
 import bench.log
 import bench.util
+import datetime
 import hostlist
 import logging
 import os
+import tabulate
 
 class Process(object):
 
@@ -12,11 +14,18 @@ class Process(object):
         self.parse_data = parse_data
         self.evaluate_data = evaluate_data
         self.subtests = subtests
+        self.node_list = None
 
+        # Storing pass, fail, and error tests/nodes
         self.results = {}
-        self.results['passing'] = set()
-        self.results['failing'] = set()
-        self.results['erroring'] = set()
+        self.results['p_tests'] = set()
+        self.results['p_nodes'] = set()
+        self.results['f_tests'] = set()
+        self.results['f_nodes'] = set()
+        self.results['e_tests'] = set()
+        self.results['e_nodes'] = set()
+
+        # Additional dicts for displaying data
         self.results['fail'] = {}
         self.results['error'] = {}
         self.results['error']['not_found'] = set()
@@ -65,10 +74,7 @@ class Process(object):
             return
 
         self.remove_previous_results(prefix)
-
-        node_list = bench.util.read_node_list(os.path.join(prefix, 'node_list'))
-        fail_nodes = set()
-        pass_nodes = set()
+        self.node_list = bench.util.read_node_list(os.path.join(prefix, 'node_list'))
 
         for test in os.listdir(prefix_):
             test_dir = os.path.join(prefix_, test)
@@ -76,39 +82,23 @@ class Process(object):
 
             for subtest in self.subtests:
                 path = os.path.join(test_dir, subtest+'.out')
-                self.process(path, test, subtest, fail_nodes, pass_nodes, test_nodes)
+                self.process(path, test, subtest, self.results['f_nodes'], self.results['p_nodes'], test_nodes)
 
-        tested = pass_nodes | fail_nodes
-        error_nodes = set(node_list) - tested
+        tested = self.results['p_nodes'] | self.results['f_nodes']
+        self.results['e_nodes'] = set(self.node_list) - tested
 
-        self.logger.info('{0}: fail nodes: {1} / {2}'.format(
-            prefix, len(fail_nodes), len(node_list)))
-        self.logger.info('{0}: pass nodes: {1} / {2}'.format(
-            prefix, len(pass_nodes), len(node_list)))
-        self.logger.info('{0}: error nodes: {1} / {2}'.format(
-            prefix, len(error_nodes), len(node_list)))
+        #Write summary to file
         self.write_result_files(
             prefix,
-            pass_nodes,
-            fail_nodes,
-            error_nodes,
+            self.results['p_nodes'],
+            self.results['f_nodes'],
+            self.results['e_nodes'],
         )
 
-        # print(self.results['passing'])
-        # print(hostlist.collect_hostlist(self.results['passing']),
-        #         'passing nodes: {passed} / {total}'.format(passed=len(pass_nodes), total=len(node_list)))
+        #Show user fail and error tables
+        #log results tables, including passing results to file
+        self.display_results()
 
-        for key, result in self.results['fail'].items():
-            if result == []:
-                self.results['fail'].pop(key, None)
-                self.results['failing'].remove(key)
-                self.results['error']['not_parsable'].add(key)
-                continue
-            print(key, 'Test={test}: found {failing:0.1f}, expected {expected:0.1f},  {perc:0.2f}'.format(
-                test=result[0], failing=result[1], expected=result[2], perc=result[3]))
-
-        for key, result in self.results['error'].items():
-            print(key, result)
 
     def process(self, path, test, subtest, fail_nodes, pass_nodes, test_nodes):
         ''' Inputs
@@ -122,32 +112,77 @@ class Process(object):
                 output = fp.read()
             parsed_data = self.parse_data(output, subtest)
         except IOError as ex:
-            #self.logger.warn('{0}: error (unable to read {1})'.format(test, path))
             self.logger.debug(ex, exc_info=True)
             self.results['error']['not_found'].add(test)
-            self.results['erroring'].add(test)
+            self.results['e_tests'].add(test)
             return
         except bench.exc.ParseError as ex:
-            #self.logger.warn('{0}: error (unable to parse {1})'.format(test, path))
             self.logger.debug(ex, exc_info=True)
-            self.results['error']['not_parsable'].add(test)
-            self.results['erroring'].add(test)
+            for ii in test.split(','):
+                self.results['error']['not_parsable'].add(ii)
+            self.results['e_tests'].add(test)
             return
         passed, data = self.evaluate_data(parsed_data, subtest, test_nodes)
 
         if passed:
-            # self.logger.info('{0}: pass'.format(test))
-            if not test in fail_nodes:
-                pass_nodes |= test_nodes
-            self.results['passing'].add(test)
+            if not test in self.results['f_nodes']:
+                self.results['p_nodes'] |= test_nodes
+            self.results['p_tests'].add(test)
         else:
-            pass_nodes.discard(test)
-            fail_nodes |= test_nodes
-            # self.logger.info('{test}: fail {subtest}'.format(test=test,
-                                                            # subtest=subtest))
+            self.results['p_nodes'].discard(test)
+            self.results['f_nodes'] |= test_nodes
             self.results['fail'][test] = data
-            self.results['failing'].add(test)
+            self.results['f_tests'].add(test)
         return
+
+    def display_results(self):
+        error_table = []
+        fail_table = []
+        for key, result in self.results['fail'].items():
+            if result == []:
+                self.results['fail'].pop(key, None)
+                self.results['f_tests'].remove(key)
+                for ii in key.split(','):
+                    self.results['error']['not_parsable'].add(ii)
+                continue
+            fail_table.append([key] + result)
+
+        for key, result in self.results['error'].items():
+            if result:
+                error_table.append([hostlist.collect_hostlist(result), key])
+
+        self.log_results(fail_table, error_table)
+
+        if self.results['p_tests']:
+            self.results_logger.info("\n### Passing Tests ###")
+            self.results_logger.info(sorted(list(self.results['p_tests'])))
+
+        if fail_table:
+            print("\n### Failing Tests ###")
+            print(tabulate.tabulate(fail_table, headers=['Hardware', 'Test', 'Result', 'Expected', 'Res/Exp'], floatfmt=".2f"))
+
+        if error_table:
+            print("\n### Missing/Error Tests ###")
+            print(tabulate.tabulate(error_table, headers=['Hardware', 'Reason']))
+
+
+    def log_results(self, fail_table, error_table):
+
+        # Print results to results log
+        self.results_logger.info("\n### Summary - {test} - {time} ###".format(
+            test=self.test_name, time=datetime.datetime.now().strftime("%d.%b %Y %H:%M:%S")))
+        self.results_logger.info('passing nodes: {passed} / {total}'.format(passed=len(self.results['p_nodes']), total=len(self.node_list)))
+        self.results_logger.info('failing nodes: {passed} / {total}'.format(passed=len(self.results['f_nodes']), total=len(self.node_list)))
+        self.results_logger.info('error nodes: {passed} / {total}'.format(passed=len(self.results['e_nodes']), total=len(self.node_list)))
+
+        self.results_logger.info("\n### Failing Tests ###")
+        self.results_logger.info(tabulate.tabulate(fail_table, headers=['Hardware', 'Test', 'Result', 'Expected', 'Res/Exp'], floatfmt=".2f"))
+
+        self.results_logger.info("\n### Missing/Error Tests ###")
+        self.results_logger.info(tabulate.tabulate(error_table, headers=['Hardware', 'Reason']))
+
+
+
 
 
 
