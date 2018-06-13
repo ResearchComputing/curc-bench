@@ -13,6 +13,7 @@ config['node']['modules'] = ['intel']
 
 config['ior'] = {}
 config['ior']['ior'] = "/projects/rcops/holtat/src/IOR/src/C/IOR"
+config['ior']['modules'] = ['intel/17.4', 'impi/17.3', 'hdf5/1.10.1', 'netcdf/4.4.1.1', 'pnetcdf/1.8.1']
 
 # Bandwidth tests (osu_bw)
 config['bandwidth'] = {}

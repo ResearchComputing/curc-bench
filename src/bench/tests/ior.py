@@ -41,6 +41,7 @@ class IorTest(bench.framework.TestFramework):
             fp.write(self.TEMPLATE.render(
                 job_name = 'bench-ior',
                 ior_path = bc.config['ior']['ior'],
+                modules = " ".join(bc.config['ior']['modules'])
             ))
 
         node_list_file = os.path.join(test_dir, 'node_list')
