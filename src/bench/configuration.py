@@ -2,8 +2,12 @@
 
 config = {}
 
-# Included Tests
+# Reserve slurm option defaults
+config['reserve']['account'] = 'admin'
+config['reserve']['users'] = ['jobl6604', 'holtat', 'joan5896'] 
 
+
+# Included Tests
 # Node tests (linpack + stream)
 config['node'] = {}
 config['node']['linpack'] = "/curc/sw/intel/16.0.3/compilers_and_libraries_2016.3.210/linux/mkl/benchmarks/linpack/xlinpack_xeon64"

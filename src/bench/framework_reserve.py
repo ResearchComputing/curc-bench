@@ -1,3 +1,4 @@
+import bench.configuration as bc
 import bench.exc
 import bench.slurm
 import bench.util
@@ -6,13 +7,24 @@ import time
 
 class Reserve(object):
 
-    def __init__(self, logger, test_name, fail_nodes=None, error_nodes=None, reservation_name=None, account=None):
+    def __init__(self, logger, test_name, fail_nodes=None, error_nodes=None, reservation_name=None,
+                    account=None, users=None):
         self.logger = logger
         self.test_name = test_name
         self.fail_nodes = fail_nodes
         self.error_nodes = error_nodes
         self.reservation_name = reservation_name
-        self.account = account
+
+        #Defaults vs passed in
+        self.account = bc.config['reserve']['account']
+        self.users = bc.config['reserve']['users']
+        if account:
+            self.account = account
+        if users:
+            self.users = users
+
+
+
 
     def execute(self, prefix):
         if not self.reservation_name:
@@ -64,8 +76,8 @@ class Reserve(object):
 
             try:
                 nodes=','.join(sorted(reserve_nodes_))
-                #print("RESERVATION NAME ", self.reservation_name)
-                #print("NODES = ", nodes)
+                # print("RESERVATION NAME ", self.reservation_name)
+                # print("NODES = ", nodes)
 
                 if subcommand == 'update':
                     bench.slurm.scontrol(
@@ -77,12 +89,13 @@ class Reserve(object):
                     bench.slurm.scontrol(
                         subcommand=subcommand,
                         reservation=self.reservation_name,
-                        accounts = 'admin',
-                        #accounts = self.account,
+                        # accounts = 'admin',
+                        accounts = self.account,
                         flags='overlap',
                         starttime='now',
                         duration='UNLIMITED',
                         nodes=nodes,
+                        users=self.users,
                     )
             except bench.exc.SlurmError as ex:
                 self.logger.error(ex)
