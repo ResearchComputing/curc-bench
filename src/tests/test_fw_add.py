@@ -39,6 +39,7 @@ NODES = set('tnode01{0:02}'.format(i) for i in xrange(1, 81))
                                                 'linpack' : '/fake/linpack.so',
                                                 'stream' : '/fake/stream.so'}})
 @mock.patch.dict(bench.configuration.config, {'bandwidth': {'nodes' : 'tnode01[01-08,11-18]',
+                                                'modules' : ['intel/17.4', 'impi/17.3'],
                                                 'osu' : '/fake/osu_bw.so'}})
 @mock.patch.dict(bench.configuration.config, {'alltoall' : {'osu' : '/fake/osu_alltoall.so'}})
 @mock.patch.dict(bench.configuration.config, {'alltoall-pair': {'nodes' : 'tnode01[01-08,11-18]'}})
@@ -98,6 +99,7 @@ class TestAdd(unittest.TestCase):
         script = open(os.path.join(self.directory, 'bandwidth', 'tests',
                             'tnode0101,tnode0102', 'tnode0101,tnode0102.job')).read()
         self.assertIn('/fake/osu_bw.so', script)
+        self.assertIn('intel/17.4 impi/17.3', script)
         self.assertIn('#SBATCH --nodelist=tnode0101,tnode0102', script)
         self.assertIn('#!/bin/bash', script)
 

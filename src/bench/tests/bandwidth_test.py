@@ -39,6 +39,7 @@ class BandwidthTest(bench.framework.TestFramework):
             with open(script, 'w') as fp:
                 fp.write(self.TEMPLATE.render(
                     job_name = 'bench-bandwidth-{0}'.format(pair_name),
+                    modules = " ".join(bc.config['bandwidth']['modules']),
                     nodes = node_pair,
                     osu_bw_path = bc.config['bandwidth']['osu'],
                 ))

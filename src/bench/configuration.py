@@ -18,6 +18,7 @@ config['ior']['ior'] = "/projects/rcops/holtat/src/IOR/src/C/IOR"
 config['bandwidth'] = {}
 config['bandwidth']['osu'] = "/projects/rcops/CurcBenchBenchmarks/osu5.3.2/libexec/osu-micro-benchmarks/mpi/pt2pt/osu_bw"
 config['bandwidth']['nodes'] = "shas[01-05][01-60],shas06[05-64],shas08[01-60],shas09[01-32]"
+config['bandwidth']['modules'] = ['intel/17.4', 'impi/17.3']
 
 # Alltoall tests (osu_alltoall)
 config['alltoall'] = {}
