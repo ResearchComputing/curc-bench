@@ -66,16 +66,24 @@ class Reserve(object):
                 nodes=','.join(sorted(reserve_nodes_))
                 #print("RESERVATION NAME ", self.reservation_name)
                 #print("NODES = ", nodes)
-                bench.slurm.scontrol(
-                    subcommand=subcommand,
-                    reservation=self.reservation_name,
-                    accounts = 'admin',
-                    #accounts = self.account,
-                    flags='overlap',
-                    starttime='now',
-                    duration='UNLIMITED',
-                    nodes=','.join(sorted(reserve_nodes_)),
-                )
+
+                if subcommand == 'update':
+                    bench.slurm.scontrol(
+                        subcommand=subcommand,
+                        reservation=self.reservation_name,
+                        nodes=nodes,
+                    )
+                else:
+                    bench.slurm.scontrol(
+                        subcommand=subcommand,
+                        reservation=self.reservation_name,
+                        accounts = 'admin',
+                        #accounts = self.account,
+                        flags='overlap',
+                        starttime='now',
+                        duration='UNLIMITED',
+                        nodes=nodes,
+                    )
             except bench.exc.SlurmError as ex:
                 self.logger.error(ex)
                 self.logger.debug(ex, exc_info=True)
