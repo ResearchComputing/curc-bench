@@ -98,6 +98,7 @@ class AllToAllTest(bench.framework.TestFramework):
             fp.write(self.TEMPLATE.render(
                 job_name = 'bench-alltoall-{0}'.format(node_list_name),
                 nodes = list(sorted(nodes)),
+                modules = " ".join(bc.config['alltoall']['modules']),
                 osu_alltoall_path = bc.config['alltoall']['osu'],
                 subtest = self.test_name
             ))

@@ -23,6 +23,7 @@ config['bandwidth']['modules'] = ['intel/17.4', 'impi/17.3']
 # Alltoall tests (osu_alltoall)
 config['alltoall'] = {}
 config['alltoall']['osu'] = "/projects/rcops/CurcBenchBenchmarks/osu5.3.2/libexec/osu-micro-benchmarks/mpi/collective/osu_alltoall"
+config['alltoall']['modules'] = ['intel/17.4', 'impi/17.3']
 
 config['alltoall-pair'] = {}
 config['alltoall-pair']['nodes'] = "shas[01-05][01-60],shas06[05-64],shas08[01-60],shas09[01-32]"
@@ -30,6 +31,7 @@ config['alltoall-switch'] = {}
 config['alltoall-switch']['nodes'] = "shas[01-05][01-60],shas06[05-64],shas08[01-60],shas09[01-32]"
 config['alltoall-rack'] = {}
 config['alltoall-rack']['nodes'] = "shas[01-05][01-60],shas06[05-64],shas08[01-60],shas09[01-32]"
+
 
 # Alltoall rack test
 config['Rack'] = {}
