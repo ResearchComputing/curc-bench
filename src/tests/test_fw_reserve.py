@@ -134,6 +134,11 @@ class TestReserve(unittest.TestCase):
         self.assertEqual(kwargs_0['subcommand'], 'show')
         self.assertEqual(kwargs_1['subcommand'], 'update')
 
+        # Reservations already have a starttime/endtime. Updating with this will
+        # cause Slurm to error.
+        assert not ('endtime' in kwargs_1)
+        assert not ('starttime' in kwargs_1)
+
         for node in self.pass_nodes:
             self.assertNotIn(node, kwargs_1['nodes'])
         for node in self.fail_nodes:
