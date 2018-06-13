@@ -3,8 +3,9 @@
 config = {}
 
 # Reserve slurm option defaults
+config['reserve'] = {}
 config['reserve']['account'] = 'admin'
-config['reserve']['users'] = ['jobl6604', 'holtat', 'joan5896'] 
+config['reserve']['users'] = ['jobl6604', 'holtat', 'joan5896']
 
 
 # Included Tests

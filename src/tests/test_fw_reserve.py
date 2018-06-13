@@ -113,7 +113,8 @@ class TestReserve(unittest.TestCase):
 
         assert not bench.slurm.scontrol.called
 
-
+    @mock.patch.dict(bench.configuration.config, {'reserve': {'account' : 'default_account',
+                                                    'users' : ['user1', 'user2', 'user3']}})
     @mock.patch('bench.slurm.scontrol', side_effect=scontrol_show_return_1)
     # @mock.patch('bench.slurm.scontrol', return_value="Scontrol called")
     def test_reserve_already_exists(self, arg1):
@@ -129,10 +130,13 @@ class TestReserve(unittest.TestCase):
         args_0, kwargs_0 = arg1.call_args_list[0]
         #scontrol create makes a reservation
         args_1, kwargs_1 = arg1.call_args_list[1]
+        print(args_1, kwargs_1)
 
         assert bench.slurm.scontrol.called
         self.assertEqual(kwargs_0['subcommand'], 'show')
         self.assertEqual(kwargs_1['subcommand'], 'update')
+        self.assertEqual(kwargs_1['users'], 'user1,user2,user3')
+        self.assertEqual(kwargs_1['accounts'], 'default_account')
 
         # Reservations already have a starttime/endtime. Updating with this will
         # cause Slurm to error.

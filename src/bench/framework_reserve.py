@@ -17,12 +17,11 @@ class Reserve(object):
 
         #Defaults vs passed in
         self.account = bc.config['reserve']['account']
-        self.users = bc.config['reserve']['users']
+        self.users = ",".join(bc.config['reserve']['users'])
         if account:
             self.account = account
         if users:
             self.users = users
-
 
 
 
@@ -60,7 +59,6 @@ class Reserve(object):
 
         if reserve_nodes_:
 
-
             # Check for existing reservation, create new one by default
             subcommand = 'create'
             try:
@@ -81,20 +79,21 @@ class Reserve(object):
 
                 if subcommand == 'update':
                     bench.slurm.scontrol(
-                        subcommand=subcommand,
-                        reservation=self.reservation_name,
+                        subcommand = subcommand,
+                        accounts = self.account,
                         nodes=nodes,
+                        reservation=self.reservation_name,
+                        users=self.users,
                     )
                 else:
                     bench.slurm.scontrol(
-                        subcommand=subcommand,
-                        reservation=self.reservation_name,
-                        # accounts = 'admin',
+                        subcommand = subcommand,
                         accounts = self.account,
-                        flags='overlap',
-                        starttime='now',
                         duration='UNLIMITED',
+                        flags='overlap',
                         nodes=nodes,
+                        reservation=self.reservation_name,
+                        starttime='now',
                         users=self.users,
                     )
             except bench.exc.SlurmError as ex:
