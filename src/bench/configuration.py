@@ -9,6 +9,7 @@ config['node'] = {}
 config['node']['linpack'] = "/curc/sw/intel/16.0.3/compilers_and_libraries_2016.3.210/linux/mkl/benchmarks/linpack/xlinpack_xeon64"
 config['node']['stream'] = "/projects/rcops/CurcBenchBenchmarks/stream/stream.o"
 config['node']['nodes'] = "shas[01-05][01-60],shas06[05-64],shas08[01-60],shas09[01-32]"
+config['node']['modules'] = ['intel']
 
 config['ior'] = {}
 config['ior']['ior'] = "/projects/rcops/holtat/src/IOR/src/C/IOR"
@@ -89,7 +90,7 @@ config['Switch']['nodes'] = "shas[01-05][01-60],shas06[05-64],shas08[01-60],shas
 # SwitchName=OPAEDGE12 Nodes=shas03[29-60]
 # SwitchName=OPAEDGE13 Nodes=smem0301,sgpu03[01-02],shas03[01-28]
 # SwitchName=OPAEDGE14 Nodes=shas08[01-28],sgpu0801
-# SwitchName=OPAEDGE15 Nodes=shas08[29-60] 
+# SwitchName=OPAEDGE15 Nodes=shas08[29-60]
 # SwitchName=OPAEDGE16 Nodes=shas09[01-32]
 # SwitchName=OPAEDGE17 Nodes=ssky09[33-52]
 #

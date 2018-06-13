@@ -35,6 +35,7 @@ NODELIST_P = re.compile(r'(--nodelist|-w) *(|=) *([^ =]+) *\n')
 NODES = set('tnode01{0:02}'.format(i) for i in xrange(1, 81))
 
 @mock.patch.dict(bench.configuration.config, {'node': {'nodes' : 'tnode01[01-03]',
+                                                'modules' : ['intel'],
                                                 'linpack' : '/fake/linpack.so',
                                                 'stream' : '/fake/stream.so'}})
 @mock.patch.dict(bench.configuration.config, {'bandwidth': {'nodes' : 'tnode01[01-08,11-18]',
@@ -78,6 +79,7 @@ class TestAdd(unittest.TestCase):
         script = open(os.path.join(self.directory, 'node', 'tests', 'tnode0101', 'tnode0101.job')).read()
         self.assertIn('/fake/linpack.so', script)
         self.assertIn('/fake/stream.so', script)
+        self.assertIn('intel', script)
         self.assertIn('#SBATCH --nodes=1', script)
         self.assertIn('#!/bin/bash', script)
 

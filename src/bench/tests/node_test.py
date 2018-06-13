@@ -56,6 +56,7 @@ class NodeTest(bench.framework.TestFramework):
             with open(script_file, 'w') as fp:
                 fp.write(self.TEMPLATE.render(
                     job_name = 'bench-node-{0}'.format(node),
+                    modules = " ".join(bc.config['node']['modules']),
                     node_name = node,
                     linpack_path = bc.config['node']['linpack'],
                     stream_path = bc.config['node']['stream'],
