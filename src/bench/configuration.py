@@ -14,22 +14,9 @@ config['reserve']['users'] = ['jobl6604', 'holtat', 'joan5896']
 
 
 # Included Tests
-# Node tests (linpack + stream)
-config['node'] = {}
-config['node']['linpack'] = "/curc/sw/intel/16.0.3/compilers_and_libraries_2016.3.210/linux/mkl/benchmarks/linpack/xlinpack_xeon64"
-config['node']['stream'] = "/projects/rcops/CurcBenchBenchmarks/stream/stream.o"
-config['node']['nodes'] = "shas[01-05][01-60],shas06[05-64],shas08[01-60],shas09[01-32]"
-config['node']['modules'] = ['intel']
-
 config['ior'] = {}
 config['ior']['ior'] = "/projects/rcops/holtat/src/IOR/src/C/IOR"
 config['ior']['modules'] = ['intel/17.4', 'impi/17.3', 'hdf5/1.10.1', 'netcdf/4.4.1.1', 'pnetcdf/1.8.1']
-
-# Bandwidth tests (osu_bw)
-config['bandwidth'] = {}
-config['bandwidth']['osu'] = "/projects/rcops/CurcBenchBenchmarks/osu5.3.2/libexec/osu-micro-benchmarks/mpi/pt2pt/osu_bw"
-config['bandwidth']['nodes'] = "shas[01-05][01-60],shas06[05-64],shas08[01-60],shas09[01-32]"
-config['bandwidth']['modules'] = ['intel/17.4', 'impi/17.3']
 
 # Alltoall tests (osu_alltoall)
 config['alltoall'] = {}
