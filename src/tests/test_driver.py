@@ -68,7 +68,7 @@ class TestDriver(unittest.TestCase):
         return_value=None)
     @mock.patch('bench.framework_submit.Submit.execute',
         return_value=None)
-    @mock.patch.dict(bench.configuration.config, {'submit': {'account' : 'default_account',
+    @mock.patch.dict(bench.conf.general.config, {'submit': {'account' : 'default_account',
                                                     'qos' : 'default_qos'}})
     def test_call_bench_submit_execute_2(self, *arg):
         '''Test that bench.tests.node_test.NodeTest Submit.execute correctly uses
@@ -91,7 +91,7 @@ class TestDriver(unittest.TestCase):
         return_value=None)
     @mock.patch('bench.framework_submit.Submit.execute',
         return_value=None)
-    @mock.patch.dict(bench.configuration.config, {'submit': {'account' : 'default_account',
+    @mock.patch.dict(bench.conf.general.config, {'submit': {'account' : 'default_account',
                                                     'qos' : 'default_qos'}})
     def test_call_bench_submit_execute_3(self, *arg):
         '''Test that bench.tests.node_test.NodeTest Submit.execute correctly overrides

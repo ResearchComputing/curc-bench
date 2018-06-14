@@ -1,5 +1,5 @@
 import argparse
-import bench.configuration as bc
+import bench.conf.general as bc
 import bench.create
 import bench.framework
 import bench.framework_add
