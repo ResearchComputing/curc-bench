@@ -41,7 +41,7 @@ class BandwidthTest(bench.framework.TestFramework):
                     job_name = 'bench-bandwidth-{0}'.format(pair_name),
                     modules = " ".join(bbc.config['modules']),
                     nodes = node_pair,
-                    osu_bw_path = bbc.config['osu'],
+                    osu_bw_path = bbc.config['osu_bw_path'],
                 ))
             bench.util.write_node_list(os.path.join(test_dir, 'node_list'), node_pair)
         self.logger.info('bandwidth: add: {0}'.format(len(node_pairs)))

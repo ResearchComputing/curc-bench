@@ -3,7 +3,7 @@ config = {}
 
 # Bandwidth tests (osu_bw)
 config = {}
-config['osu'] = "/projects/rcops/CurcBenchBenchmarks/osu5.3.2/libexec/osu-micro-benchmarks/mpi/pt2pt/osu_bw"
+config['osu_bw_path'] = "/projects/rcops/CurcBenchBenchmarks/osu5.3.2/libexec/osu-micro-benchmarks/mpi/pt2pt/osu_bw"
 config['nodes'] = "shas[01-05][01-60],shas06[05-64],shas08[01-60],shas09[01-32]"
 config['modules'] = ['intel/17.4', 'impi/17.3']
 
