@@ -34,13 +34,27 @@ def fake_reservation (reservation_dict):
 NODELIST_P = re.compile(r'(--nodelist|-w) *(|=) *([^ =]+) *\n')
 NODES = set('tnode01{0:02}'.format(i) for i in xrange(1, 81))
 
-@mock.patch.dict(bench.configuration.config, {'node': {'nodes' : 'tnode01[01-03]',
+@mock.patch.dict(bench.conf.node_conf.config, {'nodes' : 'tnode01[01-03]',
                                                 'modules' : ['intel'],
-                                                'linpack' : '/fake/linpack.so',
-                                                'stream' : '/fake/stream.so'}})
-@mock.patch.dict(bench.configuration.config, {'bandwidth': {'nodes' : 'tnode01[01-08,11-18]',
+                                                'linpack_path' : '/fake/linpack.so',
+                                                'stream_path' : '/fake/stream.so',
+                                                'stream_copy' : 88000.0,
+                                                'stream_scale' : 89000.0,
+                                                'stream_add' : 91000.0,
+                                                'stream_triad' : 92000.0,
+                                                'linpack_averages' : {(5000, 5000, 4): 380.0,
+                                                                      (10000, 10000, 4): 580.0,
+                                                                      (20000, 20000, 4): 670.0,
+                                                                      (25000, 25000, 4): 640.0 }})
+@mock.patch.dict(bench.conf.bandwidth_conf.config, {'nodes' : 'tnode01[01-08,11-18]',
                                                 'modules' : ['intel/17.4', 'impi/17.3'],
-                                                'osu' : '/fake/osu_bw.so'}})
+                                                'osu' : '/fake/osu_bw.so',
+                                                'osu_bandwidths' : {
+                                                    4194304: 10000.0,
+                                                    1048576: 10000.0,
+                                                    262144: 10000.0,
+                                                    65536: 6000.0,
+                                                }})
 @mock.patch.dict(bench.configuration.config, {'alltoall' : {'osu' : '/fake/osu_alltoall.so',
                                                 'modules' : ['intel/17.4', 'impi/17.3']}})
 @mock.patch.dict(bench.configuration.config, {'alltoall-pair': {'nodes' : 'tnode01[01-08,11-18]'}})
