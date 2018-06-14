@@ -1,4 +1,4 @@
-import bench.configuration as bc
+import bench.conf.general as bc
 import bench.exc
 import bench.slurm
 import bench.util
