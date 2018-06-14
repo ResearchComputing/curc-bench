@@ -5,7 +5,7 @@ import bench.framework_process
 import bench.framework_reserve
 import bench.exc
 import bench.util
-import bench.configuration as bc
+import bench.conf.node_conf as bnc
 import jinja2
 import logging
 import os
@@ -15,6 +15,7 @@ import collections
 import hostlist
 
 
+
 class NodeTest(bench.framework.TestFramework):
 
     def __init__(self, test_name):
@@ -22,7 +23,7 @@ class NodeTest(bench.framework.TestFramework):
 
         self.subtests = ['stream', 'linpack']
 
-        self.Add = bench.framework_add.Add(self.logger, self.generate, test_name)
+        self.Add = bench.framework_add.Add(self.logger, self.generate, test_name, bnc.config['nodes'])
         self.Submit = bench.framework_submit.Submit(self.logger, test_name)
         self.Process = bench.framework_process.Process(self.logger, self.parse_data, self.evaluate_data, test_name, self.subtests)
         self.Reserve = bench.framework_reserve.Reserve(self.logger, test_name)
@@ -45,7 +46,7 @@ class NodeTest(bench.framework.TestFramework):
             self.logger.info('node: ignoring topology (not used)')
 
         node_set = collections.defaultdict(set)
-        node_set = set(hostlist.expand_hostlist(bc.config['node']['nodes']))
+        node_set = set(hostlist.expand_hostlist(bnc.config['nodes']))
         node_set &= set(nodes) #Don't include error/excluded nodes
 
         for node in node_set:
@@ -56,9 +57,10 @@ class NodeTest(bench.framework.TestFramework):
             with open(script_file, 'w') as fp:
                 fp.write(self.TEMPLATE.render(
                     job_name = 'bench-node-{0}'.format(node),
+                    modules = " ".join(bnc.config['modules']),
                     node_name = node,
-                    linpack_path = bc.config['node']['linpack'],
-                    stream_path = bc.config['node']['stream'],
+                    linpack_path = bnc.config['linpack_path'],
+                    stream_path = bnc.config['stream_path'],
                 ))
 
             node_list_file = os.path.join(test_dir, 'node_list')
@@ -127,10 +129,10 @@ class NodeTest(bench.framework.TestFramework):
         passed = True
         results = []
         if subtest == 'stream':
-            expected_copy = 88000.0
-            expected_scale = 89000.0
-            expected_add = 91000.0
-            expected_triad = 92000.0
+            expected_copy = bnc.config['stream_copy']
+            expected_scale = bnc.config['stream_scale']
+            expected_add = bnc.config['stream_add']
+            expected_triad = bnc.config['stream_triad']
             copy, scale, add, triad = data
 
             if copy < expected_copy:
@@ -155,12 +157,7 @@ class NodeTest(bench.framework.TestFramework):
             return [passed, results]
 
         elif subtest == 'linpack':
-            expected_averages = {
-                (5000, 5000, 4): 380.0,
-                (10000, 10000, 4): 580.0,
-                (20000, 20000, 4): 670.0,
-                (25000, 25000, 4): 640.0,
-            }
+            expected_averages = bnc.config['linpack_averages']
 
             for key, expected_average in expected_averages.iteritems():
                 if key not in data:

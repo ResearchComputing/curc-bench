@@ -21,7 +21,7 @@ Intel(R) Optimized LINPACK Benchmark data
 
 function main
 {
-    module load intel
+    module load {{modules}}
 
     $STREAM >stream.out
 

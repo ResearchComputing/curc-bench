@@ -60,10 +60,53 @@ class TestDriver(unittest.TestCase):
              'fake_reservation')
 
 
+    @mock.patch('bench.driver.get_directory',
+        return_value='fake_dir')
+    @mock.patch('bench.log.configure_stderr_logging',
+        return_value=None)
+    @mock.patch('bench.log.configure_file_logging',
+        return_value=None)
+    @mock.patch('bench.framework_submit.Submit.execute',
+        return_value=None)
+    @mock.patch.dict(bench.conf.general.config, {'submit': {'account' : 'default_account',
+                                                    'qos' : 'default_qos'}})
+    def test_call_bench_submit_execute_2(self, *arg):
+        '''Test that bench.tests.node_test.NodeTest Submit.execute correctly uses
+        default configuration'''
+        bench.driver.driver(argv=['bench', 'submit', '--test', 'node'])
+        assert Submit.execute.called
+        assert 'fake_dir' in Submit.execute.call_args[0]
+        self.assertEqual(Submit.execute.call_args[1]['account'],
+             'default_account')
+        self.assertEqual(Submit.execute.call_args[1]['qos'],
+             'default_qos')
+        self.assertEqual(Submit.execute.call_args[1]['reservation'],
+             None)
 
-
-
-
+    @mock.patch('bench.driver.get_directory',
+        return_value='fake_dir')
+    @mock.patch('bench.log.configure_stderr_logging',
+        return_value=None)
+    @mock.patch('bench.log.configure_file_logging',
+        return_value=None)
+    @mock.patch('bench.framework_submit.Submit.execute',
+        return_value=None)
+    @mock.patch.dict(bench.conf.general.config, {'submit': {'account' : 'default_account',
+                                                    'qos' : 'default_qos'}})
+    def test_call_bench_submit_execute_3(self, *arg):
+        '''Test that bench.tests.node_test.NodeTest Submit.execute correctly overrides
+        default configuration when arguments are added from command line'''
+        bench.driver.driver(argv=['bench', 'submit', '--test', 'node',
+            '--account', 'fake_account', '--qos', 'fake_qos',
+            '--reservation', 'fake_reservation'])
+        assert Submit.execute.called
+        assert 'fake_dir' in Submit.execute.call_args[0]
+        self.assertEqual(Submit.execute.call_args[1]['account'],
+             'fake_account')
+        self.assertEqual(Submit.execute.call_args[1]['qos'],
+             'fake_qos')
+        self.assertEqual(Submit.execute.call_args[1]['reservation'],
+             'fake_reservation')
 
 
 

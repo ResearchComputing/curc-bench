@@ -170,9 +170,9 @@ class TestSubmitNode(unittest.TestCase):
 
 
 
-@mock.patch.dict(bench.configuration.config, {'alltoall' : {'osu' : '/fake/osu_alltoall.so'}})
-@mock.patch.dict(bench.configuration.config, {'alltoall-switch': {'nodes' : 'tnode01[01-20]'}})
-@mock.patch.dict(bench.configuration.config, {'Switch': {'switch_1' : 'tnode01[01-05]',
+@mock.patch.dict(bench.conf.alltoall_conf.config, {'osu_a2a_path' : '/fake/osu_alltoall.so'})
+@mock.patch.dict(bench.conf.alltoall_conf.config, {'nodes' : 'tnode01[01-20]'})
+@mock.patch.dict(bench.conf.alltoall_conf.config, {'Switch': {'switch_1' : 'tnode01[01-05]',
                                                 'switch_2' : 'tnode01[06-10]',
                                                 'switch_3' : 'tnode01[11-15]',
                                                 'switch_4' : 'tnode01[16-20]'}})

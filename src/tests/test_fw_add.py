@@ -34,20 +34,72 @@ def fake_reservation (reservation_dict):
 NODELIST_P = re.compile(r'(--nodelist|-w) *(|=) *([^ =]+) *\n')
 NODES = set('tnode01{0:02}'.format(i) for i in xrange(1, 81))
 
-@mock.patch.dict(bench.configuration.config, {'node': {'nodes' : 'tnode01[01-03]',
-                                                'linpack' : '/fake/linpack.so',
-                                                'stream' : '/fake/stream.so'}})
-@mock.patch.dict(bench.configuration.config, {'bandwidth': {'nodes' : 'tnode01[01-08,11-18]',
-                                                'osu' : '/fake/osu_bw.so'}})
-@mock.patch.dict(bench.configuration.config, {'alltoall' : {'osu' : '/fake/osu_alltoall.so'}})
-@mock.patch.dict(bench.configuration.config, {'alltoall-pair': {'nodes' : 'tnode01[01-08,11-18]'}})
-@mock.patch.dict(bench.configuration.config, {'alltoall-switch': {'nodes' : 'tnode01[01-08,11-18]'}})
-@mock.patch.dict(bench.configuration.config, {'alltoall-rack': {'nodes' : 'tnode01[01-08,11-18]'}})
-@mock.patch.dict(bench.configuration.config, {'Switch': {'switch1' : 'tnode01[01-04]',
+@mock.patch.dict(bench.conf.node_conf.config, {'nodes' : 'tnode01[01-03]',
+                                                'modules' : ['intel'],
+                                                'linpack_path' : '/fake/linpack.so',
+                                                'stream_path' : '/fake/stream.so',
+                                                'stream_copy' : 88000.0,
+                                                'stream_scale' : 89000.0,
+                                                'stream_add' : 91000.0,
+                                                'stream_triad' : 92000.0,
+                                                'linpack_averages' : {(5000, 5000, 4): 380.0,
+                                                                      (10000, 10000, 4): 580.0,
+                                                                      (20000, 20000, 4): 670.0,
+                                                                      (25000, 25000, 4): 640.0 }})
+@mock.patch.dict(bench.conf.bandwidth_conf.config, {'nodes' : 'tnode01[01-08,11-18]',
+                                                'modules' : ['intel/17.4', 'impi/17.3'],
+                                                'osu_bw_path' : '/fake/osu_bw.so',
+                                                'osu_bandwidths' : {
+                                                    4194304: 10000.0,
+                                                    1048576: 10000.0,
+                                                    262144: 10000.0,
+                                                    65536: 6000.0,
+                                                }})
+@mock.patch.dict(bench.conf.alltoall_conf.config, {'osu_a2a_path' : '/fake/osu_alltoall.so',
+                                                'modules' : ['intel/17.4', 'impi/17.3'],
+                                                'nodes' : 'tnode01[01-08,11-18]',
+                                                'latency_factor': 1.55,
+                                                'osu_latencies' : { 2:13613.5219632, 3:28375.5187868,
+                                                                       4:43137.5156105, 5:57899.5124341,
+                                                                       6:72661.5092577, 7:87423.5060814,
+                                                                       8:102185.502905, 9:116947.499729,
+                                                                       10:131709.496552, 11:146471.493376,
+                                                                       12:161233.4902, 13:175995.487023,
+                                                                       14:190757.483847, 15:205519.480671,
+                                                                       16:220281.477494, 17:235043.474318,
+                                                                       18:249805.471141, 19:264567.467965,
+                                                                       20:279329.464789, 21:294091.461612,
+                                                                       22:308853.458436, 23:323615.45526,
+                                                                       24:338377.452083, 25:353139.448907,
+                                                                       26:367901.445731, 27:382663.442554,
+                                                                       28:397425.439378, 29:412187.436202,
+                                                                       30:426949.433025, 31:441711.429849,
+                                                                       32:456473.426672, 33:471235.423496,
+                                                                       34:753806.42032, 35:753806.417143,
+                                                                       36:753806.413967, 37:753806.410791,
+                                                                       38:753806.407614, 39:753806.404438,
+                                                                       40:753806.401262, 50:456062.014488,
+                                                                       51:522754.035136, 52:589446.055784,
+                                                                       53:656138.076432, 54:722830.09708,
+                                                                       55:789522.117728, 56:856214.138376,
+                                                                       57:922906.159024, 58:989598.179672,
+                                                                       59:1056290.20032, 60:1122982.22097,
+                                                                       61:1189674.24162, 62:1256366.26226,
+                                                                       63:1323058.28291, 64:1389750.30356,
+                                                                       65:1456442.32421, 66:1523134.34486,
+                                                                       67:1589826.3655, 68:1656518.38615,
+                                                                       69:1723210.4068, 70:1789902.42745,
+                                                                       71:1856594.4481, 72:1923286.46874,
+                                                                       73:1989978.48939, 74:2056670.51004,
+                                                                       75:2123362.53069, 76:2190054.55134,
+                                                                       77:2256746.57198, 78:2323438.59263,
+                                                                       79:2390130.61328, 80:2456822.63393, }})
+
+@mock.patch.dict(bench.conf.alltoall_conf.config, {'Switch': {'switch1' : 'tnode01[01-04]',
                                                 'switch2' : 'tnode01[05-08]',
                                                 'switch3' : 'tnode01[11-14]',
                                                 'switch4' : 'tnode01[15-18]'}})
-@mock.patch.dict(bench.configuration.config, {'Rack': {'rack1' : 'tnode01[01-08]',
+@mock.patch.dict(bench.conf.alltoall_conf.config, {'Rack': {'rack1' : 'tnode01[01-08]',
                                                 'rack2' : 'tnode01[11-18]'}})
 @mock.patch('bench.create.bench.util.pyslurm.node',
             return_value=fake_node(dict((node, {'state': 'fake_state', 'name' : node}) for node in NODES)))
@@ -78,6 +130,7 @@ class TestAdd(unittest.TestCase):
         script = open(os.path.join(self.directory, 'node', 'tests', 'tnode0101', 'tnode0101.job')).read()
         self.assertIn('/fake/linpack.so', script)
         self.assertIn('/fake/stream.so', script)
+        self.assertIn('intel', script)
         self.assertIn('#SBATCH --nodes=1', script)
         self.assertIn('#!/bin/bash', script)
 
@@ -96,6 +149,7 @@ class TestAdd(unittest.TestCase):
         script = open(os.path.join(self.directory, 'bandwidth', 'tests',
                             'tnode0101,tnode0102', 'tnode0101,tnode0102.job')).read()
         self.assertIn('/fake/osu_bw.so', script)
+        self.assertIn('intel/17.4 impi/17.3', script)
         self.assertIn('#SBATCH --nodelist=tnode0101,tnode0102', script)
         self.assertIn('#!/bin/bash', script)
 
@@ -132,6 +186,7 @@ class TestAdd(unittest.TestCase):
             script = open(os.path.join(self.directory, "alltoall-{test}".format(test=testname),
                                 'tests', test_scripts[testname])).read()
             self.assertIn('/fake/osu_alltoall.so', script)
+            self.assertIn('intel/17.4 impi/17.3', script)
             self.assertIn(test_nodelists[testname], script)
             self.assertIn('#!/bin/bash', script)
 

@@ -1,7 +1,7 @@
 import bench.framework
 import bench.exc
 import bench.util
-import bench.configuration as bc
+import bench.conf.bandwidth_conf as bbc
 import jinja2
 import logging
 import os
@@ -16,7 +16,7 @@ class BandwidthTest(bench.framework.TestFramework):
 
         self.subtests = ['osu_bw']
 
-        self.Add = bench.framework_add.Add(self.logger, self.generate, test_name)
+        self.Add = bench.framework_add.Add(self.logger, self.generate, test_name, bbc.config['nodes'])
         self.Submit = bench.framework_submit.Submit(self.logger, test_name)
         self.Process = bench.framework_process.Process(self.logger, self.parse_data, self.evaluate_data, test_name, self.subtests)
         self.Reserve = bench.framework_reserve.Reserve(self.logger, test_name)
@@ -39,8 +39,9 @@ class BandwidthTest(bench.framework.TestFramework):
             with open(script, 'w') as fp:
                 fp.write(self.TEMPLATE.render(
                     job_name = 'bench-bandwidth-{0}'.format(pair_name),
+                    modules = " ".join(bbc.config['modules']),
                     nodes = node_pair,
-                    osu_bw_path = bc.config['bandwidth']['osu'],
+                    osu_bw_path = bbc.config['osu_bw_path'],
                 ))
             bench.util.write_node_list(os.path.join(test_dir, 'node_list'), node_pair)
         self.logger.info('bandwidth: add: {0}'.format(len(node_pairs)))
@@ -59,12 +60,7 @@ class BandwidthTest(bench.framework.TestFramework):
 
 
     def evaluate_data(self, data, subtest, *args):
-        expected_bandwidths = {
-            4194304: 10000.0,
-            1048576: 10000.0,
-            262144: 10000.0,
-            65536: 6000.0,
-        }
+        expected_bandwidths = bbc.config['osu_bandwidths']
 
         for size, bandwidth in expected_bandwidths.iteritems():
             if size not in data:

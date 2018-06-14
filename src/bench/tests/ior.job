@@ -5,7 +5,8 @@
 #SBATCH --time 01:00:00
 #SBATCH --account ucb-testing
 
-ml intel/17.4 impi/17.3 hdf5/1.10.1 netcdf/4.4.1.1 pnetcdf/1.8.1
+# ml intel/17.4 impi/17.3 hdf5/1.10.1 netcdf/4.4.1.1 pnetcdf/1.8.1
+module load {{modules}}
 
 EXEC={{ior_path}}
 VERS=IOR-2.10.1

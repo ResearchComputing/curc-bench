@@ -1,4 +1,5 @@
 import argparse
+import bench.conf.general as bc
 import bench.create
 import bench.framework
 import bench.framework_add
@@ -231,8 +232,8 @@ def driver(argv=None):
             pause = args.pause,
             nodelist = args.nodelist,
             reservation = args.reservation or os.environ.get('BENCH_RESERVATION'),
-            qos = args.qos or os.environ.get('BENCH_QOS'),
-            account = args.account or os.environ.get('BENCH_ACCOUNT'),
+            qos = args.qos or bc.config['submit']['qos'],
+            account = args.account or bc.config['submit']['account'],
             pass_nodes = args.pass_nodes,
             fail_nodes = args.fail_nodes,
             error_nodes = args.error_nodes,
