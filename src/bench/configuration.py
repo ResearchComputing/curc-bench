@@ -18,52 +18,6 @@ config['ior'] = {}
 config['ior']['ior'] = "/projects/rcops/holtat/src/IOR/src/C/IOR"
 config['ior']['modules'] = ['intel/17.4', 'impi/17.3', 'hdf5/1.10.1', 'netcdf/4.4.1.1', 'pnetcdf/1.8.1']
 
-# Alltoall tests (osu_alltoall)
-config['alltoall'] = {}
-config['alltoall']['osu'] = "/projects/rcops/CurcBenchBenchmarks/osu5.3.2/libexec/osu-micro-benchmarks/mpi/collective/osu_alltoall"
-config['alltoall']['modules'] = ['intel/17.4', 'impi/17.3']
-
-config['alltoall-pair'] = {}
-config['alltoall-pair']['nodes'] = "shas[01-05][01-60],shas06[05-64],shas08[01-60],shas09[01-32]"
-config['alltoall-switch'] = {}
-config['alltoall-switch']['nodes'] = "shas[01-05][01-60],shas06[05-64],shas08[01-60],shas09[01-32]"
-config['alltoall-rack'] = {}
-config['alltoall-rack']['nodes'] = "shas[01-05][01-60],shas06[05-64],shas08[01-60],shas09[01-32]"
-
-
-# Alltoall rack test
-config['Rack'] = {}
-config['Rack']['Rack1'] = "shas01[01-60]"
-config['Rack']['Rack2'] = "shas02[01-60]"
-config['Rack']['Rack3'] = "shas03[01-60]"
-config['Rack']['Rack4'] = "shas04[01-60]"
-config['Rack']['Rack5'] = "shas05[01-60]"
-config['Rack']['Rack6'] = "shas06[05-64]"
-config['Rack']['Rack8'] = "shas08[01-60]"
-config['Rack']['Rack9'] = "shas09[01-32]"
-config['Rack']['nodes'] = "shas[01-05][01-60],shas06[05-64],shas08[01-60],shas09[01-32]"
-
-
-# Alltoall switch test
-config['Switch'] = {}
-config['Switch']['OPAEDGE1'] = "shas05[01-28]"
-config['Switch']['OPAEDGE2'] = "shas06[33-64]"
-config['Switch']['OPAEDGE3'] = "shas01[01-28]"
-config['Switch']['OPAEDGE4'] = "shas01[29-60]"
-config['Switch']['OPAEDGE6'] = "shas06[05-32]"
-config['Switch']['OPAEDGE7'] = "shas02[01-28]"
-config['Switch']['OPAEDGE8'] = "shas02[29-60]"
-config['Switch']['OPAEDGE9'] = "shas04[29-60]"
-config['Switch']['OPAEDGE10'] = "shas04[01-28]"
-config['Switch']['OPAEDGE11'] = "shas05[29-60]"
-config['Switch']['OPAEDGE12'] = "shas03[29-60]"
-config['Switch']['OPAEDGE13'] = "shas03[01-28]"
-config['Switch']['OPAEDGE14'] = "shas08[01-28]"
-config['Switch']['OPAEDGE15'] = "shas08[29-60]"
-config['Switch']['OPAEDGE16'] = "shas09[01-32]"
-config['Switch']['nodes'] = "shas[01-05][01-60],shas06[05-64],shas08[01-60],shas09[01-32]"
-
-
 
 #
 ## First define the core switches
