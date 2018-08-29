@@ -107,30 +107,34 @@ class Process(object):
         (some tests contain multiple subtests, for example, a "node test" might run
         both stream and linpack.)
         '''
+
+        parsed_data = None
+        passed = False
+        data = None # Data for display in table
+
         try:
             with open(path) as fp:
                 output = fp.read()
-            parsed_data = self.parse_data(output, subtest)
+                parsed_data = self.parse_data(output, subtest)
+                passed, data = self.evaluate_data(parsed_data, subtest, test_nodes)
         except IOError as ex:
             self.logger.debug(ex, exc_info=True)
             for ii in test.split(','):
                 self.results['error']['not_found'].add(ii)
             self.update_sets(test, option='add_error', reason='not_found')
             return
-        except bench.exc.ParseError as ex:
+        except (ValueError, bench.exc.ParseError) as ex:
             self.logger.debug(ex, exc_info=True)
             for ii in test.split(','):
                 self.results['error']['not_parsable'].add(ii)
-            self.update_sets(test, option='add_error', reason='not_found')
+            self.update_sets(test, option='add_error', reason='not_parsable')
             return
-        passed, data = self.evaluate_data(parsed_data, subtest, test_nodes)
 
         if passed:
             self.update_sets(test, option='add_pass')
         else:
             self.update_sets(test, option='add_fail')
             self.results['fail'][test] = data
-            print(test, passed, data)
 
         return
 
@@ -151,8 +155,6 @@ class Process(object):
                 error_table.append([hostlist.collect_hostlist(result), key])
 
         self.log_results(fail_table, error_table)
-
-        # print(fail_table)
 
 
         #Summary
