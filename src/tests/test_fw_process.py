@@ -132,6 +132,7 @@ class TestProcess(unittest.TestCase):
         os.mkdir(self.node_dir)
         os.mkdir(self.node_test_dir)
 
+
         self.num_nodes = 11
 
         self.nodes = ['tnode01{0:02}'.format(i) for i in range(1, self.num_nodes)]
@@ -230,7 +231,7 @@ class TestProcess(unittest.TestCase):
 
 
 
-    def test_process(self):
+    def test_node_process(self):
         '''Test that linpack and stream node tests are parsed and processed
         correctly.'''
 
@@ -245,6 +246,44 @@ class TestProcess(unittest.TestCase):
         for node in self.error_nodes:
             self.assertIn(node, open(os.path.join(self.node_dir, 'error_nodes')).read())
 
+
+    def test_unparseable(self):
+        '''An alltoall-pair test with a garbage output files'''
+
+        self.a2ap_dir = os.path.join(self.directory, 'alltoall-pair')
+        self.a2ap_test_dir = os.path.join(self.a2ap_dir, 'tests')
+
+        unparseable_nodes = ['tnode0109', 'tnode0110']
+
+        os.mkdir(self.a2ap_dir)
+        os.mkdir(self.a2ap_test_dir)
+
+        for node in unparseable_nodes:
+            os.mkdir(os.path.join(self.a2ap_test_dir, node))
+
+            with open(os.path.join(self.a2ap_test_dir, node, 'alltoall-pair.out'), 'w') as f:
+                f.write("ipath_wait_for_device: The /dev/ipath device failed to appear after 30.0 seconds: Connection timed outg")
+                f.close()
+            with open(os.path.join(self.a2ap_test_dir, node, 'node_list'), 'w') as f:
+                f.write(node)
+                f.close()
+
+        self.a2ap_node_list = os.path.join(self.directory, 'node_list')
+        bench.util.write_node_list(os.path.join(self.directory, 'node_list'),
+                                   unparseable_nodes)
+        bench.util.write_node_list(os.path.join(self.a2ap_dir, 'node_list'),
+                                   unparseable_nodes)
+
+        alltoall_test = bench.tests.alltoall_tests.AllToAllTest("alltoall-pair")
+        alltoall_test.Process.results_logger = bench.log.setup_logger('results_logger', self.directory, 'results.log')
+        alltoall_test.Process.process_tests(self.a2ap_dir)
+
+        for node in unparseable_nodes:
+            self.assertIn(node, open(os.path.join(self.a2ap_dir, 'error_nodes')).read())
+            self.assertIn('tnode[0109-0110]', open(os.path.join(self.directory, 'results.log')).read())
+            self.assertIn('not_parsable', open(os.path.join(self.directory, 'results.log')).read())
+
+        #self.a2ap_test_dir
 
 
 
