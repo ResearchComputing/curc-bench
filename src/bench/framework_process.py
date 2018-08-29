@@ -129,6 +129,8 @@ class Process(object):
             self.update_sets(test, option='add_pass')
         else:
             self.update_sets(test, option='add_fail')
+            self.results['fail'][test] = data
+            print(test, passed, data)
 
         return
 
@@ -149,6 +151,8 @@ class Process(object):
                 error_table.append([hostlist.collect_hostlist(result), key])
 
         self.log_results(fail_table, error_table)
+
+        # print(fail_table)
 
 
         #Summary
