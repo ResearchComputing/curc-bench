@@ -18,7 +18,7 @@ def sbatch (script, workdir=None, reservation=None, qos=None, account=None, outp
 
 
 def scontrol (subcommand, sub_args=None, reservation=None, accounts=None, flags=None,
-              starttime=None, duration=None, nodes=None):
+              starttime=None, duration=None, nodes=None, users=None):
     command = []
     if sub_args is not None:
         command = ['scontrol', subcommand, sub_args]
@@ -36,6 +36,8 @@ def scontrol (subcommand, sub_args=None, reservation=None, accounts=None, flags=
         command.append('duration={0}'.format(duration))
     if nodes is not None:
         command.append('nodes={0}'.format(nodes))
+    if users is not None:
+        command.append('users={0}'.format(nodes))
     return _run_command(command)
 
 
