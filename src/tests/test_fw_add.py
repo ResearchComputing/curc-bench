@@ -16,7 +16,7 @@ import unittest
 
 def fake_node (node_dict):
     node = mock.Mock()
-    for node_name, node_ in node_dict.iteritems():
+    for node_name, node_ in node_dict.items():
         if 'name' not in node_:
             node_['name'] = node_name
         if 'node_state' not in node_:
@@ -32,7 +32,7 @@ def fake_reservation (reservation_dict):
 
 
 NODELIST_P = re.compile(r'(--nodelist|-w) *(|=) *([^ =]+) *\n')
-NODES = set('tnode01{0:02}'.format(i) for i in xrange(1, 81))
+NODES = set('tnode01{0:02}'.format(i) for i in range(1, 81))
 
 @mock.patch.dict(bench.conf.node_conf.config, {'nodes' : 'tnode01[01-03]',
                                                 'modules' : ['intel'],
@@ -110,7 +110,7 @@ class TestAdd(unittest.TestCase):
 
     def setUp (self):
         self.directory = tempfile.mkdtemp()
-        self.nodes = set('tnode01{0:02}'.format(i) for i in xrange(1, 81))
+        self.nodes = set('tnode01{0:02}'.format(i) for i in range(1, 81))
         bench.util.write_node_list(os.path.join(self.directory, 'node_list'),
                                    self.nodes)
         self.bench_node_list = os.path.join(self.directory, 'node_list')
