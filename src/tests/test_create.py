@@ -9,7 +9,7 @@ import unittest
 
 def fake_node (node_dict):
     node = mock.Mock()
-    for node_name, node_ in node_dict.iteritems():
+    for node_name, node_ in node_dict.items():
         if 'name' not in node_:
             node_['name'] = node_name
         if 'node_state' not in node_:
