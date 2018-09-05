@@ -32,7 +32,7 @@ class BandwidthTest(bench.framework.TestFramework):
             topology = {}
         node_pairs = bench.util.get_test_nodes(nodes, 'Pair')
 
-        for pair_name, node_pair in node_pairs.iteritems():
+        for pair_name, node_pair in node_pairs.items():
             test_dir = os.path.join(prefix, "tests", pair_name)
             bench.util.mkdir_p(test_dir)
             script = os.path.join(test_dir, '{0}.job'.format(pair_name))
@@ -62,7 +62,7 @@ class BandwidthTest(bench.framework.TestFramework):
     def evaluate_data(self, data, subtest, *args):
         expected_bandwidths = bbc.config['osu_bandwidths']
 
-        for size, bandwidth in expected_bandwidths.iteritems():
+        for size, bandwidth in expected_bandwidths.items():
             if size not in data:
                 self.logger.debug('bandwidth: {0}: {1}: expected {2}, not found'.format(
                     subtest, size, expected_bandwidths[size]))
