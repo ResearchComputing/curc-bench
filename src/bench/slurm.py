@@ -45,7 +45,7 @@ def scontrol (subcommand, sub_args=None, reservation=None, accounts=None, flags=
 def _run_command (command):
     try:
         process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    except OSError, ex:
+    except OSError as ex:
         message = 'slurm: {0}: {1}'.format(os.path.basename(command[0]), ex.strerror)
         raise bench.exc.SlurmError(message)
 
