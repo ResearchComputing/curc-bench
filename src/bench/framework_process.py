@@ -134,7 +134,7 @@ class Process(object):
             self.update_sets(test, option='add_pass')
         else:
             self.update_sets(test, option='add_fail')
-            
+
             #results['fail'][HARDWARE] = ['Test', 'Result', 'Expected', 'Res/Exp']]
             self.results['fail'][hostlist.collect_hostlist(test_nodes)] = [data]
 
@@ -144,7 +144,8 @@ class Process(object):
     def display_results(self):
         error_table = []
         fail_table = []
-        for key, result in self.results['fail'].items():
+        # for key, result in self.results['fail'].items():
+        for key, result in list(self.results['fail'].items()):
             if result == []:
                 self.results['fail'].pop(key, None)
                 self.results['f_tests'].remove(key)
@@ -153,7 +154,8 @@ class Process(object):
                 continue
             fail_table.append([key] + result)
 
-        for key, result in self.results['error'].items():
+        # for key, result in self.results['error'].items():
+        for key, result in list(self.results['error'].items()):
             if result:
                 error_table.append([hostlist.collect_hostlist(result), key])
 
