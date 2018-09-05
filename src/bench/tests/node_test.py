@@ -159,7 +159,7 @@ class NodeTest(bench.framework.TestFramework):
         elif subtest == 'linpack':
             expected_averages = bnc.config['linpack_averages']
 
-            for key, expected_average in expected_averages.iteritems():
+            for key, expected_average in expected_averages.items():
                 if key not in data:
                     self.logger.debug('linpack: {0}: {1}: expected {2}, not found'.format(
                         subtest, key, expected_average))
