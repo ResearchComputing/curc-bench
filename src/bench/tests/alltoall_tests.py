@@ -48,7 +48,7 @@ class AllToAllTest(bench.framework.TestFramework):
             test_nodes = bench.util.get_test_nodes(nodes, 'Pair')
 
         # Write job scripts for each test
-        for test_name, test_nodes_ in test_nodes.iteritems():
+        for test_name, test_nodes_ in test_nodes.items():
             if test_nodes_:
                 test_dir = os.path.join(prefix, "tests", test_name)
                 self.render(test_dir, test_nodes_, test_name)
