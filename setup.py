@@ -1,6 +1,3 @@
-from ez_setup import use_setuptools
-use_setuptools()
-
 import multiprocessing
 import os
 import setuptools
@@ -16,10 +13,8 @@ def read(fname):
 
 
 def git_describe():
-    git_describe = subprocess.Popen(['git', 'describe', '--tags'], stdout=subprocess.PIPE)
-    stdout, _ = git_describe.communicate()
+    stdout = subprocess.getoutput('git describe --tags')
     return stdout.strip()
-
 
 def main ():
     setuptools.setup(
