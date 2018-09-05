@@ -23,7 +23,7 @@ def execute(directory, include_states=None, exclude_states=None, **kwargs):
 
     try:
         bench.util.write_node_list(node_list_filename, sorted(node_list))
-    except IOError, ex:
+    except IOError as ex:
         logger.error('unable to write {0}'.format(node_list_filename))
         logger.debug(ex, exc_info=True)
 
@@ -36,6 +36,6 @@ def execute(directory, include_states=None, exclude_states=None, **kwargs):
         ))
     try:
         bench.util.write_node_list(error_nodes_filename, sorted(error_nodes))
-    except IOError, ex:
+    except IOError as ex:
         logger.error('unable to write {0}'.format(error_nodes_filename))
         logger.debug(ex, exc_info=True)
