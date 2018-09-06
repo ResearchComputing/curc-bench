@@ -27,7 +27,7 @@ def main ():
         keywords = '',
         url = '',
         package_dir = {'': 'src'},
-        packages=['bench'],
+        packages=['bench', 'bench.conf', 'bench.tests'],
         install_requires=['argparse', 'jinja2', 'python-hostlist', 'pyslurm', 'tabulate', 
             'datetime'],
         dependency_links=['http://github.com/PySlurm/pyslurm/tarball/17.11.0#egg=pyslurm'],
