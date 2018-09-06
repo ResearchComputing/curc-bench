@@ -37,7 +37,7 @@ def scontrol (subcommand, sub_args=None, reservation=None, accounts=None, flags=
     if nodes is not None:
         command.append('nodes={0}'.format(nodes))
     if users is not None:
-        command.append('users={0}'.format(nodes))
+        command.append('users={0}'.format(users))
     return _run_command(command)
 
 

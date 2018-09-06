@@ -121,22 +121,22 @@ class Process(object):
             self.logger.debug(ex, exc_info=True)
             for ii in test.split(','):
                 self.results['error']['not_found'].add(ii)
-            self.update_sets(test, option='add_error', reason='not_found')
+            self.update_sets(test, test_nodes=test_nodes, option='add_error', reason='not_found')
             return
         except (ValueError, bench.exc.ParseError) as ex:
             self.logger.debug(ex, exc_info=True)
             for ii in test.split(','):
                 self.results['error']['not_parsable'].add(ii)
-            self.update_sets(test, option='add_error', reason='not_parsable')
+            self.update_sets(test, test_nodes=test_nodes, option='add_error', reason='not_parsable')
             return
 
         if passed:
-            self.update_sets(test, option='add_pass')
+            self.update_sets(test, test_nodes=test_nodes, option='add_pass')
         else:
-            self.update_sets(test, option='add_fail')
+            self.update_sets(test, test_nodes=test_nodes, option='add_fail')
 
-            #results['fail'][HARDWARE] = ['Test', 'Result', 'Expected', 'Res/Exp']]
-            self.results['fail'][hostlist.collect_hostlist(test_nodes)] = [data]
+            #results['fail'][HARDWARE] = ['Test', 'Result', 'Expected', 'Res/Exp']
+            self.results['fail'][test] = data
 
 
         return
@@ -198,31 +198,28 @@ class Process(object):
         self.results_logger.info("\n### Missing/Error Tests ###")
         self.results_logger.info(tabulate.tabulate(error_table, headers=['Hardware', 'Reason']))
 
-    def update_sets(self, test, option=None, reason=None):
+    def update_sets(self, test, test_nodes=None, option=None, reason=None):
         '''Updates all sets when a change is needed'''
 
         if option == 'add_pass':
             if test not in self.results['f_tests']:
-                for ii in test.split(','):
-                    self.results['p_nodes'].add(ii)
-                    self.results['f_nodes'].discard(ii)
-                    self.results['e_nodes'].discard(ii)
+                self.results['p_nodes'] |= test_nodes
+                self.results['f_nodes'] -= test_nodes
+                self.results['e_nodes'] -= test_nodes
                 self.results['p_tests'].add(test)
                 self.results['f_tests'].discard(test)
                 self.results['e_tests'].discard(test)
         elif option == 'add_fail':
-            for ii in test.split(','):
-                self.results['f_nodes'].add(ii)
-                self.results['p_nodes'].discard(ii)
-                self.results['e_nodes'].discard(ii)
+            self.results['f_nodes'] |= test_nodes
+            self.results['p_nodes'] -= test_nodes
+            self.results['e_nodes'] -= test_nodes
             self.results['f_tests'].add(test)
             self.results['p_tests'].discard(test)
             self.results['e_tests'].discard(test)
         elif option == 'add_error':
-            for ii in test.split(','):
-                self.results['e_nodes'].add(ii)
-                self.results['p_nodes'].discard(ii)
-                self.results['f_nodes'].discard(ii)
+            self.results['e_nodes'] |= test_nodes
+            self.results['p_nodes'] -= test_nodes
+            self.results['f_nodes'] -= test_nodes
             self.results['e_tests'].add(test)
             self.results['p_tests'].discard(test)
             self.results['f_tests'].discard(test)
