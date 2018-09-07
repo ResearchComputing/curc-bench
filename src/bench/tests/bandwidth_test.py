@@ -22,7 +22,7 @@ class BandwidthTest(bench.framework.TestFramework):
         self.Reserve = bench.framework_reserve.Reserve(self.logger, test_name)
 
         self.TEMPLATE = jinja2.Template(
-            pkg_resources.resource_string(__name__, 'bandwidth.job'),
+            pkg_resources.resource_string(__name__, 'bandwidth.job').decode('utf-8'),
             keep_trailing_newline=True,
         )
 
