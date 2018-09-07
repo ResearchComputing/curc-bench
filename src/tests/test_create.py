@@ -40,7 +40,10 @@ class TestCreateExecute (unittest.TestCase):
         node_list = os.path.join(self.directory, 'node_list')
         #print("nodelist", open(node_list).read())
         self.assertTrue(os.path.exists(node_list), node_list)
-        self.assertEqual(open(node_list).read(), 'tnode0101\ntnode0102\n')
+        with open(node_list, 'r') as nodefile:
+            nodes = nodefile.read()
+            self.assertEqual(nodes, 'tnode0101\ntnode0102\n')
+            nodefile.close()
 
     @mock.patch('bench.create.bench.util.pyslurm.node',
                 return_value=fake_node({'tnode0101': {'state': 'fake_state'},
@@ -49,7 +52,10 @@ class TestCreateExecute (unittest.TestCase):
         bench.create.execute(self.directory, include_nodes=['tnode0101'])
         node_list = os.path.join(self.directory, 'node_list')
         self.assertTrue(os.path.exists(node_list), node_list)
-        self.assertEqual(open(node_list).read(), 'tnode0101\n')
+        with open(node_list, 'r') as nodefile:
+            nodes = nodefile.read()
+            self.assertEqual(nodes, 'tnode0101\n')
+            nodefile.close()
 
     @mock.patch('bench.create.bench.util.pyslurm.node',
                 return_value=fake_node({'tnode0101': {'state': 'fake_state'},
@@ -58,7 +64,10 @@ class TestCreateExecute (unittest.TestCase):
         bench.create.execute(self.directory, include_nodes=['tnode01[02-03]'])
         node_list = os.path.join(self.directory, 'node_list')
         self.assertTrue(os.path.exists(node_list), node_list)
-        self.assertEqual(open(node_list).read(), 'tnode0102\ntnode0103\n')
+        with open(node_list, 'r') as nodefile:
+            nodes = nodefile.read()
+            self.assertEqual(nodes, 'tnode0102\ntnode0103\n')
+            nodefile.close()
 
     @mock.patch('bench.create.bench.util.pyslurm.node',
                 return_value=fake_node({'tnode0101': {'state': 'fake_state'},
@@ -67,7 +76,10 @@ class TestCreateExecute (unittest.TestCase):
         bench.create.execute(self.directory, exclude_nodes=['tnode0101'])
         node_list = os.path.join(self.directory, 'node_list')
         self.assertTrue(os.path.exists(node_list), node_list)
-        self.assertEqual(open(node_list).read(), 'tnode0102\n')
+        with open(node_list, 'r') as nodefile:
+            nodes = nodefile.read()
+            self.assertEqual(nodes, 'tnode0102\n')
+            nodefile.close()
 
     @mock.patch('bench.create.bench.util.pyslurm.node',
                 return_value=fake_node({'tnode0101': {'state': 'fake_state'},
@@ -76,7 +88,10 @@ class TestCreateExecute (unittest.TestCase):
         bench.create.execute(self.directory, exclude_nodes=['tnode01[01-02]'])
         node_list = os.path.join(self.directory, 'node_list')
         self.assertTrue(os.path.exists(node_list), node_list)
-        self.assertEqual(open(node_list).read(), 'tnode0103\n')
+        with open(node_list, 'r') as nodefile:
+            nodes = nodefile.read()
+            self.assertEqual(nodes, 'tnode0103\n')
+            nodefile.close()
 
     @mock.patch('bench.create.bench.util.pyslurm.node',
                 return_value=fake_node({'tnode0101': {'state': 'fake_state'},
@@ -87,7 +102,10 @@ class TestCreateExecute (unittest.TestCase):
                              exclude_nodes=['tnode0101'])
         node_list = os.path.join(self.directory, 'node_list')
         self.assertTrue(os.path.exists(node_list), node_list)
-        self.assertEqual(open(node_list).read(), 'tnode0102\n')
+        with open(node_list, 'r') as nodefile:
+            nodes = nodefile.read()
+            self.assertEqual(nodes, 'tnode0102\n')
+            nodefile.close()
 
     @mock.patch('bench.create.bench.util.pyslurm.node',
                 return_value=fake_node({'tnode0101': {'state': 'fake_state'},
@@ -99,7 +117,10 @@ class TestCreateExecute (unittest.TestCase):
                              include_reservations=['res1'])
         node_list = os.path.join(self.directory, 'node_list')
         self.assertTrue(os.path.exists(node_list), node_list)
-        self.assertEqual(open(node_list).read(), 'tnode0101\ntnode0103\n')
+        with open(node_list, 'r') as nodefile:
+            nodes = nodefile.read()
+            self.assertEqual(nodes, 'tnode0101\ntnode0103\n')
+            nodefile.close()
 
     @mock.patch('bench.create.bench.util.pyslurm.node',
                 return_value=fake_node({'tnode0101': {'state': 'fake_state'},
@@ -112,7 +133,10 @@ class TestCreateExecute (unittest.TestCase):
                              include_nodes=['tnode0102'])
         node_list = os.path.join(self.directory, 'node_list')
         self.assertTrue(os.path.exists(node_list), node_list)
-        self.assertEqual(open(node_list).read(), 'tnode0101\ntnode0102\ntnode0103\n')
+        with open(node_list, 'r') as nodefile:
+            nodes = nodefile.read()
+            self.assertEqual(nodes, 'tnode0101\ntnode0102\ntnode0103\n')
+            nodefile.close()
 
     @mock.patch('bench.create.bench.util.pyslurm.node',
                 return_value=fake_node({'tnode0101': {'state': 'fake_state'},
@@ -125,7 +149,10 @@ class TestCreateExecute (unittest.TestCase):
                              exclude_nodes=['tnode0101'])
         node_list = os.path.join(self.directory, 'node_list')
         self.assertTrue(os.path.exists(node_list), node_list)
-        self.assertEqual(open(node_list).read(), 'tnode0103\n')
+        with open(node_list, 'r') as nodefile:
+            nodes = nodefile.read()
+            self.assertEqual(nodes, 'tnode0103\n')
+            nodefile.close()
 
     @mock.patch('bench.create.bench.util.pyslurm.node',
                 return_value=fake_node({'tnode0101': {'state': 'fake_state'},
@@ -137,7 +164,10 @@ class TestCreateExecute (unittest.TestCase):
                              exclude_reservations=['res1'])
         node_list = os.path.join(self.directory, 'node_list')
         self.assertTrue(os.path.exists(node_list), node_list)
-        self.assertEqual(open(node_list).read(), 'tnode0102\n')
+        with open(node_list, 'r') as nodefile:
+            nodes = nodefile.read()
+            self.assertEqual(nodes, 'tnode0102\n')
+            nodefile.close()
 
     @mock.patch('bench.create.bench.util.pyslurm.node',
                 return_value=fake_node({'tnode0101': {'state': 'fake_state'},
@@ -150,7 +180,10 @@ class TestCreateExecute (unittest.TestCase):
                              include_nodes=['tnode0101'])
         node_list = os.path.join(self.directory, 'node_list')
         self.assertTrue(os.path.exists(node_list), node_list)
-        self.assertEqual(open(node_list).read(), '')
+        with open(node_list, 'r') as nodefile:
+            nodes = nodefile.read()
+            self.assertEqual(nodes, '')
+            nodefile.close()
 
     @mock.patch('bench.create.bench.util.pyslurm.node',
                 return_value=fake_node({'tnode0101': {'state': 'fake_state'}, 'tnode0102': {'state': 'fake_state'}, 'tnode0103': {'state': 'fake_state'}}))
@@ -162,4 +195,7 @@ class TestCreateExecute (unittest.TestCase):
                              exclude_nodes=['tnode0102'])
         node_list = os.path.join(self.directory, 'node_list')
         self.assertTrue(os.path.exists(node_list), node_list)
-        self.assertEqual(open(node_list).read(), '')
+        with open(node_list, 'r') as nodefile:
+            nodes = nodefile.read()
+            self.assertEqual(nodes, '')
+            nodefile.close()
