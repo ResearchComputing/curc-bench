@@ -30,7 +30,8 @@ class Add(object):
             curcb_res = []
             curcb_res_nodes = set()
             all_res_data = bench.slurm.scontrol('show', 'res')
-            all_res_data = all_res_data.split('\n\n')
+            all_res_data = all_res_data.split(b'\n\n')
+            all_res_data = [x.decode('utf-8') for x in all_res_data]
 
             for res in all_res_data:
                 if self.test_name in res:
