@@ -170,13 +170,13 @@ class TestProcess(unittest.TestCase):
             avg_25k = uniform(self.expected_25k, self.expected_25k*1.3)
 
             #Fail stream
-            if node in self.fail_nodes[:len(self.fail_nodes)/2]:
+            if node in self.fail_nodes[:int(len(self.fail_nodes)/2)]:
                 copy_avg = uniform(0, self.expected_copy - 1)
                 scale_avg = uniform(0, self.expected_scale - 1)
                 add_avg = uniform(0, self.expected_add - 1)
                 triad_avg = uniform(0, self.expected_triad - 1)
             #Fail linpack
-            elif node in self.fail_nodes[len(self.fail_nodes)/2:]:
+            elif node in self.fail_nodes[int(len(self.fail_nodes)/2):]:
                 avg_5k = uniform(0, self.expected_5k - 1)
                 avg_10k = uniform(0, self.expected_10k - 1)
                 avg_20k = uniform(0, self.expected_20k - 1)
@@ -218,16 +218,23 @@ class TestProcess(unittest.TestCase):
                             self.fail_nodes, self.error_nodes)
 
         pass_node_string = '\n'.join(self.pass_nodes)
-        pass_file = open(os.path.join(self.node_dir, 'pass_nodes')).read()
-        self.assertIn(pass_node_string, pass_file)
+        # pass_file = open(os.path.join(self.node_dir, 'pass_nodes')).read()
+        with open(os.path.join(self.node_dir, 'pass_nodes'), 'r') as pass_file:
+            pass_nodes = pass_file.read()
+            self.assertIn(pass_node_string, pass_nodes)
+            pass_file.close()
 
         fail_node_string = '\n'.join(self.fail_nodes)
-        fail_file = open(os.path.join(self.node_dir, 'fail_nodes')).read()
-        self.assertIn(fail_node_string, fail_file)
+        with open(os.path.join(self.node_dir, 'fail_nodes'), 'r') as fail_file:
+            fail_nodes = fail_file.read()
+            self.assertIn(fail_node_string, fail_nodes)
+            fail_file.close()
 
         error_node_string = '\n'.join(self.error_nodes)
-        error_file = open(os.path.join(self.node_dir, 'error_nodes')).read()
-        self.assertIn(error_node_string, error_file)
+        with open(os.path.join(self.node_dir, 'error_nodes'), 'r') as error_file:
+            error_nodes = error_file.read()
+            self.assertIn(error_node_string, error_nodes)
+            error_file.close()
 
 
 
@@ -240,11 +247,21 @@ class TestProcess(unittest.TestCase):
         node_test.Process.process_tests(self.node_dir)
 
         for node in self.pass_nodes:
-            self.assertIn(node, open(os.path.join(self.node_dir, 'pass_nodes')).read())
+            with open(os.path.join(self.node_dir, 'pass_nodes'), 'r') as pass_file:
+                pass_nodes = pass_file.read()
+                self.assertIn(node, pass_nodes)
+                pass_file.close()
         for node in self.fail_nodes:
-            self.assertIn(node, open(os.path.join(self.node_dir, 'fail_nodes')).read())
+            with open(os.path.join(self.node_dir, 'fail_nodes'), 'r') as fail_file:
+                fail_nodes = fail_file.read()
+                self.assertIn(node, fail_nodes)
+                fail_file.close()
         for node in self.error_nodes:
-            self.assertIn(node, open(os.path.join(self.node_dir, 'error_nodes')).read())
+            with open(os.path.join(self.node_dir, 'error_nodes'), 'r') as error_file:
+                error_nodes = error_file.read()
+                self.assertIn(node, error_nodes)
+                error_file.close()
+
 
 
     def test_unparseable(self):
@@ -279,9 +296,15 @@ class TestProcess(unittest.TestCase):
         alltoall_test.Process.process_tests(self.a2ap_dir)
 
         for node in unparseable_nodes:
-            self.assertIn(node, open(os.path.join(self.a2ap_dir, 'error_nodes')).read())
-            self.assertIn('tnode[0109-0110]', open(os.path.join(self.directory, 'results.log')).read())
-            self.assertIn('not_parsable', open(os.path.join(self.directory, 'results.log')).read())
+            with open(os.path.join(self.a2ap_dir, 'error_nodes'), 'r') as error_file:
+                error_nodes = error_file.read()
+                self.assertIn(node, error_nodes)
+                error_file.close()
+            with open(os.path.join(self.directory, 'results.log'), 'r') as results_log:
+                results = results_log.read()
+                self.assertIn('tnode[0109-0110]', results)
+                self.assertIn('not_parsable', results)
+                results_log.close()
 
         #self.a2ap_test_dir
 
