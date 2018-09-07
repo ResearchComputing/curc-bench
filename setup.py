@@ -29,7 +29,7 @@ def main ():
         package_dir = {'': 'src'},
         packages=['bench', 'bench.conf', 'bench.tests'],
         install_requires=['argparse', 'jinja2', 'python-hostlist', 'pyslurm', 'tabulate', 
-            'datetime'],
+            'datetime', 'mock'],
         dependency_links=['http://github.com/PySlurm/pyslurm/tarball/17.11.0#egg=pyslurm'],
         tests_require=['nose', 'importlib', 'mock'],
         test_suite = 'nose.collector',
