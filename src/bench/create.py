@@ -30,7 +30,7 @@ def execute(directory, include_states=None, exclude_states=None, **kwargs):
     error_nodes_filename = os.path.join(directory, 'error_nodes')
     error_nodes = all_nodes - node_list
     if error_nodes:
-        logger.warn('error nodes: {0} ({1} nodes)'.format(
+        logger.warning('error nodes: {0} ({1} nodes)'.format(
             hostlist.collect_hostlist(error_nodes),
             len(error_nodes),
         ))
