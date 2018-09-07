@@ -23,7 +23,7 @@ class AllToAllTest(bench.framework.TestFramework):
         self.Reserve = bench.framework_reserve.Reserve(self.logger, test_name)
 
         self.TEMPLATE = jinja2.Template(
-            pkg_resources.resource_string(__name__, 'alltoall.job'),
+            pkg_resources.resource_string(__name__, 'alltoall.job').decode('utf-8'),
             keep_trailing_newline=True,
         )
 
@@ -48,7 +48,7 @@ class AllToAllTest(bench.framework.TestFramework):
             test_nodes = bench.util.get_test_nodes(nodes, 'Pair')
 
         # Write job scripts for each test
-        for test_name, test_nodes_ in test_nodes.iteritems():
+        for test_name, test_nodes_ in test_nodes.items():
             if test_nodes_:
                 test_dir = os.path.join(prefix, "tests", test_name)
                 self.render(test_dir, test_nodes_, test_name)

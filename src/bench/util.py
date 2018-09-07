@@ -21,7 +21,7 @@ def chunks(l, n):
     """ Yield successive n-sized chunks from l.
     """
     l = list(l)
-    for i in xrange(0, len(l), n):
+    for i in range(0, len(l), n):
         yield l[i:i+n]
 
 
@@ -105,7 +105,7 @@ def get_nodes(include_states=None, exclude_states=None):
         include_states = set(state.lower() for state in include_states)
     if exclude_states:
         exclude_states = set(state.lower() for state in exclude_states)
-    nodes = list(pyslurm.node().get().itervalues())
+    nodes = list(pyslurm.node().get().values())
     if include_states:
         nodes = list(node for node in nodes
                  if node['state'].rstrip('*').lower()
@@ -136,7 +136,7 @@ def get_test_nodes(nodes, test_type):
         return node_set
     elif test_type == 'Pair':
         node_set = collections.defaultdict(set)
-        for switch_name, switch_nodes in bac.config['Switch'].iteritems():
+        for switch_name, switch_nodes in bac.config['Switch'].items():
             switch_nodes = set(hostlist.expand_hostlist(switch_nodes))
             switch_nodes &= set(nodes)  #Don't include error/excluded nodes
             if len(switch_nodes) < 2:

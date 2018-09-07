@@ -29,7 +29,7 @@ class NodeTest(bench.framework.TestFramework):
         self.Reserve = bench.framework_reserve.Reserve(self.logger, test_name)
 
         self.TEMPLATE = jinja2.Template(
-            pkg_resources.resource_string(__name__, 'node.job'),
+            pkg_resources.resource_string(__name__, 'node.job').decode('utf-8'),
             keep_trailing_newline=True,
         )
 
@@ -159,7 +159,7 @@ class NodeTest(bench.framework.TestFramework):
         elif subtest == 'linpack':
             expected_averages = bnc.config['linpack_averages']
 
-            for key, expected_average in expected_averages.iteritems():
+            for key, expected_average in expected_averages.items():
                 if key not in data:
                     self.logger.debug('linpack: {0}: {1}: expected {2}, not found'.format(
                         subtest, key, expected_average))
