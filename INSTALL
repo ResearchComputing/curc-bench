@@ -1,19 +1,20 @@
-## virtualenv
 
-    git clone git@github.com:PySlurm/pyslurm.git
-    cd pyslurm
-    git checkout 16.05.5
-    python setup.py build
 
-    module load python intel mkl
-    virtualenv venv
-    source venv/bin/activate
+python3 -m venv cb
+source cb/bin/activate
+pip3 install --upgrade pip
 
-    pip install cython
+## Install PySlurm
+pip3 install cython
+CC=gcc pip3 install pyslurm==17.11.0.7 --no-cache-dir
 
-    cd pyslurm
-    python setup.py install
+## Install curc-bench
+git clone https://github.com/ResearchComputing/curc-bench
+cd curc-bench
+pip3 install .
 
-    # curc-bench
-    cd curc-bench
-    python setup.py develop
+## Run all unit tests
+python setup.py test
+
+## Individual Unit Tests
+python -m unittest tests.test_fw_process.TestProcess
