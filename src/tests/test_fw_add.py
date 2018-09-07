@@ -124,15 +124,20 @@ class TestAdd(unittest.TestCase):
         node_test.Add.execute(self.directory)
 
         #Test that correct nodelist is written out for node test
-        self.assertEqual(open(os.path.join(self.directory, 'node', 'node_list')).read(), 'tnode0101\ntnode0102\ntnode0103\n')
+        with open(os.path.join(self.directory, 'node', 'node_list'), 'r') as nodefile:
+            nodes = nodefile.read()
+            self.assertEqual(nodes, 'tnode0101\ntnode0102\ntnode0103\n')
+            nodefile.close()
 
         #Test for test executables and directives in job script
-        script = open(os.path.join(self.directory, 'node', 'tests', 'tnode0101', 'tnode0101.job')).read()
-        self.assertIn('/fake/linpack.so', script)
-        self.assertIn('/fake/stream.so', script)
-        self.assertIn('intel', script)
-        self.assertIn('#SBATCH --nodes=1', script)
-        self.assertIn('#!/bin/bash', script)
+        with open(os.path.join(self.directory, 'node', 'tests', 'tnode0101', 'tnode0101.job'), 'r') as jobfile:
+            script = jobfile.read()
+            self.assertIn('/fake/linpack.so', script)
+            self.assertIn('/fake/stream.so', script)
+            self.assertIn('intel', script)
+            self.assertIn('#SBATCH --nodes=1', script)
+            self.assertIn('#!/bin/bash', script)
+            jobfile.close()
 
 
     def test_bw_tests (self, _):
@@ -143,16 +148,21 @@ class TestAdd(unittest.TestCase):
         for jj in range(0,2):
             for ii in range(1,9):
                 bw_nodes += 'tnode01{jj}{ii}\n'.format(ii=ii, jj=jj)
-        self.assertEqual(open(os.path.join(self.directory, 'bandwidth', 'node_list')).read(), bw_nodes)
+
+        with open(os.path.join(self.directory, 'bandwidth', 'node_list'), 'r') as nodefile:
+            nodes = nodefile.read()
+            self.assertEqual(nodes, bw_nodes)
+            nodefile.close()
 
         #Test for test executables and directives in job script
-        script = open(os.path.join(self.directory, 'bandwidth', 'tests',
-                            'tnode0101,tnode0102', 'tnode0101,tnode0102.job')).read()
-        self.assertIn('/fake/osu_bw.so', script)
-        self.assertIn('intel/17.4 impi/17.3', script)
-        self.assertIn('#SBATCH --nodelist=tnode0101,tnode0102', script)
-        self.assertIn('#!/bin/bash', script)
-
+        with open(os.path.join(self.directory, 'bandwidth', 'tests',
+                'tnode0101,tnode0102', 'tnode0101,tnode0102.job'), 'r') as jobfile:
+            script = jobfile.read()
+            self.assertIn('/fake/osu_bw.so', script)
+            self.assertIn('intel/17.4 impi/17.3', script)
+            self.assertIn('#SBATCH --nodelist=tnode0101,tnode0102', script)
+            self.assertIn('#!/bin/bash', script)
+            jobfile.close()
 
     def test_alltoall_tests (self, _):
         a2a_nodes = ''
@@ -180,16 +190,20 @@ class TestAdd(unittest.TestCase):
             test.Add.execute(self.directory)
 
             #Test that correct nodelist is written out for node test
-            self.assertEqual(open(os.path.join(self.directory, "alltoall-{test}".format(test=testname), 'node_list')).read(), a2a_nodes)
+            with open(os.path.join(self.directory, "alltoall-{test}".format(test=testname), 'node_list'), 'r') as nodefile:
+                nodes = nodefile.read()
+                self.assertEqual(nodes, a2a_nodes)
+                nodefile.close()
 
             #Test for test executables and directives in job script
-            script = open(os.path.join(self.directory, "alltoall-{test}".format(test=testname),
-                                'tests', test_scripts[testname])).read()
-            self.assertIn('/fake/osu_alltoall.so', script)
-            self.assertIn('intel/17.4 impi/17.3', script)
-            self.assertIn(test_nodelists[testname], script)
-            self.assertIn('#!/bin/bash', script)
-
+            with open(os.path.join(self.directory, "alltoall-{test}".format(test=testname),
+                                'tests', test_scripts[testname]), 'r') as testfile:
+                script = testfile.read()
+                self.assertIn('/fake/osu_alltoall.so', script)
+                self.assertIn('intel/17.4 impi/17.3', script)
+                self.assertIn(test_nodelists[testname], script)
+                self.assertIn('#!/bin/bash', script)
+                testfile.close()
 
 
 
