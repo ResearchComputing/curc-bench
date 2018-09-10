@@ -32,43 +32,61 @@ expect this directory to exist ahead of time.
 
 * `node_list` (1)
 * `bench.log` (2)
-* `${test_type}/` (3)
-  * `pass_nodes` (4)
-  * `fail_nodes` (5)
-  * `error_nodes` (6)
-  * `tests/` (7)
-    * `${test}/` (8)
-      * `${test}.job` (9)
-      * `node_list` (10)
-      * `slurm-*.out` (11)
-      * `${output_files}` (12)
+* `results.log` (3)
+* `${test_type}/` (4)
+  * `pass_nodes` (5)
+  * `fail_nodes` (6)
+  * `error_nodes` (7)
+  * `tests/` (8)
+    * `${test}/` (9)
+      * `${test}.job` (10)
+      * `node_list` (11)
+      * `slurm-*.out` (12)
+      * `${output_files}` (13)
 
 `bench create` creates the base session directory, and generates the
 root `node_list` file (1).
 
 `bench add` consults the root `node_list` (1) to generate tests of the
-requested `${test_type}` (3). (Valid types are `node`, `bandwidth`,
+requested `${test_type}` (4). (Valid types are `node`, `bandwidth`,
 `alltoall-pair`, `alltoall-switch`, and `alltoall-rack`.) Each test
-generates a `${test}.job` (9) Slurm job script in an individual
-`${test}/` (8) directory, as well as a test-specific `node_list` file
-(10).
+generates a `${test}.job` (10) Slurm job script in an individual
+`${test}/` (9) directory, as well as a test-specific `node_list` file
+(11).
 
-`bench submit` submits a Slurm job for each `${test}/` (8)
+`bench submit` submits a Slurm job for each `${test}/` (9)
 directory. This directory is used as the working directory for the
-job, which runs the contained `${test}.job` (9) script. Because it is
+job, which runs the contained `${test}.job` (10) script. Because it is
 the working directory for the job, Slurm and the payload tests are
-expected to write output to the `${test}/` (8) directory. (11, 12)
+expected to write output to the `${test}/` (9) directory. (11, 12)
 
-`bench process` inspects the `${test}/` (8) directories for payload
-test output (12) to evaluate pass/fail for each test. Test results are
-summarized for each `${test_type}/` (3) in `pass_nodes` (4),
-`fail_nodes` (5), and `error_nodes` (6) files, which share the same
+`bench process` inspects the `${test}/` (9) directories for payload
+test output (13) to evaluate pass/fail for each test. Test results are
+summarized for each `${test_type}/` (4) in `pass_nodes` (5),
+`fail_nodes` (6), and `error_nodes` (7) files, which share the same
 format as `node_list` (1, 10). (The `tests/` directory serves to
-separate valid `${test}/` (8) directories from these summary files.)
+separate valid `${test}/` (9) directories from these summary files.)
 
 `bench reserve` and `bench update-node` create Slurm reservations or
 mark nodes down, respectively, based on the result summaries generated
 by `bench process`. (4, 5, 6)
+
+`bench.log` contains logging and debugging information about curc-bench
+including Slurm job information and error messages. (2)
+
+`results.log` is created after `bench process` is run and contains a
+results summaries for all tests. (3)
+
+## Configuration
+
+`general.py` has default qos, account, and user information for
+submitting jobs and creating reservations. This can be overridden on the
+command line.
+
+`alltoall_conf.py`, `bandwidth_conf.py`, `ior.py`, and `node_conf.py` contain
+test specific configuration. This includes the path to the test executable,
+modules that will be loaded in the batch script, nodes to run on with topology
+information if needed, and passing test values.
 
 ## Running curc-bench at CU-Boulder Research Computing
 
