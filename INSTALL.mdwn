@@ -1,0 +1,37 @@
+## Installing curc-bench on RMACC Summit
+
+1. Create a virtualenv (On RMACC Summit, the Python3 and Intel compiler modules are needed)
+
+  ```
+  $ ml intel/17.4 python/3.5.1 #RMACC Summit modules
+  $ python3 -m venv cb
+  $ source cb/bin/activate
+  $ pip3 install --upgrade pip
+  ```
+
+2. Install PySlurm
+
+  ```
+  $ pip3 install cython
+  $ CC=gcc pip3 install pyslurm==17.11.0.7 --no-cache-dir
+  ```
+
+3. Install curc-bench
+
+  ```
+  $ git clone https://github.com/ResearchComputing/curc-bench
+  $ cd curc-bench
+  $ pip3 install .
+  ```
+
+## Running Unit Tests
+
+  ```
+  # Run all unit tests (from top level of curc-bench directory)
+  $ cd curc-bench
+  $ python setup.py test
+
+  # Individual Unit Test Example (from src dir of curc-bench directory)
+  $ cd curc-bench/src
+  $ python -m unittest src/tests.test_fw_process.TestProcess
+  ```
