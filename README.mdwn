@@ -13,15 +13,15 @@ linpack, stream, and osu-micro-benchmarks.
 
 ## Tests available
 
-* `-n`, `--node-tests`: each node in the test runs a stream and
+* `--test node`: each node in the test runs a stream and
   linpack benchmark
-* `-b`, `--bandwidth-tests`: pairs of nodes selected from each switch
+* `--test bandwidth`: pairs of nodes selected from each switch
   run osu_bw
-* `-p`, `--alltoall-pair-tests`: pairs of nodes selected from each
+* `--test alltoall-pair`: pairs of nodes selected from each
   swtich run osu_alltoall
-* `-s`, `--alltoall-switch-tests`: the nodes connected to each switch
+* `--test alltoall-switch`: the nodes connected to each switch
   run osu_alltoall
-* `-r`, `--alltoall-rack-tests`: the nodes in each rack run
+* `--test alltoall-rack`: the nodes in each rack run
   osu_alltoall
 
 ## Session directory
@@ -75,53 +75,54 @@ by `bench process`. (4, 5, 6)
 1. Load modules and prepare the environment
 
    ```
-   $ module load slurm python/pyslurm benchmarks/bench 
+   $ source /projects/rcops/cb/environment.sh
    $ bench create
    ```
 
 2. Node tests
 
    ```
-   $ bench add --node-tests
-   $ bench submit --node-tests
-   $ bench process --node-tests # after all jobs done
-   $ bench reserve --node-tests
+   $ bench add --test node
+   # Submit jobs with optional arguments, PM_RES is usually month.day-shas
+   $ bench submit --test node --reservation PM_RES --account ACCOUNT --qos QOS
+   $ bench process --test node # after all jobs done
+   $ bench reserve --test node
    ```
 
 3. Bandwidth tests
 
    ```
-   $ bench add --bandwidth-tests
-   $ bench submit --bandwidth-tests
-   $ bench process --bandwidth-tests # after all jobs done
-   $ bench reserve --bandwidth-tests
+   $ bench add --test bandwidth
+   $ bench submit --test bandwidth
+   $ bench process --test bandwidth --reservation PM_RES # after all jobs done
+   $ bench reserve --test bandwidth
    ```
 
 4. All-to-all tests: pairs of nodes
 
    ```
-   $ bench add --alltoall-pair-tests
-   $ bench submit --alltoall-pair-tests
-   $ bench process --alltoall-pair-tests # after all jobs done
-   $ bench reserve --alltoall-pair-tests
+   $ bench add --test alltoall-pair
+   $ bench submit --test alltoall-pair
+   $ bench process --test alltoall-pair --reservation PM_RES # after all jobs done
+   $ bench reserve --test alltoall-pair
    ```
 
 5. All-to-all tests: switch groups
 
    ```
-   $ bench add --alltoall-switch-tests
-   $ bench submit --alltoall-switch-tests
-   $ bench process --alltoall-switch-tests # after all jobs done
-   $ bench reserve --alltoall-switch-tests
+   $ bench add --test alltoall-switch
+   $ bench submit --test alltoall-switch
+   $ bench process --test alltoall-switch --reservation PM_RES # after all jobs done
+   $ bench reserve --test alltoall-switch
    ```
 
 6. All-to-all tests: rack groups
 
    ```
-   $ bench add --alltoall-rack-tests
-   $ bench submit --alltoall-rack-tests
-   $ bench process --alltoall-rack-tests # after all jobs done
-   $ bench reserve --alltoall-rack-tests
+   $ bench add --test alltoall-rack
+   $ bench submit --test alltoall-rack
+   $ bench process --test alltoall-rack --reservation PM_RES # after all jobs done
+   $ bench reserve --test alltoall-rack
    ```
 
 ## Running code tests
@@ -130,16 +131,12 @@ by `bench process`. (4, 5, 6)
 
 ## Non-Python dependencies
 
-* [IOR-2.10.3](http://sourceforge.net/projects/ior-sio/files/)
-* [hpl-2.0](http://www.netlib.org/benchmark/hpl/)
-* [hpcc-1.4.1](http://icl.cs.utk.edu/hpcc/software/index.html)
-* [osu-micro-benchmarks-3.8](https://www.nersc.gov/users/computational-systems/cori/nersc-8-procurement/trinity-nersc-8-rfp/nersc-8-trinity-benchmarks/omb-mpi-tests/)
-  * latest version: http://mvapich.cse.ohio-state.edu/benchmarks/
+* [IOR](http://sourceforge.net/projects/ior-sio/files/)
+* [hpl](http://www.netlib.org/benchmark/hpl/)
+* [osu-micro-benchmark](http://mvapich.cse.ohio-state.edu/benchmarks/)
 * [stream.c v5.9](https://github.com/gregs1104/stream-scaling/blob/master/stream.c)
-* Intel-provided linpack 10.3.9
-* openmpi
-
-*Some of the version numbers were changed in this (come back to this later)*
+* Intel-provided linpack
+* OpenMPI or IntelMPI
 
 *stream.c has been tuned. If you download a fresh copy it needs to be
 re-tuned.*
