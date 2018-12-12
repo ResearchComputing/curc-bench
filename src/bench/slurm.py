@@ -51,7 +51,7 @@ def _run_command (command):
 
     stdout, stderr = process.communicate()
     if process.returncode != 0:
-        stderr_message = stderr.strip().replace('\n', ':')
+        stderr_message = stderr.strip().replace(b'\n', b':')
         raise bench.exc.SlurmError(stderr_message)
     else:
         return stdout

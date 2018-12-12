@@ -87,6 +87,6 @@ class Submit(object):
                 self.logger.error('failed to submit job {0} ({1})'.format(script, ex))
                 self.logger.debug(ex, exc_info=True)
             else:
-                self.logger.info(': '.join(result.splitlines()))
+                self.logger.info(b': '.join(result.splitlines()))
             index += 1
         return index
