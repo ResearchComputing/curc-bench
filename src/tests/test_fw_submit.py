@@ -73,7 +73,7 @@ function main
 main'''
 
 
-@mock.patch('bench.slurm.sbatch', return_value="Submitted batch job")
+@mock.patch('bench.slurm.sbatch', return_value="Submitted batch job".encode('utf-8'))
 class TestSubmitNode(unittest.TestCase):
 
     def assertIsFile (self, path):
@@ -128,7 +128,7 @@ class TestSubmitNode(unittest.TestCase):
 
         self.assertTrue(bench.slurm.sbatch.called)
 
-        for ii, call in enumerate(arg1.call_args_list):
+        for ii, call in enumerate(sorted(arg1.call_args_list)):
             script_dir = os.path.join(self.node_test_dir, self.nodes[ii])
             args, kwargs = call #call object is two things: args=tuple, kwargs=dict
             self.assertEqual(kwargs['workdir'], script_dir)
@@ -143,7 +143,7 @@ class TestSubmitNode(unittest.TestCase):
 
         self.assertTrue(bench.slurm.sbatch.called)
 
-        for ii, call in enumerate(arg1.call_args_list):
+        for ii, call in enumerate(sorted(arg1.call_args_list)):
             script_dir = os.path.join(self.node_test_dir, self.nodes[ii])
             args, kwargs = call #call object is two things: args=tuple, kwargs=dict
             self.assertEqual(kwargs['workdir'], script_dir)
@@ -153,13 +153,13 @@ class TestSubmitNode(unittest.TestCase):
             self.assertEqual(args[0], script_dir + '/' + self.nodes[ii] + '.job')
 
     def test_submit_jobs_3(self, arg1):
-        '''Test that submit doesn't submit jobs with nodes in --nodelist'''
+        '''Test that submit doesn't submit jobs with nodes not in --nodelist'''
         node_test = bench.tests.node_test.NodeTest("node")
         node_test.Submit.execute(self.directory, nodelist='tnode01[01-06]')
 
         self.assertTrue(bench.slurm.sbatch.called)
 
-        for ii, call in enumerate(arg1.call_args_list):
+        for ii, call in enumerate(sorted(arg1.call_args_list)):
             script_dir = os.path.join(self.node_test_dir, self.nodes[ii])
             args, kwargs = call #call object is two things: args=tuple, kwargs=dict
             self.assertEqual(kwargs['workdir'], script_dir)
@@ -176,7 +176,7 @@ class TestSubmitNode(unittest.TestCase):
                                                 'switch_2' : 'tnode01[06-10]',
                                                 'switch_3' : 'tnode01[11-15]',
                                                 'switch_4' : 'tnode01[16-20]'}})
-@mock.patch('bench.slurm.sbatch', return_value="Submitted batch job")
+@mock.patch('bench.slurm.sbatch', return_value="Submitted batch job".encode('utf-8'))
 class TestSubmitSwitch(unittest.TestCase):
 
     def assertIsFile (self, path):
@@ -241,7 +241,7 @@ class TestSubmitSwitch(unittest.TestCase):
 
         self.assertTrue(bench.slurm.sbatch.called)
 
-        for ii, call in enumerate(arg1.call_args_list):
+        for ii, call in enumerate(sorted(arg1.call_args_list)):
             switch_name = self.get_switch_name(ii)
             script_dir = os.path.join(self.switch_test_dir, switch_name)
             args, kwargs = call #call object is two things: args=tuple, kwargs=dict
@@ -258,7 +258,7 @@ class TestSubmitSwitch(unittest.TestCase):
 
         self.assertTrue(bench.slurm.sbatch.called)
 
-        for ii, call in enumerate(arg1.call_args_list):
+        for ii, call in enumerate(sorted(arg1.call_args_list)):
             switch_name = self.get_switch_name(ii)
             script_dir = os.path.join(self.switch_test_dir, switch_name)
             args, kwargs = call #call object is two things: args=tuple, kwargs=dict
@@ -276,7 +276,7 @@ class TestSubmitSwitch(unittest.TestCase):
 
         self.assertTrue(bench.slurm.sbatch.called)
 
-        for ii, call in enumerate(arg1.call_args_list):
+        for ii, call in enumerate(sorted(arg1.call_args_list)):
             switch_name = self.get_switch_name(ii)
             script_dir = os.path.join(self.switch_test_dir, switch_name)
             args, kwargs = call #call object is two things: args=tuple, kwargs=dict

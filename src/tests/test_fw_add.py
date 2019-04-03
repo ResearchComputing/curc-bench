@@ -103,6 +103,7 @@ NODES = set('tnode01{0:02}'.format(i) for i in range(1, 81))
                                                 'rack2' : 'tnode01[11-18]'}})
 @mock.patch('bench.create.bench.util.pyslurm.node',
             return_value=fake_node(dict((node, {'state': 'fake_state', 'name' : node}) for node in NODES)))
+@mock.patch('bench.slurm.scontrol', return_value="Submitted batch job".encode('utf-8'))
 class TestAdd(unittest.TestCase):
 
     def assertIsFile (self, path):
@@ -119,7 +120,7 @@ class TestAdd(unittest.TestCase):
         shutil.rmtree(self.directory)
 
 
-    def test_node_tests (self, _):
+    def test_node_tests (self, *arg1):
         node_test = bench.tests.node_test.NodeTest("node")
         node_test.Add.execute(self.directory)
 
@@ -140,7 +141,7 @@ class TestAdd(unittest.TestCase):
             jobfile.close()
 
 
-    def test_bw_tests (self, _):
+    def test_bw_tests (self, *arg1):
         bw_test = bench.tests.bandwidth_test.BandwidthTest("bandwidth")
         bw_test.Add.execute(self.directory)
         #Test that correct nodelist is written out for node test
@@ -160,11 +161,13 @@ class TestAdd(unittest.TestCase):
             script = jobfile.read()
             self.assertIn('/fake/osu_bw.so', script)
             self.assertIn('intel/17.4 impi/17.3', script)
-            self.assertIn('#SBATCH --nodelist=tnode0101,tnode0102', script)
+            self.assertIn('#SBATCH --nodelist=tnode01', script)
+            self.assertIn('tnode0101', script)
+            self.assertIn('tnode0102', script)
             self.assertIn('#!/bin/bash', script)
             jobfile.close()
 
-    def test_alltoall_tests (self, _):
+    def test_alltoall_tests (self, *arg1):
         a2a_nodes = ''
         a2a_rack2 = []
         for ii in range(1,9):

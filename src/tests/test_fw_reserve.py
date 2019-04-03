@@ -23,8 +23,8 @@ class TestReserve(unittest.TestCase):
      Nodes=node[0325-0328] NodeCnt=4 CoreCnt=96 Features=(null) PartitionName=(null) Flags=OVERLAP,SPEC_NODES
      TRES=cpu=96
      Users=asdf1,asdf2,asdf3 Accounts=(null)
-     Licenses=(null) State=ACTIVE BurstBuffer=(null) Watts=n/a''',
-     'Scontrol create called']
+     Licenses=(null) State=ACTIVE BurstBuffer=(null) Watts=n/a'''.encode('utf-8'),
+     'Scontrol create called'.encode('utf-8')]
 
     scontrol_show_return_2=['Reservation bench-node not found', 'Scontrol create called']
 
@@ -75,7 +75,7 @@ class TestReserve(unittest.TestCase):
     def tearDown (self):
         shutil.rmtree(self.directory)
 
-    @mock.patch('bench.slurm.scontrol', return_value="Scontrol called")
+    @mock.patch('bench.slurm.scontrol', return_value="Scontrol called".encode('utf-8'))
     def test_reserve(self, arg1):
         '''Test that fail and error nodes are reserved, and that
         pass nodes are not reserved'''
@@ -101,7 +101,7 @@ class TestReserve(unittest.TestCase):
             self.assertIn(node, kwargs_1['nodes'])
 
 
-    @mock.patch('bench.slurm.scontrol', return_value="Scontrol called")
+    @mock.patch('bench.slurm.scontrol', return_value="Scontrol called".encode('utf-8'))
     def test_reserve_empty(self, arg1):
         '''Test that an empty reservation isn't created when
         no fail or error nodes exist'''

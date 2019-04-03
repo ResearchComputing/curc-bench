@@ -65,7 +65,7 @@ class Reserve(object):
                 output = bench.slurm.scontrol(subcommand='show', reservation=self.reservation_name)
 
                 # If reservation found, update old reservation
-                if b"ReservationName=" in output:
+                if "ReservationName=".encode('utf-8') in output:
                     subcommand = 'update'
 
             except bench.exc.SlurmError as ex:
