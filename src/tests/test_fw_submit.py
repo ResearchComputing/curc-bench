@@ -5,7 +5,6 @@ import bench.tests.alltoall_tests
 import bench.tests.ior
 import bench.util
 import hostlist
-import mock
 import os
 import pkg_resources
 import re
@@ -14,6 +13,8 @@ import tempfile
 import unittest
 import jinja2
 import collections
+
+from unittest import mock
 
 
 

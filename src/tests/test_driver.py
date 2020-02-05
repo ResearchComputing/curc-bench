@@ -1,7 +1,8 @@
 import bench.driver
 import argparse
-import mock
 import unittest
+
+from unittest import mock
 from bench.tests.node_test import NodeTest
 from bench.framework_add import Add
 from bench.framework_submit import Submit

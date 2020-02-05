@@ -5,13 +5,14 @@ import bench.tests.alltoall_tests
 import bench.tests.ior
 import bench.util
 import hostlist
-import mock
 import os
 import pkg_resources
 import re
 import shutil
 import tempfile
 import unittest
+
+from unittest import mock
 
 
 def fake_node (node_dict):

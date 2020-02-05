@@ -5,7 +5,6 @@ import bench.tests.alltoall_tests
 import bench.tests.ior
 import bench.util
 import hostlist
-import mock
 import os
 import pkg_resources
 import re
@@ -13,6 +12,8 @@ import shutil
 import tempfile
 import unittest
 import jinja2
+
+from unittest import mock
 
 num_nodes = 11
 

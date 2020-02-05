@@ -1,10 +1,11 @@
 import bench.create
 import datetime
-import mock
 import os
 import shutil
 import tempfile
 import unittest
+
+from unittest import mock
 
 
 def fake_node (node_dict):

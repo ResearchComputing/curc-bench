@@ -28,11 +28,12 @@ def main ():
         url = '',
         package_dir = {'': 'src'},
         packages=['bench', 'bench.conf', 'bench.tests'],
-        install_requires=['argparse', 'jinja2', 'python-hostlist', 'pyslurm', 'tabulate', 
-            'datetime', 'mock'],
-        dependency_links=['http://github.com/PySlurm/pyslurm/tarball/17.11.0#egg=pyslurm'],
-        tests_require=['nose', 'importlib', 'mock'],
-        test_suite = 'nose.collector',
+        include_package_data=True,
+        install_requires=['argparse', 'jinja2', 'python-hostlist', 'pyslurm', 'tabulate',
+            'datetime'],
+        dependency_links=['http://github.com/PySlurm/pyslurm/tarball/19.05.0#egg=pyslurm'],
+        tests_require=['importlib'],
+        test_suite = 'tests',
         long_description=read('README.mdwn'),
         classifiers=[
             'License :: BSD License',
@@ -41,9 +42,6 @@ def main ():
             'console_scripts': [
                 'bench = bench.driver:driver',
             ],
-        },
-        package_data={
-            'bench.tests': ['*.job'],
         },
     )
 
