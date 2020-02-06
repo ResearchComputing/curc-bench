@@ -1,0 +1,7 @@
+graft curc
+graft src
+graft src/tests
+graft src/bench
+graft src/bench/conf
+graft src/bench/tests
+global-exclude *.py[cod] __pycache__ *.so

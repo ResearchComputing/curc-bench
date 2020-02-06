@@ -1,4 +1,4 @@
-import multiprocessing
+import unittest
 import os
 import setuptools
 import subprocess
@@ -11,6 +11,10 @@ import subprocess
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
+def get_test_suite():
+    test_loader = unittest.TestLoader()
+    test_suite = test_loader.discover('tests', pattern='test_*.py')
+    return test_suite
 
 def git_describe():
     stdout = subprocess.getoutput('git describe --tags')
@@ -28,11 +32,12 @@ def main ():
         url = '',
         package_dir = {'': 'src'},
         packages=['bench', 'bench.conf', 'bench.tests'],
-        install_requires=['argparse', 'jinja2', 'python-hostlist', 'pyslurm', 'tabulate', 
-            'datetime', 'mock'],
-        dependency_links=['http://github.com/PySlurm/pyslurm/tarball/17.11.0#egg=pyslurm'],
-        tests_require=['nose', 'importlib', 'mock'],
-        test_suite = 'nose.collector',
+        include_package_data=True,
+        install_requires=['argparse', 'jinja2>=2.10,<3', 'python-hostlist', 'pyslurm', 'tabulate',
+            'datetime'],
+        dependency_links=['http://github.com/PySlurm/pyslurm/tarball/19.05.0#egg=pyslurm'],
+        tests_require=['importlib'],
+        test_suite = 'setup.get_test_suite',
         long_description=read('README.mdwn'),
         classifiers=[
             'License :: BSD License',
