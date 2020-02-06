@@ -82,7 +82,7 @@ class Submit(object):
                     continue
 
             try:
-                result = bench.slurm.sbatch(script, workdir=test_dir, **kwargs)
+                result = bench.slurm.sbatch(script, chdir=test_dir, **kwargs)
             except bench.exc.SlurmError as ex:
                 self.logger.error('failed to submit job {0} ({1})'.format(script, ex))
                 self.logger.debug(ex, exc_info=True)

@@ -132,7 +132,7 @@ class TestSubmitNode(unittest.TestCase):
         for ii, call in enumerate(arg1.call_args_list):
             script_dir = os.path.join(self.node_test_dir, self.nodes[ii])
             args, kwargs = call #call object is two things: args=tuple, kwargs=dict
-            self.assertEqual(kwargs['workdir'], script_dir)
+            self.assertEqual(kwargs['chdir'], script_dir)
             self.assertEqual(args[0], script_dir + '/' + self.nodes[ii] + '.job')
             self.assertFalse('reservation' in kwargs)
 
@@ -147,7 +147,7 @@ class TestSubmitNode(unittest.TestCase):
         for ii, call in enumerate(arg1.call_args_list):
             script_dir = os.path.join(self.node_test_dir, self.nodes[ii])
             args, kwargs = call #call object is two things: args=tuple, kwargs=dict
-            self.assertEqual(kwargs['workdir'], script_dir)
+            self.assertEqual(kwargs['chdir'], script_dir)
             self.assertEqual(kwargs['reservation'], 'fake_res')
             self.assertEqual(kwargs['account'], 'fake_account')
             self.assertEqual(kwargs['qos'], 'fake_qos')
@@ -163,11 +163,11 @@ class TestSubmitNode(unittest.TestCase):
         for ii, call in enumerate(arg1.call_args_list):
             script_dir = os.path.join(self.node_test_dir, self.nodes[ii])
             args, kwargs = call #call object is two things: args=tuple, kwargs=dict
-            self.assertEqual(kwargs['workdir'], script_dir)
+            self.assertEqual(kwargs['chdir'], script_dir)
             self.assertEqual(args[0], script_dir + '/' + self.nodes[ii] + '.job')
             # Check that --nodelist nodes not submitted
             for node in hostlist.expand_hostlist('tnode01[07-10]'):
-                self.assertNotIn(node, kwargs['workdir'])
+                self.assertNotIn(node, kwargs['chdir'])
 
 
 
@@ -246,7 +246,7 @@ class TestSubmitSwitch(unittest.TestCase):
             switch_name = self.get_switch_name(ii)
             script_dir = os.path.join(self.switch_test_dir, switch_name)
             args, kwargs = call #call object is two things: args=tuple, kwargs=dict
-            self.assertEqual(kwargs['workdir'], script_dir)
+            self.assertEqual(kwargs['chdir'], script_dir)
             self.assertEqual(args[0], script_dir + '/' + switch_name + '.job')
             self.assertFalse('reservation' in kwargs)
 
@@ -263,7 +263,7 @@ class TestSubmitSwitch(unittest.TestCase):
             switch_name = self.get_switch_name(ii)
             script_dir = os.path.join(self.switch_test_dir, switch_name)
             args, kwargs = call #call object is two things: args=tuple, kwargs=dict
-            self.assertEqual(kwargs['workdir'], script_dir)
+            self.assertEqual(kwargs['chdir'], script_dir)
             self.assertEqual(args[0], script_dir + '/' + switch_name + '.job')
             self.assertEqual(kwargs['reservation'], 'fake_res')
             self.assertEqual(kwargs['account'], 'fake_account')
@@ -281,11 +281,11 @@ class TestSubmitSwitch(unittest.TestCase):
             switch_name = self.get_switch_name(ii)
             script_dir = os.path.join(self.switch_test_dir, switch_name)
             args, kwargs = call #call object is two things: args=tuple, kwargs=dict
-            self.assertEqual(kwargs['workdir'], script_dir)
+            self.assertEqual(kwargs['chdir'], script_dir)
             self.assertEqual(args[0], script_dir + '/' + switch_name + '.job')
             # Check that --nodelist nodes not submitted
             for switch in ['switch_3', 'switch_4']:
-                self.assertNotIn(switch, kwargs['workdir'])
+                self.assertNotIn(switch, kwargs['chdir'])
 
 
 

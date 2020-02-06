@@ -3,7 +3,7 @@ import os
 import subprocess
 
 
-def sbatch (script, workdir=None, reservation=None, qos=None, account=None, output=None):
+def sbatch (script, chdir=None, reservation=None, qos=None, account=None, output=None):
     command = ['sbatch']
     if reservation:
         command.extend(('--reservation', reservation))
@@ -11,8 +11,8 @@ def sbatch (script, workdir=None, reservation=None, qos=None, account=None, outp
         command.extend(('--qos', qos))
     if account:
         command.extend(('--account', account))
-    if workdir:
-        command.extend(('--workdir', workdir))
+    if chdir:
+        command.extend(('--chdir', chdir))
     command.append(script)
     return _run_command(command)
 
