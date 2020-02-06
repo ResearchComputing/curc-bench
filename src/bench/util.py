@@ -16,6 +16,14 @@ def mkdir_p (path):
         else:
             raise
 
+def string_to_bytes(string_or_bytes):
+    """Takes a string or bytes object and converts it to
+    a string if necessary"""
+    if isinstance(string_or_bytes, (bytes, bytearray)):
+        return string_or_bytes
+    else:
+        return string_or_bytes.encode('utf-8')
+
 
 def chunks(l, n):
     """ Yield successive n-sized chunks from l.

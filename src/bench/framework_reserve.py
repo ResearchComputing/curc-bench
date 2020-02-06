@@ -63,6 +63,7 @@ class Reserve(object):
             subcommand = 'create'
             try:
                 output = bench.slurm.scontrol(subcommand='show', reservation=self.reservation_name)
+                output = bench.util.string_to_bytes(output)
 
                 # If reservation found, update old reservation
                 if b"ReservationName=" in output:
