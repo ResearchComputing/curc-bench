@@ -129,12 +129,21 @@ class TestSubmitNode(unittest.TestCase):
 
         self.assertTrue(bench.slurm.sbatch.called)
 
+        directories = set()
+        expected_directories = set()
+        job_scripts = set()
+        expected_job_scripts = set()
         for ii, call in enumerate(arg1.call_args_list):
             script_dir = os.path.join(self.node_test_dir, self.nodes[ii])
             args, kwargs = call #call object is two things: args=tuple, kwargs=dict
-            self.assertEqual(kwargs['chdir'], script_dir)
-            self.assertEqual(args[0], script_dir + '/' + self.nodes[ii] + '.job')
+            directories.add(script_dir)
+            expected_directories.add(kwargs['chdir'])
+            job_scripts.add(args[0])
+            expected_job_scripts.add(script_dir + '/' + self.nodes[ii] + '.job')
             self.assertFalse('reservation' in kwargs)
+
+        self.assertEqual(directories, expected_directories)
+        self.assertEqual(job_scripts, expected_job_scripts)
 
     def test_submit_jobs_2(self, arg1):
         '''Test submit of node jobs with an account, qos, and reservation'''
@@ -144,14 +153,23 @@ class TestSubmitNode(unittest.TestCase):
 
         self.assertTrue(bench.slurm.sbatch.called)
 
+        directories = set()
+        expected_directories = set()
+        job_scripts = set()
+        expected_job_scripts = set()
         for ii, call in enumerate(arg1.call_args_list):
             script_dir = os.path.join(self.node_test_dir, self.nodes[ii])
             args, kwargs = call #call object is two things: args=tuple, kwargs=dict
-            self.assertEqual(kwargs['chdir'], script_dir)
+            directories.add(script_dir)
+            expected_directories.add(kwargs['chdir'])
+            job_scripts.add(args[0])
+            expected_job_scripts.add(script_dir + '/' + self.nodes[ii] + '.job')
             self.assertEqual(kwargs['reservation'], 'fake_res')
             self.assertEqual(kwargs['account'], 'fake_account')
             self.assertEqual(kwargs['qos'], 'fake_qos')
-            self.assertEqual(args[0], script_dir + '/' + self.nodes[ii] + '.job')
+
+        self.assertEqual(directories, expected_directories)
+        self.assertEqual(job_scripts, expected_job_scripts)
 
     def test_submit_jobs_3(self, arg1):
         '''Test that submit doesn't submit jobs with nodes in --nodelist'''
@@ -160,14 +178,24 @@ class TestSubmitNode(unittest.TestCase):
 
         self.assertTrue(bench.slurm.sbatch.called)
 
+        directories = set()
+        expected_directories = set()
+        job_scripts = set()
+        expected_job_scripts = set()
         for ii, call in enumerate(arg1.call_args_list):
             script_dir = os.path.join(self.node_test_dir, self.nodes[ii])
             args, kwargs = call #call object is two things: args=tuple, kwargs=dict
-            self.assertEqual(kwargs['chdir'], script_dir)
-            self.assertEqual(args[0], script_dir + '/' + self.nodes[ii] + '.job')
+            directories.add(script_dir)
+            expected_directories.add(kwargs['chdir'])
+            job_scripts.add(args[0])
+            expected_job_scripts.add(script_dir + '/' + self.nodes[ii] + '.job')
+
             # Check that --nodelist nodes not submitted
             for node in hostlist.expand_hostlist('tnode01[07-10]'):
                 self.assertNotIn(node, kwargs['chdir'])
+
+        self.assertEqual(directories, expected_directories)
+        self.assertEqual(job_scripts, expected_job_scripts)
 
 
 
@@ -242,13 +270,22 @@ class TestSubmitSwitch(unittest.TestCase):
 
         self.assertTrue(bench.slurm.sbatch.called)
 
+        directories = set()
+        expected_directories = set()
+        job_scripts = set()
+        expected_job_scripts = set()
         for ii, call in enumerate(arg1.call_args_list):
             switch_name = self.get_switch_name(ii)
             script_dir = os.path.join(self.switch_test_dir, switch_name)
             args, kwargs = call #call object is two things: args=tuple, kwargs=dict
-            self.assertEqual(kwargs['chdir'], script_dir)
-            self.assertEqual(args[0], script_dir + '/' + switch_name + '.job')
+            directories.add(script_dir)
+            expected_directories.add(kwargs['chdir'])
+            job_scripts.add(args[0])
+            expected_job_scripts.add(script_dir + '/' + switch_name + '.job')
             self.assertFalse('reservation' in kwargs)
+
+        self.assertEqual(directories, expected_directories)
+        self.assertEqual(job_scripts, expected_job_scripts)
 
 
     def test_submit_jobs_2(self, arg1):
@@ -259,15 +296,24 @@ class TestSubmitSwitch(unittest.TestCase):
 
         self.assertTrue(bench.slurm.sbatch.called)
 
+        directories = set()
+        expected_directories = set()
+        job_scripts = set()
+        expected_job_scripts = set()
         for ii, call in enumerate(arg1.call_args_list):
             switch_name = self.get_switch_name(ii)
             script_dir = os.path.join(self.switch_test_dir, switch_name)
             args, kwargs = call #call object is two things: args=tuple, kwargs=dict
-            self.assertEqual(kwargs['chdir'], script_dir)
-            self.assertEqual(args[0], script_dir + '/' + switch_name + '.job')
+            directories.add(script_dir)
+            expected_directories.add(kwargs['chdir'])
+            job_scripts.add(args[0])
+            expected_job_scripts.add(script_dir + '/' + switch_name + '.job')
             self.assertEqual(kwargs['reservation'], 'fake_res')
             self.assertEqual(kwargs['account'], 'fake_account')
             self.assertEqual(kwargs['qos'], 'fake_qos')
+
+        self.assertEqual(directories, expected_directories)
+        self.assertEqual(job_scripts, expected_job_scripts)
 
     def test_submit_jobs_3(self, arg1):
         '''Test submit of alltoall-switch jobs with nodes in --nodelist
@@ -277,15 +323,24 @@ class TestSubmitSwitch(unittest.TestCase):
 
         self.assertTrue(bench.slurm.sbatch.called)
 
+        directories = set()
+        expected_directories = set()
+        job_scripts = set()
+        expected_job_scripts = set()
         for ii, call in enumerate(arg1.call_args_list):
             switch_name = self.get_switch_name(ii)
             script_dir = os.path.join(self.switch_test_dir, switch_name)
             args, kwargs = call #call object is two things: args=tuple, kwargs=dict
-            self.assertEqual(kwargs['chdir'], script_dir)
-            self.assertEqual(args[0], script_dir + '/' + switch_name + '.job')
+            directories.add(script_dir)
+            expected_directories.add(kwargs['chdir'])
+            job_scripts.add(args[0])
+            expected_job_scripts.add(script_dir + '/' + switch_name + '.job')
             # Check that --nodelist nodes not submitted
             for switch in ['switch_3', 'switch_4']:
                 self.assertNotIn(switch, kwargs['chdir'])
+
+        self.assertEqual(directories, expected_directories)
+        self.assertEqual(job_scripts, expected_job_scripts)
 
 
 
