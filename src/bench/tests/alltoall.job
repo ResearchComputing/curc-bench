@@ -2,7 +2,7 @@
 #SBATCH --job-name={{job_name}}
 #SBATCH --nodelist={{','.join(nodes)}}
 #SBATCH --time=1:30:00
-#SBATCH --ntasks-per-node=1
+#SBATCH --ntasks-per-node=6
 #SBATCH --exclusive
 
 OSU_ALLTOALL={{osu_alltoall_path}}

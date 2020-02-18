@@ -13,8 +13,8 @@ LINPACK_INPUT="\
 Sample Intel(R) Optimized LINPACK Benchmark data file (lininput_xeon64)
 Intel(R) Optimized LINPACK Benchmark data
 6                     # number of tests
-1000 5000 10000 20000 25000 150000# problem sizes
-1000 5000 10000 20000 25000 150000# leading dimensions
+5000 10000 20000 25000 150000# problem sizes
+5000 10000 20000 25000 150000# leading dimensions
 2 2 2 1 1 1  # times to run a test
 4 4 4 4 4 4  # alignment values (in KBytes)"
 
