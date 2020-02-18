@@ -33,7 +33,7 @@ def main ():
         package_dir = {'': 'src'},
         packages=['bench', 'bench.conf', 'bench.tests'],
         include_package_data=True,
-        install_requires=['argparse', 'jinja2>=2.10,<3', 'python-hostlist>=1.20,<=2', 'pyslurm>17.10,<=18', 'tabulate<=1',
+        install_requires=['argparse', 'jinja2>=2.10,<3', 'python-hostlist>=1.20,<=2', 'pyslurm>=19,<20', 'tabulate<=1',
             'datetime>=4.3,<=5'],
         dependency_links=['http://github.com/PySlurm/pyslurm/tarball/19.05.0#egg=pyslurm'],
         tests_require=['importlib'],
